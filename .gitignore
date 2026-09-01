@@ -1,0 +1,45 @@
+﻿# Data files (too large for git)
+data/aptos2019/
+data/idrid/
+data/drive/
+data/drimdb/
+data/hrf/
+data/stare/
+data/chase_db1/
+data/eyepacs2015/
+data/DR_Testing_Set/
+data/DR_Training_Set/
+
+# MATLAB files
+*.asv
+*.m~
+*.mlappinstall
+*.mlpkginstall
+slprj/
+sccprj/
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+
+# OS files
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Download files
+*.zip
+*.tar.gz
+*.rar
+
+# Python
+__pycache__/
+*.pyc
+.env
