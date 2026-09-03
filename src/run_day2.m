@@ -1,9 +1,15 @@
-% run_day2.m - Master script for Day 2
-% Runs all Day 2 tasks in sequence
+function run_day2(mode)
+% RUN_DAY2 Master script for Day 2
+%   run_day2()        - Run everything (explore + quality + train + eval)
+%   run_day2('explore') - Run exploration only (skip training)
 %
 % Usage:
 %   run_day2           % Run everything
-%   run_day2('skip_train')  % Skip training, just explore
+%   run_day2('explore')  % Skip training, just explore
+
+if nargin < 1
+    mode = 'all';
+end
 
 fprintf('============================================\n');
 fprintf('       DrishtiCare - DAY 2 EXECUTION       \n');
@@ -20,10 +26,9 @@ addpath(fullfile(project_root, 'src', 'quality'));
 fprintf('Project root: %s\n\n', project_root);
 
 %% Parse arguments
-skipTrain = false;
-if nargin > 0 && strcmpi(varargin{1}, 'skip_train')
-    skipTrain = true;
-    fprintf('[INFO] Skipping training (exploration only)\n\n');
+skipTrain = strcmpi(mode, 'explore');
+if skipTrain
+    fprintf('[INFO] Running exploration only (no training)\n\n');
 end
 
 %% Step 1: Data Exploration
@@ -113,3 +118,4 @@ fprintf('  3. Decide if more training needed\n');
 fprintf('  4. Prepare for Day 3: Quality Assessment Module\n');
 
 fprintf('\n=== End Day 2 ===\n');
+end
