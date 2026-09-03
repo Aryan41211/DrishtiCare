@@ -1,4 +1,4 @@
-﻿# Data files (too large for git)
+﻿# Raw dataset directories (too large for git)
 data/aptos2019/
 data/idrid/
 data/drive/
@@ -9,6 +9,18 @@ data/chase_db1/
 data/eyepacs2015/
 data/DR_Testing_Set/
 data/DR_Training_Set/
+
+# Retinal image files (never commit raw images)
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.bmp
+
+# Keep analysis outputs (small, useful for reproducibility)
+!data/analysis/
+!data/analysis/**
 
 # MATLAB files
 *.asv
