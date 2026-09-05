@@ -103,5 +103,94 @@ function run_day7(mode)
         return;
     end
 
-    error('Unknown mode: %s (use verify/full)', mode);
+    if strcmp(mode, 'contrast')
+        % For each 5-class error case: heatmap for TRUE class vs PREDICTED
+        % class + their correlation (same region or different evidence?).
+        M = load(fullfile(outDir, 'day7_manifest.mat'), 'manifest');
+        manifest = M.manifest;
+        classNames = config.classes.names;
+        fprintf('%-24s %-14s %-14s %-8s\n', 'file', 'true', 'pred', 'corr');
+        contrast = struct('file', {}, 'trueClass', {}, 'predClass', {}, 'corr', {});
+        n = 0;
+        for k = 1:length(manifest)
+            if ~strcmp(manifest(k).kind, 'error'), continue; end
+            n = n + 1;
+            img = imresize(imread(fullfile( ...
+                config.dataset.dataRoot, 'train_images', manifest(k).file)), [224 224]);
+            ti = find(strcmp(classNames, manifest(k).true5));
+            pi = find(strcmp(classNames, manifest(k).pred5));
+            hmT = mat2gray(gradCAM(net5, img, ti, 'FeatureLayer', 'res5b_relu'));
+            hmP = mat2gray(gradCAM(net5, img, pi, 'FeatureLayer', 'res5b_relu'));
+            c = corr(hmT(:), hmP(:));
+            [~, f, e] = fileparts(manifest(k).file);
+            imwrite(imfuse(repmat(imresize(hmT, [224 224]), 1, 1, 3), ...
+                im2double(img), 'blend', 'Scaling', 'joint'), ...
+                fullfile(outDir, sprintf('contrast%02d_true_%s.png', n, manifest(k).true5)));
+            fprintf('%-24s %-14s %-14s %-8.3f\n', manifest(k).file, ...
+                manifest(k).true5, manifest(k).pred5, c);
+            contrast(n).file = [f e];
+            contrast(n).trueClass = manifest(k).true5;
+            contrast(n).predClass = manifest(k).pred5;
+            contrast(n).corr = c;
+        end
+        save(fullfile(outDir, 'day7_contrast.mat'), 'contrast');
+        fprintf('Saved %d contrast pairs.\n', n);
+        return;
+    end
+
+    if strcmp(mode, 'avgmaps')
+        % Class-average attention: 20 correctly classified images per grade.
+        fileCount = length(valDSraw.Files);
+        YTrue5 = zeros(fileCount,1); YPred5 = zeros(fileCount,1);
+        fprintf('Scanning %d images for correct-per-class pools...\n', fileCount);
+        for i = 1:fileCount
+            img = imresize(imread(valDSraw.Files{i}), [224 224]);
+            [~, folderName] = fileparts(fileparts(valDSraw.Files{i}));
+            t = regexp(folderName, 'class_(\d+)', 'tokens');
+            YTrue5(i) = str2double(t{1}{1}) + 1;
+            s = predict(net5, img); [~, YPred5(i)] = max(s(:)');
+            if mod(i,200)==0, fprintf('  %d/%d\n', i, fileCount); end
+        end
+        classNames = config.classes.names;
+        avgResult = struct('class', {}, 'n', {}, 'meanMassInside', {}, 'meanCorrToMean', {});
+        for c = 1:5
+            pool = find(YTrue5 == c & YPred5 == c);
+            pool = pool(1:min(20, length(pool)));
+            first = mat2gray(gradCAM(net5, ...
+                imresize(imread(valDSraw.Files{pool(1)}), [224 224]), c, ...
+                'FeatureLayer', 'res5b_relu'));
+            acc = zeros(size(first));
+            maps = zeros([size(first), length(pool)]);
+            inside = zeros(length(pool), 1);
+            for j = 1:length(pool)
+                img = imresize(imread(valDSraw.Files{pool(j)}), [224 224]);
+                hm = mat2gray(gradCAM(net5, img, c, 'FeatureLayer', 'res5b_relu'));
+                maps(:, :, j) = hm;
+                acc = acc + hm;
+                mask = imresize(createRetinalMask(img), size(hm)) > 0.5;
+                inside(j) = sum(hm(mask)) / (sum(hm(:)) + eps);
+            end
+            avgMap = acc / length(pool);
+            imwrite(mat2gray(avgMap), fullfile(outDir, ...
+                sprintf('avgmap_class%d_%s.png', c-1, classNames{c})));
+            % Mean correlation of individual maps to the average
+            v = avgMap(:);
+            cc = zeros(length(pool), 1);
+            for j = 1:length(pool)
+                mj = maps(:, :, j);
+                cc(j) = corr(mj(:), v);
+            end
+            avgResult(c).class = classNames{c};
+            avgResult(c).n = length(pool);
+            avgResult(c).meanMassInside = mean(inside);
+            avgResult(c).meanCorrToMean = mean(cc);
+            fprintf('%-14s n=%2d massInside=%.3f selfCorr=%.3f\n', ...
+                classNames{c}, length(pool), mean(inside), mean(cc));
+        end
+        save(fullfile(outDir, 'day7_avgmaps.mat'), 'avgResult');
+        fprintf('Saved class-average maps.\n');
+        return;
+    end
+
+    error('Unknown mode: %s (use verify/full/contrast/avgmaps)', mode);
 end
