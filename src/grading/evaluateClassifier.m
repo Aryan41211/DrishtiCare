@@ -1,274 +1,242 @@
-function results = evaluateClassifier(modelPath, dataRoot)
-% EVALUATECLASSIFIER Evaluate trained classifier with detailed metrics
-%   results = evaluateClassifier(modelPath, dataRoot)
+function metrics = evaluateClassifier(trainedNet, valDSraw, varargin)
+% EVALUATECLASSIFIER Evaluate trained DR classifier on validation set
+%   metrics = evaluateClassifier(trainedNet, valDSraw)
+%   metrics = evaluateClassifier(trainedNet, valDSraw, 'Config', config)
 %
 %   Inputs:
-%       modelPath - Path to saved model (.mat file)
-%       dataRoot  - Path to aptos2019 folder
+%       trainedNet - Trained network (DAGNetwork or SeriesNetwork)
+%       valDSraw   - Raw imageDatastore (NOT augmented) for evaluation
 %
-%   Outputs:
-%       results - Struct with all evaluation metrics
+%   Optional Parameters:
+%       'Config' - Training config struct (default: defaultTrainingConfig())
+%
+%   IMPORTANT: These are ENGINEERING metrics, NOT clinical performance claims.
 
-    %% Setup
-    if nargin < 1
-        script_dir = fileparts(mfilename('fullpath'));
-        project_root = fileparts(fileparts(script_dir));
-        modelPath = fullfile(project_root, 'models', 'dr_classifier_resnet18.mat');
+    %% Parse arguments
+    p = inputParser;
+    addParameter(p, 'Config', [], @(x) isstruct(x));
+    parse(p, varargin{:});
+    config = p.Results.Config;
+
+    if isempty(config)
+        config = defaultTrainingConfig();
     end
-    if nargin < 2
-        script_dir = fileparts(mfilename('fullpath'));
-        project_root = fileparts(fileparts(script_dir));
-        dataRoot = fullfile(project_root, 'data', 'aptos2019');
-    end
 
-    fprintf('=== DrishtiCare Model Evaluation ===\n\n');
+    classNames = config.classes.names;  % {'NoDR', 'Mild', 'Moderate', 'Severe', 'Proliferative'}
+    numClasses = config.classes.numClasses;
 
-    %% Load model
-    fprintf('--- Loading Model ---\n');
-    if ~exist(modelPath, 'file')
-        error('Model not found: %s', modelPath);
-    end
-    loaded = load(modelPath);
-    net = loaded.net;
-    fprintf('[OK] Model loaded from: %s\n\n', modelPath);
+    %% Get file list and labels from folder structure
+    fprintf('Loading validation files...\n');
+    fileCount = length(valDSraw.Files);
+    fprintf('  Total validation files: %d\n', fileCount);
 
-    %% Load test data
-    fprintf('--- Loading Test Data ---\n');
-    trainCsv = fullfile(dataRoot, 'train.csv');
-    trainDir = fullfile(dataRoot, 'train_images');
+    %% Get class order from the trained network
+    % The network's categorical output uses folder names: class_0, class_1, etc.
+    % We need to map these to our config class indices
+    netClasses = categories(valDSraw.Labels);
+    fprintf('  Network classes: %s\n', strjoin(netClasses, ', '));
 
-    data = readtable(trainCsv);
-    imgPaths = fullfile(trainDir, strcat(data.id_code, '.png'));
-    labels = categorical(data.diagnosis);
-
-    imds = imageDatastore(imgPaths, 'Labels', labels);
-
-    % Use last 20% as test set (same split as training)
-    [~, testDS] = splitEachLabel(imds, 0.8, 'randomized');
-
-    fprintf('Test images: %d\n\n', numel(testDS.Files));
-
-    %% Create augmented datastore
-    inputSize = net.Layers(1).InputSize;
-    augmentedTestDS = augmentedImageDatastore(inputSize, testDS);
-
-    %% Classify
-    fprintf('--- Running Classification ---\n');
+    %% Run predictions
+    fprintf('Running predictions...\n');
     tic;
-    [predLabels, scores] = classify(net, augmentedTestDS);
-    inferenceTime = toc;
-    trueLabels = testDS.Labels;
 
-    fprintf('Inference time: %.2f seconds (%.1f ms/image)\n', ...
-        inferenceTime, inferenceTime/numel(testDS.Files)*1000);
+    YPred = zeros(fileCount, 1);
+    YTrue = zeros(fileCount, 1);
 
-    %% Calculate metrics
-    fprintf('\n--- Calculating Metrics ---\n');
+    for i = 1:fileCount
+        % Read and resize image (same as training preprocessing)
+        img = imread(valDSraw.Files{i});
+        imgResized = imresize(img, config.input.imageSize(1:2));
 
-    % Overall accuracy
-    accuracy = sum(predLabels == trueLabels) / numel(trueLabels);
-    fprintf('Overall Accuracy: %.2f%%\n', accuracy * 100);
+        % Get true label from folder name
+        folderPath = fileparts(valDSraw.Files{i});
+        [~, folderName] = fileparts(folderPath);
+        tokens = regexp(folderName, 'class_(\d+)', 'tokens');
+        if ~isempty(tokens)
+            YTrue(i) = str2double(tokens{1}{1}) + 1; % 1-indexed
+        else
+            YTrue(i) = 1;
+        end
 
-    % Confusion matrix
-    [confMat, order] = confusionmat(trueLabels, predLabels);
+        % Predict
+        pred = classify(trainedNet, imgResized);
+        if iscell(pred)
+            pred = pred{1};
+        end
 
-    % Per-class metrics
-    numClasses = 5;
-    classNames = {'No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative'};
+        % Get predicted class index from categorical
+        % The model outputs categorical with names like 'class_0', 'class_1', etc.
+        predStr = string(pred);
+        % Extract class number from 'class_X' pattern
+        predTokens = regexp(predStr, 'class_(\d+)', 'tokens');
+        if ~isempty(predTokens)
+            YPred(i) = str2double(predTokens{1}{1}) + 1; % 1-indexed
+        else
+            % Fallback: try to match against config class names
+            idx = find(strcmp(predStr, classNames));
+            if ~isempty(idx)
+                YPred(i) = idx;
+            else
+                YPred(i) = 1; % Default to first class
+            end
+        end
 
+        if mod(i, 100) == 0
+            fprintf('  Processed %d/%d\n', i, fileCount);
+        end
+    end
+
+    predTime = toc;
+    fprintf('  Predictions completed in %.1f seconds\n', predTime);
+
+    %% Confusion matrix
+    fprintf('Computing confusion matrix...\n');
+    confMat = zeros(numClasses);
+    for i = 1:fileCount
+        confMat(YTrue(i), YPred(i)) = confMat(YTrue(i), YPred(i)) + 1;
+    end
+
+    %% Per-class metrics
+    fprintf('Computing per-class metrics...\n');
     precision = zeros(numClasses, 1);
     recall = zeros(numClasses, 1);
-    f1Score = zeros(numClasses, 1);
+    f1 = zeros(numClasses, 1);
     support = zeros(numClasses, 1);
 
-    for i = 1:numClasses
-        tp = confMat(i, i);
-        fp = sum(confMat(:, i)) - tp;
-        fn = sum(confMat(i, :)) - tp;
-        support(i) = sum(confMat(i, :));
+    for c = 1:numClasses
+        tp = confMat(c, c);
+        fp = sum(confMat(:, c)) - tp;
+        fn = sum(confMat(c, :)) - tp;
 
-        if (tp + fp) > 0
-            precision(i) = tp / (tp + fp);
-        end
-        if (tp + fn) > 0
-            recall(i) = tp / (tp + fn);
-        end
-        if (precision(i) + recall(i)) > 0
-            f1Score(i) = 2 * precision(i) * recall(i) / (precision(i) + recall(i));
-        end
+        precision(c) = tp / (tp + fp + eps);
+        recall(c) = tp / (tp + fn + eps);
+        f1(c) = 2 * precision(c) * recall(c) / (precision(c) + recall(c) + eps);
+        support(c) = sum(YTrue == c);
     end
 
-    % Macro averages
-    macroPrecision = mean(precision);
-    macroRecall = mean(recall);
-    macroF1 = mean(f1Score);
+    %% Macro F1
+    macroF1 = mean(f1);
 
-    % Weighted averages
-    weightedPrecision = sum(precision .* support) / sum(support);
-    weightedRecall = sum(recall .* support) / sum(support);
-    weightedF1 = sum(f1Score .* support) / sum(support);
+    %% Overall accuracy
+    accuracy = sum(YPred == YTrue) / fileCount;
 
-    %% Display results
-    fprintf('\n=== DETAILED RESULTS ===\n');
+    %% Quadratic Weighted Kappa (QWK)
+    fprintf('Computing QWK...\n');
+    qwk = computeQWK(YTrue, YPred, numClasses);
 
-    fprintf('\nPer-Class Metrics:\n');
-    fprintf('%-15s  Precision  Recall  F1-Score  Support\n', 'Class');
-    fprintf('%-15s  ---------  ------  --------  -------\n', '-----');
-    for i = 1:numClasses
-        fprintf('%-15s  %.4f    %.4f  %.4f     %d\n', ...
-            classNames{i}, precision(i), recall(i), f1Score(i), support(i));
+    %% Referable DR metrics
+    fprintf('Computing referable DR metrics...\n');
+    referableClasses = config.classes.referable; % [2, 3, 4] -> indices [3, 4, 5]
+
+    % Binary: referable vs non-referable
+    YTrueReferable = ismember(YTrue, referableClasses);
+    YPredReferable = ismember(YPred, referableClasses);
+
+    tpRef = sum(YTrueReferable & YPredReferable);
+    fpRef = sum(~YTrueReferable & YPredReferable);
+    fnRef = sum(YTrueReferable & ~YPredReferable);
+    tnRef = sum(~YTrueReferable & ~YPredReferable);
+
+    sensitivity = tpRef / (tpRef + fnRef + eps);
+    specificity = tnRef / (tnRef + fpRef + eps);
+    ppv = tpRef / (tpRef + fpRef + eps);
+    npv = tnRef / (tnRef + fnRef + eps);
+
+    %% Predicted class distribution
+    predDist = zeros(numClasses, 1);
+    for c = 1:numClasses
+        predDist(c) = sum(YPred == c);
     end
 
-    fprintf('\nMacro Averages:\n');
-    fprintf('  Precision: %.4f\n', macroPrecision);
-    fprintf('  Recall:    %.4f\n', macroRecall);
-    fprintf('  F1-Score:  %.4f\n', macroF1);
+    %% Compile metrics
+    metrics = struct();
+    metrics.date = datestr(now);
+    metrics.numClasses = numClasses;
+    metrics.classNames = classNames;
+    metrics.confusionMatrix = confMat;
+    metrics.precision = precision;
+    metrics.recall = recall;
+    metrics.f1 = f1;
+    metrics.support = support;
+    metrics.macroF1 = macroF1;
+    metrics.accuracy = accuracy;
+    metrics.qwk = qwk;
+    metrics.referable.sensitivity = sensitivity;
+    metrics.referable.specificity = specificity;
+    metrics.referable.ppv = ppv;
+    metrics.referable.npv = npv;
+    metrics.referable.tp = tpRef;
+    metrics.referable.fp = fpRef;
+    metrics.referable.fn = fnRef;
+    metrics.referable.tn = tnRef;
+    metrics.predictionTime = predTime;
+    metrics.totalSamples = fileCount;
+    metrics.YTrue = YTrue;
+    metrics.YPred = YPred;
+    metrics.predictedDistribution = predDist;
 
-    fprintf('\nWeighted Averages:\n');
-    fprintf('  Precision: %.4f\n', weightedPrecision);
-    fprintf('  Recall:    %.4f\n', weightedRecall);
-    fprintf('  F1-Score:  %.4f\n', weightedF1);
-
-    %% Sensitivity/Specificity for DR detection (binary: DR vs No DR)
-    fprintf('\n--- Binary DR Detection ---\n');
-    noDRIdx = (trueLabels == categorical(0));
-    drIdx = ~noDRIdx;
-
-    % Predicted labels
-    predNoDR = (predLabels == categorical(0));
-    predDR = ~predNoDR;
-
-    tp = sum(drIdx & predDR);
-    tn = sum(noDRIdx & predNoDR);
-    fp = sum(noDRIdx & predDR);
-    fn = sum(drIdx & predNoDR);
-
-    sensitivity = tp / (tp + fn);
-    specificity = tn / (tn + fp);
-   ppv = tp / (tp + fp);
-    npv = tn / (tn + fn);
-
-    fprintf('Sensitivity (DR detection): %.2f%%\n', sensitivity * 100);
-    fprintf('Specificity (No DR):        %.2f%%\n', specificity * 100);
-    fprintf('PPV (Precision):            %.2f%%\n', ppv * 100);
-    fprintf('NPV (Negative Predictive):  %.2f%%\n', npv * 100);
-
-    %% Visualizations
-    fprintf('\n--- Creating Visualizations ---\n');
-
-    % Figure 1: Confusion Matrix
-    figure('Name', 'Evaluation Results', 'NumberTitle', 'off', ...
-           'Position', [50, 50, 1400, 600]);
-
-    subplot(1,3,1);
-    confusionchart(trueLabels, predLabels, ...
-        'RowSummary', 'row-normalized', ...
-        'ColumnSummary', 'column-normalized');
-    title('Normalized Confusion Matrix');
-
-    % Figure 2: Per-class bar chart
-    subplot(1,3,2);
-    bar_data = [precision, recall, f1Score];
-    bar(bar_data);
-    set(gca, 'XTickLabel', classNames);
-    xtickangle(45);
-    ylabel('Score');
-    title('Per-Class Metrics');
-    legend('Precision', 'Recall', 'F1-Score', 'Location', 'best');
-    ylim([0 1]);
-    grid on;
-
-    % Figure 3: ROC-like visualization (confidence distribution)
-    subplot(1,3,3);
-    maxScores = max(scores, [], 2);
-    histogram(maxScores, 30, 'FaceColor', [0.2 0.6 0.8]);
-    xlabel('Max Confidence Score');
-    ylabel('Count');
-    title('Prediction Confidence Distribution');
-    grid on;
-
-    sgtitle(sprintf('Model Evaluation - Accuracy: %.2f%%', accuracy*100), ...
-        'FontSize', 14, 'FontWeight', 'bold');
-
-    %% Sample predictions
-    fprintf('\n--- Sample Predictions ---\n');
-    numShow = min(10, numel(testDS.Files));
-    figure('Name', 'Sample Predictions', 'NumberTitle', 'off', ...
-           'Position', [50, 50, 1400, 400]);
-
-    for i = 1:numShow
-        img = readimage(testDS, i);
-        subplot(2, 5, i);
-        imshow(img);
-
-        trueClass = char(trueLabels(i));
-        predClass = char(predLabels(i));
-        conf = max(scores(i, :)) * 100;
-
-        if predLabels(i) == trueLabels(i)
-            color = 'g';
-        else
-            color = 'r';
-        end
-
-        title(sprintf('True: %s\nPred: %s (%.0f%%)', ...
-            trueClass, predClass, conf), ...
-            'Color', color, 'FontSize', 9);
-    end
-    sgtitle('Sample Predictions (Green=Correct, Red=Wrong)', ...
-        'FontSize', 12, 'FontWeight', 'bold');
-
-    %% Save results
-    results.accuracy = accuracy;
-    results.precision = precision;
-    results.recall = recall;
-    results.f1Score = f1Score;
-    results.macroPrecision = macroPrecision;
-    results.macroRecall = macroRecall;
-    results.macroF1 = macroF1;
-    results.weightedPrecision = weightedPrecision;
-    results.weightedRecall = weightedRecall;
-    results.weightedF1 = weightedF1;
-    results.sensitivity = sensitivity;
-    results.specificity = specificity;
-    results.confMat = confMat;
-    results.predLabels = predLabels;
-    results.trueLabels = trueLabels;
-    results.scores = scores;
-
-    % Save results
-    script_dir = fileparts(mfilename('fullpath'));
-    project_root = fileparts(fileparts(script_dir));
-    resultsPath = fullfile(project_root, 'models', 'evaluation_results.mat');
-    save(resultsPath, 'results');
-    fprintf('\n[OK] Results saved to: %s\n', resultsPath);
-
-    %% Summary
-    fprintf('\n=== EVALUATION SUMMARY ===\n');
+    %% Print results
+    fprintf('\n=== Evaluation Results ===\n');
     fprintf('Overall Accuracy: %.2f%%\n', accuracy * 100);
-    fprintf('Sensitivity:      %.2f%%\n', sensitivity * 100);
-    fprintf('Specificity:      %.2f%%\n', specificity * 100);
-    fprintf('Macro F1:         %.4f\n', macroF1);
-    fprintf('Weighted F1:      %.4f\n', weightedF1);
+    fprintf('Macro F1: %.4f\n', macroF1);
+    fprintf('QWK: %.4f\n', qwk);
 
-    fprintf('\n--- Training Recommendations ---\n');
-    if accuracy < 0.7
-        fprintf('[!] Accuracy is low. Consider:\n');
-        fprintf('    - More epochs (current: check options.MaxEpochs)\n');
-        fprintf('    - Larger network (try resnet50 or efficientnetb0)\n');
-        fprintf('    - More aggressive augmentation\n');
-        fprintf('    - Learning rate scheduling\n');
-    elseif accuracy < 0.85
-        fprintf('[*] Accuracy is decent. Consider:\n');
-        fprintf('    - Fine-tuning hyperparameters\n');
-        fprintf('    - Adding more epochs\n');
-        fprintf('    - Ensemble methods\n');
-    else
-        fprintf('[+] Accuracy is good! Consider:\n');
-        fprintf('    - Testing on external dataset (IDRiD)\n');
-        fprintf('    - Optimizing for inference speed\n');
-        fprintf('    - Preparing for deployment\n');
+    fprintf('\nPredicted class distribution:\n');
+    for c = 1:numClasses
+        fprintf('  %s: %d (%.1f%%)\n', classNames{c}, predDist(c), predDist(c)/fileCount*100);
     end
 
-    fprintf('\n=== End Evaluation ===\n');
+    fprintf('\nTrue class distribution:\n');
+    for c = 1:numClasses
+        fprintf('  %s: %d (%.1f%%)\n', classNames{c}, support(c), support(c)/fileCount*100);
+    end
+
+    fprintf('\nPer-class metrics:\n');
+    fprintf('%-15s %8s %8s %8s %8s\n', 'Class', 'Prec', 'Recall', 'F1', 'Support');
+    fprintf('%-15s %8s %8s %8s %8s\n', '-----', '----', '------', '--', '-------');
+    for c = 1:numClasses
+        fprintf('%-15s %8.4f %8.4f %8.4f %8d\n', ...
+            classNames{c}, precision(c), recall(c), f1(c), support(c));
+    end
+
+    fprintf('\nReferable DR:\n');
+    fprintf('  Sensitivity: %.4f\n', sensitivity);
+    fprintf('  Specificity: %.4f\n', specificity);
+    fprintf('  PPV: %.4f\n', ppv);
+    fprintf('  NPV: %.4f\n', npv);
+    fprintf('  TP: %d, FP: %d, FN: %d, TN: %d\n', tpRef, fpRef, fnRef, tnRef);
+    fprintf('========================\n\n');
+end
+
+function qwk = computeQWK(yTrue, yPred, numClasses)
+    n = length(yTrue);
+
+    % Build weight matrix
+    W = zeros(numClasses);
+    for i = 1:numClasses
+        for j = 1:numClasses
+            W(i,j) = (i - j)^2 / (numClasses - 1)^2;
+        end
+    end
+
+    % Build confusion matrix
+    O = zeros(numClasses);
+    for i = 1:n
+        O(yTrue(i), yPred(i)) = O(yTrue(i), yPred(i)) + 1;
+    end
+
+    % Expected confusion matrix (by chance)
+    E = zeros(numClasses);
+    rowSums = sum(O, 2);
+    colSums = sum(O, 1);
+    for i = 1:numClasses
+        for j = 1:numClasses
+            E(i,j) = rowSums(i) * colSums(j) / n;
+        end
+    end
+
+    % Compute QWK
+    numer = sum(W(:) .* O(:));
+    denom = sum(W(:) .* E(:));
+    qwk = 1 - numer / (denom + eps);
 end
