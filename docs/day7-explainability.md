@@ -45,6 +45,40 @@ attends to retinal content, not frame artifacts. Two correct cases near
 - Heatmaps explain *where*, never *why* clinically.
 - Visual inspection of overlays still required before SIH demo.
 
+## Contrast analysis: true-class vs predicted-class evidence
+For all 5 error cases, heatmaps for the true and predicted grades were
+compared (correlation of the two maps):
+
+| Error | True → Pred | Correlation |
+|-------|-------------|-------------|
+| 0cbcc7b23613 | NoDR → Moderate | 0.19 |
+| 06b71823f9cd | Mild → Proliferative | -0.27 |
+| 000c1434d8d7 | Moderate → Proliferative | -0.55 |
+| 05cd0178ccfe | Severe → Moderate | -0.46 |
+| 03a7f4a5786f | Proliferative → Moderate | -0.14 |
+
+All near-zero or negative: the model attends to **different regions**
+for each hypothesis. Errors are attention failures (looking at the
+wrong place), not borderline-feature disagreements.
+
+## Class-average attention (20 correct images per grade)
+
+| Grade | n | Mass inside retina | Self-consistency |
+|-------|---|--------------------|------------------|
+| NoDR | 20 | 0.619 | 0.715 |
+| Mild | 20 | 0.830 | 0.652 |
+| Moderate | 20 | 0.784 | 0.444 |
+| Severe | 7 | 0.705 | 0.694 |
+| Proliferative | 13 | 0.768 | 0.504 |
+
+Readings: Mild is the most retina-focused grade; Moderate attention is
+the least consistent (0.44) — the model looks at different places for
+different Moderate images, matching its broad middle-grade nature; the
+Severe pool holds only 7 correctly classified images, itself a measure
+of Severe recall weakness. Average maps saved as `avgmap_*.png`.
+
 ## Files
 - `src/grading/gradcamExplain.m`, `src/run_day7.m`
-- `data/analysis/day7/day7_manifest.mat` + 28 overlay PNGs
+  (modes: verify / full / contrast / avgmaps)
+- `data/analysis/day7/`: manifest, contrast pairs, average maps,
+  28 case overlays (PNGs)
