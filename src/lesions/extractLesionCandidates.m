@@ -50,20 +50,20 @@ function feat = extractLesionCandidates(imgPath, opts)
     % Multi-orientation top-hat: dark dots/lines removed by bottom-hat on
     % the normalized green channel. Use disk SE for MAs, larger disk for HEs.
     se_disk_small = strel('disk', 1);          % ~MA scale (downscaled)
-    se_disk_large = strel('disk', round(max(4/s, 3))); % HE scale
+    se_disk_large = strel('disk', round(40/s)); % HE scale (~40px original radius; bridges vessels)
 
     % Bottom-hat (dark structures on bright bg) via closing minus original
     redResponseSmall = imbothat(Gnorm, se_disk_small);
     redResponseLarge = imbothat(Gnorm, se_disk_large);
 
-    % Threshold: require strong local response (top quartile of positive
+    % Threshold: require strong local response (upper quantile of positive
     % response) to avoid textbook background texture over-detection.
-    p = redResponseLarge(:);
-    pPos = p(p > 0);
+    pS = redResponseSmall(:);  pSL = pS(pS > 0);
+    pL = redResponseLarge(:);  pLL = pL(pL > 0);
     thrSmall = max(graythresh(redResponseSmall) * max(redResponseSmall(:)), ...
-                   quantile(pPos, 0.5) * 1.5);
+                   quantile(pSL, 0.85) * 1.2);
     thrLarge = max(graythresh(redResponseLarge) * max(redResponseLarge(:)), ...
-                   quantile(pPos, 0.7));
+                   quantile(pLL, 0.8));
     binSmall = redResponseSmall > thrSmall;
     binLarge = redResponseLarge > thrLarge;
 
@@ -93,14 +93,16 @@ function feat = extractLesionCandidates(imgPath, opts)
         end
     end
 
-    % ---- HEs: larger, irregular but not infinite ----
+    % ---- HEs: larger, irregular but not vessel-like ----
     hes = struct('count', 0, 'centroidX', [], 'centroidY', [], 'areaPx', []);
-    HEminArea = round((25/s)^2);
-    heMu = regionprops(ccLarge, {'Area','Centroid','Eccentricity'});
+    HEminArea = round((35/s)^2);
+    heMu = regionprops(ccLarge, {'Area','Centroid','Eccentricity','MajorAxisLength','MinorAxisLength'});
     for k = 1:length(heMu)
         a = heMu(k).Area;
         ecc = heMu(k).Eccentricity;
-        if a >= HEminArea && ecc > 0.55 && a <= round((200/s)^2)  % disc by size+ecc
+        % Vessels are very elongated (ecc ~ 1); haemorrhages are
+        % irregular blobs. Keep moderate eccentricity and reasonable size.
+        if a >= HEminArea && ecc > 0.4 && ecc < 0.92 && a <= round((250/s)^2)
             hes.count = hes.count + 1;
             hes.centroidX(end+1) = heMu(k).Centroid(1) * s;
             hes.centroidY(end+1) = heMu(k).Centroid(2) * s;
