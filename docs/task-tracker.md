@@ -16,6 +16,7 @@ Proliferative 52.54, NoDR 98.34).
 | Task 5(b) | Target-boosted weighting on Severe/Proliferative | ⛔ Skipped per operator decision | Recorded in `docs/day8/day8-task5-minority-recall.md`. Auto-chaining is disabled in code (`RUN_VARIANT_B = false`); launching it later still requires explicit user approval. |
 | Task 5(c) | Targeted augmentation for Severe/Proliferative | ⛔ Skipped per operator decision | `RUN_VARIANT_C = false`. |
 | Task 6 | Lesion-feature branch (IDRiD MA/HE/EX/SE masks) | ✅ Complete | Code: `src/lesions/extractLesionCandidates.m`, `src/run_task6_lesions.m`. Outputs: `data/analysis/day8/lesions/` (`lesion_features.mat` [gitignored, 116 MB], `lesion_summary.csv`, `lesion_montage.png`, `inspect_IDRiD_01..10.png` overlay figures for manual review). Report: `docs/day8/day8-task6-lesions.md`. Classical candidates (not deep segmentation); counts usable as relative features. |
+| Inference + lesion evidence | Wire MA/HE/EX candidates + optic-disc into `predictSingleFundus` report | ✅ Complete | `src/lesions/estimateOpticDisc.m` (classical, scale-aware, refuses when unsure), extended `src/inference/predictSingleFundus.m` (5-panel report), `src/test_lesion_report.m`. Verified on 5 APTOS train images (grades 0–4). OD honesty measured: 5/10 IDRiD within 300px, else → "OD NOT located" flag; exudates may include OD region. `data/analysis/day8/od_estimator_verification.mat`, figures in `data/analysis/day8/lesion_report/`. |
 
 ## Task 5(a) vs day7 baseline — measured, validation n=733 (verified)
 

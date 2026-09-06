@@ -5,10 +5,11 @@ function result = predictSingleFundus(imagePath, varargin)
 %   Pipeline (EXACT same preprocessing as training):
 %     raw -> imresize 224 -> quality gate -> binary screening (pretrained)
 %     -> 5-class grading (pretrained) -> Grad-CAM
+%     -> [lesion evidence: {MA,HE,EX} candidates + optic disc] (lesions)
 %
 %   Returns struct: qualityStatus, qualityScore, binaryProbability,
 %   binaryDecision, binaryThreshold, grade, gradeLabel, classProbabilities,
-%   confidence, gradCAM.
+%   confidence, gradCAM, lesions.
 %
 %   ENGINEERING demo tool. NOT a clinical device.
 
@@ -17,6 +18,7 @@ function result = predictSingleFundus(imagePath, varargin)
     addParameter(p, 'GradeModel', '', @ischar);
     addParameter(p, 'BinaryThreshold', 0.60, @isnumeric);
     addParameter(p, 'ShowFigure', true, @islogical);
+    addParameter(p, 'RunLesions', true, @islogical);
     parse(p, varargin{:});
 
     projectRoot = pwd;
@@ -81,14 +83,55 @@ function result = predictSingleFundus(imagePath, varargin)
     result.confidence = conf;
     result.gradCAM = overlay;
 
+    % 8. Lesion evidence (classical MA/HE/EX candidates + optic disc)
+    result.lesions = struct();
+    result.lesions.odLocated = false;
+    result.lesions.od = [];
+    if p.Results.RunLesions
+        try
+            od = estimateOpticDisc(raw);
+            loos = struct();
+            if ~isempty(od)
+                loos.odCenter = od(1:2);
+                loos.odRadius = od(3);
+                loos.fovea = [];
+            else
+                loos.odCenter = [];
+                loos.odRadius = 0;
+                loos.fovea = [];
+            end
+            feat = extractLesionCandidates(imagePath, loos);
+            result.lesions.odLocated = ~isempty(od);
+            result.lesions.od = od;
+            result.lesions.maCount = feat.microaneurysms.count;
+            result.lesions.heCount = feat.haemorrhages.count;
+            result.lesions.exCount = feat.exudates.count;
+            result.lesions.quadrantHemorrhage = feat.quadrantHemorrhage;
+            result.lesions.meanExudateDistToFovea = feat.meanExudateDistToFovea;
+            result.lesions.minExudateDistToFovea = feat.minExudateDistToFovea;
+            result.lesions.overlay = feat.visual;
+        catch me
+            result.lesions.odLocated = false;
+            result.lesions.od = [];
+            result.lesions.error = me.message;
+        end
+    end
+
     % 10. Display figure
     if p.Results.ShowFigure
-        fig = figure('Name', 'DrishtiCare Single-Image Inference', ...
-            'Position', [100 100 1100 420]);
-        subplot(1, 4, 1); imshow(raw); title('Original fundus');
-        subplot(1, 4, 2); imshow(enhanced); title('Enhanced / model input');
-        subplot(1, 4, 3); imshow(overlay); title('Grad-CAM');
-        subplot(1, 4, 4); axis off;
+        if p.Results.RunLesions
+            fig = figure('Name', 'DrishtiCare Single-Image Inference', ...
+                'Position', [100 100 1600 420]);
+            np = 5;
+        else
+            fig = figure('Name', 'DrishtiCare Single-Image Inference', ...
+                'Position', [100 100 1100 420]);
+            np = 4;
+        end
+        subplot(1, np, 1); imshow(raw); title('Original fundus');
+        subplot(1, np, 2); imshow(enhanced); title('Enhanced / model input');
+        subplot(1, np, 3); imshow(overlay); title('Grad-CAM');
+        subplot(1, np, 4); axis off;
         text(0.05, 0.95, sprintf('Quality: %s (%.2f)', qualityStatus, qualityScore), 'FontSize', 11);
         text(0.05, 0.82, sprintf('Referable prob: %.1f%%', pRef*100), 'FontSize', 12, 'FontWeight', 'bold');
         text(0.05, 0.72, sprintf('Screening: %s (thr %.2f)', binaryDecision, thr), 'FontSize', 11);
@@ -98,6 +141,33 @@ function result = predictSingleFundus(imagePath, varargin)
         for i = 1:5
             text(0.05, 0.28-(i-1)*0.06, sprintf('  %d %s: %.1f%%', ...
                 i-1, gradeLabels{i}, s5(i)*100), 'FontSize', 10);
+        end
+        if p.Results.RunLesions
+            subplot(1, 5, 5); hold on;
+            if isfield(result.lesions, 'overlay') && ~isempty(result.lesions.overlay)
+                ov = result.lesions.overlay.overlay;
+                imagesc(ov); axis image off; title('Lesion evidence');
+                ma = result.lesions.overlay.maMask; he = result.lesions.overlay.heMask;
+                ex = result.lesions.overlay.exMask;
+                [ey, exx] = find(ex); if ~isempty(ey), plot(exx, ey, 'y.', 'MarkerSize', 1); end
+                [my, mx] = find(ma);  if ~isempty(my), plot(mx, my, 'r.', 'MarkerSize', 3); end
+                [hy, hx] = find(he);  if ~isempty(hy), plot(hx, hy, 'c.', 'MarkerSize', 3); end
+                if result.lesions.odLocated && numel(result.lesions.od) == 3
+                    scl = size(ov,1) / size(raw,1);
+                    viscircles(result.lesions.od(1:2)*scl, result.lesions.od(3)*scl, ...
+                        'Color', 'g', 'LineWidth', 1);
+                end
+            end
+            txt = sprintf('MA=%d HE=%d EX=%d\nquadHE=[%s]', ...
+                result.lesions.maCount, result.lesions.heCount, result.lesions.exCount, ...
+                num2str(result.lesions.quadrantHemorrhage));
+            if result.lesions.odLocated
+                txt = [txt sprintf('\nOD located (r=%.0f)', result.lesions.od(3))];
+            else
+                txt = [txt sprintf('\nOD NOT located:\nexudates may include OD')];
+            end
+            text(0.02, 0.98, txt, 'FontSize', 9, 'Units', 'normalized', ...
+                'VerticalAlignment', 'top', 'BackgroundColor', 'w');
         end
         result.figure = fig;
     end
