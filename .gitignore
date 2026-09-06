@@ -60,3 +60,6 @@ __pycache__/
 # NOTE: this section was previously written in UTF-16 encoding, which git does
 # NOT parse - the ignore rules silently did not apply. Kept in ASCII now.
 data/models/checkpoints/
+
+# Large single analysis artifact (116 MB) - exceeds GitHub 100 MB file limit
+data/analysis/day8/lesions/lesion_features.mat
