@@ -126,7 +126,7 @@ function metrics = evaluateClassifier(trainedNet, valDSraw, varargin)
 
     %% Referable DR metrics
     fprintf('Computing referable DR metrics...\n');
-    referableClasses = config.classes.referable; % [2, 3, 4] -> indices [3, 4, 5]
+    referableClasses = config.classes.referable; % 1-indexed: [3,4,5]
 
     % Binary: referable vs non-referable
     YTrueReferable = ismember(YTrue, referableClasses);

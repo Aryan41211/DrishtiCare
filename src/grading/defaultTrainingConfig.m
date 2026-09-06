@@ -30,8 +30,10 @@ function config = defaultTrainingConfig()
     config.classes.numClasses = 5;
     config.classes.names = {'NoDR', 'Mild', 'Moderate', 'Severe', 'Proliferative'};
     config.classes.labels = 0:4;
-    config.classes.referable = [2, 3, 4];  % Moderate, Severe, Proliferative
-    config.classes.nonReferable = [0, 1];  % NoDR, Mild
+    % 1-INDEXED class indices (YTrue/YPred are 1..5). Do NOT use 0-indexed
+    % grades here: Moderate=3, Severe=4, Proliferative=5.
+    config.classes.referable = [3, 4, 5];  % Moderate, Severe, Proliferative
+    config.classes.nonReferable = [1, 2];  % NoDR, Mild
 
     %% Split settings
     config.split.splitRatio = 0.8;
