@@ -1,6 +1,6 @@
 # Task Tracker (post-Day-7 corrective tasks)
 
-Updated: 2026-09-07 ~00:15 (local). Source of truth for the numbered
+Updated: 2026-09-07 ~00:58 (local). Source of truth for the numbered
 corrective tasks that started after the Day 7 champion
 (`day7_pretrained_resnet18_5class`, val n=733: Acc 82.81%, Macro F1 0.6805,
 QWK 0.8914; per-class recall Mild 60.81 / Moderate 78.50 / Severe 48.72 /
@@ -12,19 +12,39 @@ Proliferative 52.54, NoDR 98.34).
 |------|-------------|--------|-------|
 | Task 3 | PR-AUC regression investigation (scratch vs pretrained binary) | ✅ Complete | `src/run_task3_prauc.m` + `data/analysis/day7/pr_auc_investigation.mat` |
 | Task 4 | One-time official APTOS test-set evaluation | ✅ Complete — **test set now CLOSED** | `src/run_task4_test_eval.m` + `data/analysis/day8/test_evaluation.mat`. Local copy has NO test ground truth → only distribution/confidence/agreement metrics measured; accuracy/F1/QWK not computable. Binary threshold stays locked at 0.60. |
-| Task 5(a) | `day8_5class_v2a` — corrected class weighting (was uniform 800/class, now per-class targets 800/800/800/1000/1000 for classes 0–4) | 🔶 **IN PROGRESS — training running** | Stage-2 run started 23:45:57 on 2026-09-06. Last observed checkpoint: iteration 274 @ 00:03:23 (`data/models/checkpoints/day8_5class_v2a_stage2/`). Final `data/models/day8_5class_v2a_stage2.mat` **not yet saved**. Evaluation vs day7 baseline (Task B) pending until training completes. |
-| Task 5(b) | Target-boosted weighting on Severe/Proliferative | ⛔ Blocked — needs explicit user approval | Auto-chaining disabled in `src/run_task5_minority_recall.m` (`RUN_VARIANT_B = false`). Decision only AFTER Task 5(a) numbers exist. |
-| Task 5(c) | Targeted augmentation for Severe/Proliferative | ⛔ Not started — only if both (a) and (b) underperform | `RUN_VARIANT_C = false`. |
-| Task 6 | Lesion-feature branch (IDRiD MA/HE/EX/SE masks) | 🔹 Prep done | Annotation-format reference: `docs/idrid-lesion-annotations.md`. Implementation not started. |
+| Task 5(a) | `day8_5class_v2a` — corrected class weighting (uniform 800/class → targets 800/800/800/1000/1000) | ✅ **Complete (negative result on the target classes)** | Final model `data/models/day8_5class_v2a_stage2.mat`; metrics `data/analysis/day5/day8_5class_v2a_metrics.mat`; independently verified (`src/verify_taskB_metrics.m`, `day8_v2a_metrics_verification.mat`). One-line outcome: **Severe recall +0.00 pts, Proliferative recall +0.00 pts** (unchanged); Mild +2.70 pts, NoDR −0.56 pts, accuracy ±0.00, Macro F1 +0.0022, QWK −0.0037. Day7 champion retained. |
+| Task 5(b) | Target-boosted weighting on Severe/Proliferative | ⛔ Skipped per operator decision | Recorded in `docs/day8/day8-task5-minority-recall.md`. Auto-chaining is disabled in code (`RUN_VARIANT_B = false`); launching it later still requires explicit user approval. |
+| Task 5(c) | Targeted augmentation for Severe/Proliferative | ⛔ Skipped per operator decision | `RUN_VARIANT_C = false`. |
+| Task 6 | Lesion-feature branch (IDRiD MA/HE/EX/SE masks) | 🔹 In progress (operator parallel work) | Prep: `docs/idrid-lesion-annotations.md`. Code: `src/lesions/extractLesionCandidates.m`, `src/run_task6_lesions.m`. |
 
-## Decision rule for Task 5 (apply after Task B evaluation)
+## Task 5(a) vs day7 baseline — measured, validation n=733 (verified)
 
-- If Severe AND Proliferative recall both improved by a meaningful margin
-  (beyond run-to-run noise) → mark Task 5 sufficient, move directly to
-  Task 6 (lesion-feature branch). Do NOT queue variant (b)/(c).
-- If recall barely moved or got worse on either class → the next single
-  isolated experiment is variant (b), **launching only with explicit user
-  approval**. Variant (c) is not queued.
+| Metric | day7_pretrained_resnet18_5class | day8_5class_v2a | Δ (pts) |
+|--------|--------------------------------|-----------------|---------|
+| NoDR recall | 98.34% | 97.78% | −0.56 |
+| Mild recall | 60.81% | 63.51% | **+2.70** |
+| Moderate recall | 78.50% | 78.50% | 0.00 |
+| **Severe recall** | **48.72%** | **48.72%** | **0.00** |
+| **Proliferative recall** | **52.54%** | **52.54%** | **0.00** |
+| Accuracy | 82.81% | 82.81% | 0.00 |
+| Macro F1 | 0.6805 | 0.6827 | +0.0022 |
+| QWK | 0.8914 | 0.8877 | −0.0037 |
+
+## Decision rule for Task 5 — applied outcome
+
+- Rule branch that applies: **"recall barely moved or got worse on either
+  class"** — Severe and Proliferative recall did not move at all (±0.00 pts).
+  Strictly, the rule points to variant (b) as the next single isolated
+  experiment **subject to explicit user approval**.
+- However, the operator has already recorded the decision to **skip (b) and
+  (c)** as separate training runs, with the interpretation that the
+  Severe/Proliferative bottleneck is feature discriminability (errors are
+  ±1-severity confusions), not training-data representation.
+- **Net recommendation: accept Task 5 as PARTIAL (negative result kept on
+  record) and move to Task 6 (lesion-feature branch)**, which is already
+  underway. No variant (b)/(c) training will be launched without explicit
+  user approval. Variant (c) remains off the table unless both (a) and (b)
+  were tried and underperformed.
 
 ## Baseline to beat (measured, day7_pretrained_resnet18_5class)
 
@@ -38,5 +58,3 @@ Proliferative 52.54, NoDR 98.34).
 | Severe recall | 48.72% |
 | Proliferative recall | 52.54% |
 
-(Task 5(a) result columns will be appended here after the Task B evaluation
-on the same 733-image validation split.)
