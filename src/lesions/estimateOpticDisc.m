@@ -17,12 +17,14 @@ function od = estimateOpticDisc(I, opts)
 %   Returns od = [cx cy radius] in ORIGINAL pixel coordinates (x=col, y=row),
 %   or [] when no confident candidate exists.
 %
-%   MEASURED ACCURACY (IDRiD train, n=10, same images as Task 6):
-%   3/10 within 300 px of the ground-truth OD center, 6/10 within 800 px,
-%   1/10 refused, remaining candidates can be off target (classical method
-%   limitation). For the SIH explainability report this is acceptable ONLY
-%   because the report flags OD-not-localized cases instead of silently
-%   trusting an unreliable circle.
+%   MEASURED ACCURACY (IDRiD train, n=10, same images as Task 6, vs OD
+%   mask centroids): 5/10 located, 4/10 within 300 px of the ground-truth
+%   center, 5/10 honestly REFUSED. This is now the FALLBACK in
+%   predictSingleFundus; the primary locator is the CNN
+%   `locateOpticDiscCnn` (9/10 within 300 px on the same set). For the SIH
+%   explainability report refusing is acceptable ONLY because the report
+%   flags OD-not-localized cases instead of silently trusting an unreliable
+%   circle.
 %
 %   opts fields:
 %     .verbose     logical (default false)

@@ -69,3 +69,12 @@ data/analysis/day8/lesions/lesion_features.mat
 # net (ma_cnn_net.mat) IS committed for reproducibility.
 data/analysis/day8/ma_cnn/ma_dataset.mat
 data/analysis/day8/ma_cnn/ma_cnn_hardneg.mat
+
+# OD-CNN regenerable datasets (built by buildOdDataset.m / hardNegMineOdCnn.m)
+# The trained nets (od_cnn_net.mat) ARE committed for reproducibility.
+data/analysis/day8/od_cnn/od_dataset.mat
+data/analysis/day8/od_cnn/od_cnn_hardneg.mat
+
+# Fovea-CNN regenerable dataset (built by buildFoveaDataset.m), 57 MB.
+# The trained net (fovea_cnn_net.mat) IS committed for reproducibility.
+data/analysis/day8/fovea_cnn/fovea_dataset.mat
