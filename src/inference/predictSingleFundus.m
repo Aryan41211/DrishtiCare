@@ -22,6 +22,8 @@ function result = predictSingleFundus(imagePath, varargin)
     parse(p, varargin{:});
 
     projectRoot = pwd;
+    addpath(fullfile(projectRoot, 'src', 'ood_detection'), ...
+            fullfile(projectRoot, 'src', 'cascade_router'));
     modelDir = fullfile(projectRoot, 'data', 'models');
     if isempty(p.Results.BinaryModel)
         binPath = fullfile(modelDir, 'day7_pretrained_resnet18_binary_stage2.mat');
@@ -89,7 +91,10 @@ function result = predictSingleFundus(imagePath, varargin)
     result.lesions.od = [];
     if p.Results.RunLesions
         try
-            od = estimateOpticDisc(raw);
+            od = locateOpticDiscCnn(raw);
+            if isempty(od)
+                od = estimateOpticDisc(raw);   % fallback to classical detector
+            end
             loos = struct();
             if ~isempty(od)
                 loos.odCenter = od(1:2);
@@ -117,36 +122,48 @@ function result = predictSingleFundus(imagePath, varargin)
         end
     end
 
-    % 10. Display figure
+    % 9. OOD detection + cascade routing (unsafe/uncertain -> human review)
+    result.ood = struct('flag', false, 'mahalanobis', NaN, 'available', false);
+    result.cascade = struct('route', 'CLEAR', 'available', false);
+    if p.Results.RunLesions   % both are lightweight; reuse the same flag
+        try
+            [oodFlag, mDist, oodDet] = ood_detector(raw);
+            result.ood.flag = oodFlag;
+            result.ood.mahalanobis = mDist;
+            result.ood.threshold = oodDet.threshold;
+            result.ood.nearestClass = oodDet.nearestClass;
+            result.ood.available = true;
+        catch me
+            result.ood.available = false;
+            result.ood.error = me.message;
+        end
+        try
+            [route, casDet] = cascade_router(result.grade, s5, pRef);
+            result.cascade.route = route;
+            result.cascade.detail = casDet;
+            result.cascade.available = true;
+        catch me
+            result.cascade.available = false;
+            result.cascade.error = me.message;
+        end
+    end
+
+    % 10. Explanation narrative (evidence-based paragraph)
+    result.explanation = buildExplanationNarrative(result);
+
+    % 11. Display figure (2-row polished layout)
     if p.Results.ShowFigure
+        fig = figure('Name', 'DrishtiCare Single-Image Inference', ...
+            'Color', 'w', 'Position', [80 60 1680 880]);
+
+        subplot(2, 3, 1); imshow(raw); title('Original fundus', 'FontWeight', 'bold');
+        subplot(2, 3, 2); imshow(enhanced); title('Enhanced / model input', 'FontWeight', 'bold');
+        subplot(2, 3, 3); imshow(overlay); title(['Grad-CAM (pred. class ', num2str(gradeIdx-1), ')'], 'FontWeight', 'bold');
         if p.Results.RunLesions
-            fig = figure('Name', 'DrishtiCare Single-Image Inference', ...
-                'Position', [100 100 1600 420]);
-            np = 5;
-        else
-            fig = figure('Name', 'DrishtiCare Single-Image Inference', ...
-                'Position', [100 100 1100 420]);
-            np = 4;
-        end
-        subplot(1, np, 1); imshow(raw); title('Original fundus');
-        subplot(1, np, 2); imshow(enhanced); title('Enhanced / model input');
-        subplot(1, np, 3); imshow(overlay); title('Grad-CAM');
-        subplot(1, np, 4); axis off;
-        text(0.05, 0.95, sprintf('Quality: %s (%.2f)', qualityStatus, qualityScore), 'FontSize', 11);
-        text(0.05, 0.82, sprintf('Referable prob: %.1f%%', pRef*100), 'FontSize', 12, 'FontWeight', 'bold');
-        text(0.05, 0.72, sprintf('Screening: %s (thr %.2f)', binaryDecision, thr), 'FontSize', 11);
-        text(0.05, 0.58, sprintf('Grade: %d — %s', gradeIdx-1, gradeLabels{gradeIdx}), 'FontSize', 12, 'FontWeight', 'bold');
-        text(0.05, 0.48, sprintf('Confidence: %.1f%%', conf*100), 'FontSize', 11);
-        text(0.05, 0.34, '5-class probs:', 'FontSize', 10);
-        for i = 1:5
-            text(0.05, 0.28-(i-1)*0.06, sprintf('  %d %s: %.1f%%', ...
-                i-1, gradeLabels{i}, s5(i)*100), 'FontSize', 10);
-        end
-        if p.Results.RunLesions
-            subplot(1, 5, 5); hold on;
+            subplot(2, 3, 4); hold on;
             if isfield(result.lesions, 'overlay') && ~isempty(result.lesions.overlay)
                 ov = result.lesions.overlay.overlay;
-                imagesc(ov); axis image off; title('Lesion evidence');
+                imagesc(ov); axis image off; title('Lesion evidence', 'FontWeight', 'bold');
                 ma = result.lesions.overlay.maMask; he = result.lesions.overlay.heMask;
                 ex = result.lesions.overlay.exMask;
                 [ey, exx] = find(ex); if ~isempty(ey), plot(exx, ey, 'y.', 'MarkerSize', 1); end
@@ -157,18 +174,82 @@ function result = predictSingleFundus(imagePath, varargin)
                     viscircles(result.lesions.od(1:2)*scl, result.lesions.od(3)*scl, ...
                         'Color', 'g', 'LineWidth', 1);
                 end
-            end
-            txt = sprintf('MA=%d HE=%d EX=%d\nquadHE=[%s]', ...
-                result.lesions.maCount, result.lesions.heCount, result.lesions.exCount, ...
-                num2str(result.lesions.quadrantHemorrhage));
-            if result.lesions.odLocated
-                txt = [txt sprintf('\nOD located (r=%.0f)', result.lesions.od(3))];
             else
-                txt = [txt sprintf('\nOD NOT located:\nexudates may include OD')];
+                axis off; title('Lesion evidence (unavailable)', 'FontWeight', 'bold');
             end
-            text(0.02, 0.98, txt, 'FontSize', 9, 'Units', 'normalized', ...
-                'VerticalAlignment', 'top', 'BackgroundColor', 'w');
+        else
+            subplot(2, 3, 4); axis off;
         end
+
+        % ---- bottom-left: decision metrics panel ----
+        subplot(2, 3, 5); axis off; box on; set(gca, 'XLim',[0 1], 'YLim',[0 1]);
+        lines = {
+            sprintf('Quality: %s (score %.2f)', qualityStatus, qualityScore)
+            sprintf('Referable prob: %.1f%%   ->  %s', pRef*100, binaryDecision)
+            sprintf('Severity: grade %d  %s', gradeIdx-1, gradeLabels{gradeIdx})
+            sprintf('Confidence: %.1f%%', conf*100)
+            ''
+            'Class probabilities:'
+        };
+        if p.Results.RunLesions
+            lines = [lines; {sprintf('Lesions  MA=%d HE=%d EX=%d', ...
+                result.lesions.maCount, result.lesions.heCount, result.lesions.exCount)}];
+            if result.lesions.odLocated
+                lines = [lines; {sprintf('Optic disc: located (r=%.0f px)', result.lesions.od(3))}];
+            else
+                lines = [lines; {'Optic disc: NOT located (EX near disc may include it)'}];
+            end
+        end
+        if result.ood.available
+            if result.ood.flag
+                lines = [lines; {sprintf('OOD: OUT-OF-DISTRIBUTION (Mah=%.1f)', result.ood.mahalanobis)}];
+            else
+                lines = [lines; {sprintf('OOD: in-dist (Mah=%.1f)', result.ood.mahalanobis)}];
+            end
+        end
+        if result.cascade.available
+            lines = [lines; {sprintf('Cascade: %s', result.cascade.route)}];
+        end
+        text(0.05, 0.97, lines, 'FontSize', 11, 'VerticalAlignment', 'top', ...
+            'BackgroundColor','none', 'FontName','Consolas');
+        hold all;
+        h5 = text(0.07, 0.02, sprintf('NoDR %.0f%%  Mild %.0f%%  Mod %.0f%%  Sev %.0f%%  Prol %.0f%%', ...
+            s5(1)*100, s5(2)*100, s5(3)*100, s5(4)*100, s5(5)*100), ...
+            'FontSize', 9, 'FontName','Consolas');
+        h6 = text(0.05, 0.12, sprintf('thr=%.2f (locked)', thr), 'FontSize', 9, 'Color', [0.4 0.4 0.4]);
+
+        % ---- bottom-right: explanation narrative panel ----
+        subplot(2, 3, 6); axis off;
+        title('Explanation');
+        narrLines = [{'EXPLANATION (engineering demo — not clinical advice):'; ''}; ...
+                     wrapText(result.explanation.paragraph, 110); ...
+                     {''; 'Evidence basis:'; ''}; ...
+                     wrapText(result.explanation.caveats, 110)];
+        text(0.03, 0.99, narrLines, 'FontSize', 9.5, 'VerticalAlignment', 'top', ...
+            'FontName', 'Consolas', 'Units', 'normalized');
+
         result.figure = fig;
     end
+end
+
+function out = wrapText(s, width)
+%WRAPTEXT Wrap char/string s into lines of at most `width` chars, splitting
+%on spaces to preserve words (utility for the explanation panel).
+    if isstring(s), s = char(s); else, s = char(s); end
+    words = strsplit(strtrim(s), ' ');
+    out = {};
+    cur = '';
+    for k = 1:numel(words)
+        w = words{k};
+        if isempty(cur)
+            cur = w;
+        elseif numel(cur) + 1 + numel(w) <= width
+            cur = [cur ' ' w];
+        else
+            out{end+1} = cur; %#ok<AGROW>
+            cur = w;
+        end
+    end
+    if ~isempty(cur), out{end+1} = cur; end
+    out = out(:);
 end

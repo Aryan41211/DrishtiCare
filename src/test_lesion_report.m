@@ -7,7 +7,8 @@
 projRoot = 'C:\projects\DrishtiCare';
 cd(projRoot);
 addpath('src','src/inference','src/lesions','src/quality', ...
-        'src/enhancement','src/grading','src/setup');
+        'src/enhancement','src/grading','src/setup','src/explainability', ...
+        'src/ood_detection','src/cascade_router');
 outDir = fullfile(projRoot, 'data', 'analysis', 'day8', 'lesion_report');
 if ~exist(outDir,'dir'), mkdir(outDir); end
 
