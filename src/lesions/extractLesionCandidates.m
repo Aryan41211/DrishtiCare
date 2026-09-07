@@ -1,23 +1,28 @@
 function feat = extractLesionCandidates(imgPath, opts)
-% EXTRACTLESIONCANDIDATES Classical lesion candidate extraction (IDRiD)
+% EXTRACTLESIONCANDIDATES Lesion candidate extraction (IDRiD, hybrid CNN+classical)
 %   feat = extractLesionCandidates(imgPath, opts)
 %
-%   Classical (non-deep-learning) candidate extraction for explainability +
-%   fusion features:
-%     - Microaneurysms:  multi-orientation top-hat morphology (green channel)
-%     - Haemorrhages:    same normalized pipeline, discriminated by size/shape
+%   Hybrid lesion extraction for explainability + fusion features:
+%     - Microaneurysms:  CNN patch classifier (ensemble, threshold 0.9) via
+%                        detectMaCnn — validates against IDRiD GT:
+%                        recall ~0.11 / precision ~0.60 at threshold 0.9
+%                        (IDRiD val, n=10, tol=12px). Counts are LOW-RECALL
+%                        relative cues; NOT clinical-grade.
+%     - Haemorrhages:    classical LoG matched filter (recall ~0.10, weak)
 %     - Exudates:        morphological reconstruction, optic-disc excluded
 %
 %   Returns counts, centroids (original-image coords) and masks scaled to
 %   original image size.
 %
 %   opts fields:
-%     .scale          downscale factor for processing (default 4)
+%     .scale          downscale factor for HE/EX processing (default 4)
 %     .odCenter       [c r] optic disc center in ORIGINAL coords (default [])
 %     .odRadius       optic disc radius in ORIGINAL pixels (default 0)
 %     .fovea          [c r] fovea center in ORIGINAL coords (default [])
 %     .verbose        logical (default true)
 %     .returnVisual   logical: also return downscaled overlay images (default true)
+%     .maScoreThr     CNN P(MA) threshold for detections (default 0.90)
+%     .ensemble       logical: ensemble both nets (default true)
 %
 %   Coordinates convention: [x, y] = [column, row] (MATLAB image coords).
 %   This is an ENGINEERING explainability feature, not clinical diagnosis.
@@ -29,6 +34,8 @@ function feat = extractLesionCandidates(imgPath, opts)
     if ~isfield(opts, 'fovea'), opts.fovea = []; end
     if ~isfield(opts, 'verbose'), opts.verbose = true; end
     if ~isfield(opts, 'returnVisual'), opts.returnVisual = true; end
+    if ~isfield(opts, 'maScoreThr'), opts.maScoreThr = 0.90; end
+    if ~isfield(opts, 'ensemble'), opts.ensemble = true; end
 
     s = opts.scale;
 
@@ -46,52 +53,33 @@ function feat = extractLesionCandidates(imgPath, opts)
     bg = imfilter(G, fspecial('average', round(max(we,he)/25)));
     Gnorm = G - bg;
 
-    %% ============ MICROANEURYSMS + HAEMORRHAGES (red lesions) ============
-    % Multi-orientation top-hat: dark dots/lines removed by bottom-hat on
-    % the normalized green channel. Use disk SE for MAs, larger disk for HEs.
-    se_disk_small = strel('disk', 1);          % ~MA scale (downscaled)
-    se_disk_large = strel('disk', round(40/s)); % HE scale (~40px original radius; bridges vessels)
+    %% ============ MICROANEURYSMS (CNN, threshold 0.9) ============
+    % CNN ensemble (original + hard-neg retrained) via detectMaCnn, validated
+    % against IDRiD GT: recall ~0.11 / precision ~0.60 at threshold 0.90.
+    % This replaces the classical top-hat MA pipeline (which had recall 0.002
+    % at scale 4, precision 0.003 — broken). Counts are LOW-RECALL relative
+    % severity cues, NOT clinical-grade absolute counts.
+    maDets = detectMaCnn(imgPath, struct('scoreThr', opts.maScoreThr, ...
+                                         'ensemble', opts.ensemble, ...
+                                         'verbose', false));
+    mas = struct('count', 0, 'centroidX', [], 'centroidY', [], 'areaPx', [], 'score', []);
+    if ~isempty(maDets.detections.centroidX)
+        mas.count = numel(maDets.detections.centroidX);
+        mas.centroidX = maDets.detections.centroidX;
+        mas.centroidY = maDets.detections.centroidY;
+        mas.score     = maDets.detections.score;
+        mas.areaPx    = repmat(pi*8^2, 1, mas.count);  % nominal 8px-radius full-res
+    end
 
-    % Bottom-hat (dark structures on bright bg) via closing minus original
-    redResponseSmall = imbothat(Gnorm, se_disk_small);
+    %% ============ HAEMORRHAGES (classical top-hat, scale s) ============
+    se_disk_large = strel('disk', round(40/s));
     redResponseLarge = imbothat(Gnorm, se_disk_large);
-
-    % Threshold: require strong local response (upper quantile of positive
-    % response) to avoid textbook background texture over-detection.
-    pS = redResponseSmall(:);  pSL = pS(pS > 0);
     pL = redResponseLarge(:);  pLL = pL(pL > 0);
-    thrSmall = max(graythresh(redResponseSmall) * max(redResponseSmall(:)), ...
-                   quantile(pSL, 0.85) * 1.2);
     thrLarge = max(graythresh(redResponseLarge) * max(redResponseLarge(:)), ...
                    quantile(pLL, 0.8));
-    binSmall = redResponseSmall > thrSmall;
     binLarge = redResponseLarge > thrLarge;
-
-    % Remove tiny noise (1-2 px downscaled)
-    binSmall = bwareaopen(binSmall, 4);
     binLarge = bwareaopen(binLarge, 8);
-
-    % Haemorrhages = large(binLarge) minus small(binSmall); MAs = small
-    % candidates below HE size threshold.
-    MAmaxArea = round((14/s)^2);   % max MA candidate area
-
-    % Connected components
-    ccSmall = bwconncomp(binSmall & ~binLarge);
     ccLarge = bwconncomp(binLarge);
-
-    % ---- MAs: small, roundish ----
-    mas = struct('count', 0, 'centroidX', [], 'centroidY', [], 'areaPx', []);
-    maMu = regionprops(ccSmall, {'Area','Centroid','Eccentricity'});
-    for k = 1:length(maMu)
-        a = maMu(k).Area;
-        ecc = maMu(k).Eccentricity;
-        if a >= 4 && a <= MAmaxArea && ecc < 0.75
-            mas.count = mas.count + 1;
-            mas.centroidX(end+1) = maMu(k).Centroid(1) * s;
-            mas.centroidY(end+1) = maMu(k).Centroid(2) * s;
-            mas.areaPx(end+1) = a * s^2;
-        end
-    end
 
     % ---- HEs: larger, irregular but not vessel-like ----
     hes = struct('count', 0, 'centroidX', [], 'centroidY', [], 'areaPx', []);

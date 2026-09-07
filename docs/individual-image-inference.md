@@ -20,11 +20,11 @@ This prints quality, referable probability/decision (threshold 0.60),
 grade with confidence, and shows a 5-panel figure
 (original | enhanced | Grad-CAM | report | lesion evidence).
 
-Where "lesion evidence" shows classical MA/HE/EX candidate overlays plus a
-green optic-disc ring (when the disc is reliably located):
+Where "lesion evidence" shows lesion candidate overlays plus a green
+optic-disc ring (when the disc is reliably located):
 
-- MA (red dots) = microaneurysm candidates
-- HE (cyan dots) = haemorrhage candidates
+- MA (red dots) = microaneurysm candidates from a trained CNN ensemble
+- HE (cyan dots) = haemorrhage candidates (classical)
 - EX (yellow dots) = exudate candidates (optic-disc region excluded)
 - quadHE = [TR TL BL BR] per-quadrant haemorrhage counts
 - meanExudateDistToFovea: only meaningful when called with IDRiD-style
@@ -68,7 +68,25 @@ Lesion sub-struct `result.lesions`:
   "OD NOT located: exudates may include OD" as an explicit flag. This is a
   documented honest fallback, not a silent error.
 - Exudates are hard to separate from the disc region classically; treat EX
-  counts as relative features, and trust MA/HE more than EX.
+  counts as relative features (classical, moderate), and treat HE counts as
+  weak (classical, recall ~0.10).
+
+## Microaneurysm counts (CNN, measured operating point)
+
+- `maCount` comes from a trained CNN ensemble (`detectMaCnn`), replacing the
+  previously broken classical MA stage (recall 0.002 / precision 0.003 at
+  scale 4).
+- Detector: dark-dot candidate generation (black-hat, top ~13k/image) →
+  48×48 full-res crops → ensemble of two CNNs (original + hard-negative
+  retrained) → non-max suppression (24 px radius) → threshold 0.90 on P(MA).
+- Held-out IDRiD images 01–10 (never trained), tol 12 px, matching per GT
+  blob: **recall 0.113, precision 0.595** at threshold 0.90. Patch-level
+  held-out AUC 0.976 (2409 MA positives from 54 images, 44/10 holdout).
+- Trained nets are committed at `data/analysis/day8/ma_cnn/ma_cnn_net.mat`;
+  training code at `src/lesions/{buildMaDataset,trainMaCnn,hardNegMineMaCnn}.m`.
+- This is a LOW-RECALL relative severity cue (~11% of MAs found), useful for
+  highlighting present MAs, NOT a clinical-grade count. `maScoreThr` can be
+  lowered (e.g. 0.5 → recall 0.874) at the cost of precision (0.019).
 
 ## Rules
 

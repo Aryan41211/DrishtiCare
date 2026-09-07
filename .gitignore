@@ -63,3 +63,9 @@ data/models/checkpoints/
 
 # Large single analysis artifact (116 MB) - exceeds GitHub 100 MB file limit
 data/analysis/day8/lesions/lesion_features.mat
+
+# MA-CNN regenerable datasets (built by buildMaDataset.m / hardNegMineMaCnn.m)
+# 27 MB combined; kept out of git but regenerable from IDRiD GT. The trained
+# net (ma_cnn_net.mat) IS committed for reproducibility.
+data/analysis/day8/ma_cnn/ma_dataset.mat
+data/analysis/day8/ma_cnn/ma_cnn_hardneg.mat
