@@ -9,6 +9,7 @@ function narrative = buildExplanationNarrative(result)
 %     .assessment  severity sentence(s)
 %     .evidence    evidence-basis sentence(s) (lesion candidates, OD)
 %     .confidence  confidence sentence
+%     .calibration calibration sentence (temperature scaling), if available
 %     .recommendation referral/conservative-care sentence
 %     .caveats     non-clinical-device + quality caveats
 %
@@ -61,6 +62,22 @@ end
 scr = sprintf('Screening interpretation at the locked referability threshold (%.2f): the image is flagged %s (P(referable) = %.1f%%).', ...
     result.binaryThreshold, result.binaryDecision, result.binaryProbability*100);
 
+% ---------- temperature calibration ----------
+cal = '';
+hasCal = isfield(result, 'binaryProbabilityCalibrated') && isfield(result, 'calibrationTemperature');
+if hasCal
+    Tval = result.calibrationTemperature;
+    pCal = result.binaryProbabilityCalibrated;
+    pRaw = result.binaryProbability;
+    if abs(pCal - pRaw) > 0.01
+        cal = sprintf('After constrained temperature scaling (T=%.2f), the calibrated P(referable) is %.1f%% (raw %.1f%%). Temperature scaling adjusts probability estimates but does not change the screening decision.', ...
+            Tval, pCal*100, pRaw*100);
+    else
+        cal = sprintf('Temperature calibration (T=%.2f) was applied; the adjusted P(referable) remains %.1f%% (delta < 1 pp from raw).', ...
+            Tval, pCal*100);
+    end
+end
+
 % ---------- governance: OOD flag + cascade route ----------
 gov = '';
 if isfield(result, 'ood') && isfield(result.ood, 'available') && result.ood.available
@@ -89,8 +106,22 @@ if isfield(result, 'cascade') && isfield(result.cascade, 'available') && result.
     end
 end
 
+% ---------- dual-evidence: Branch B (lesion-feature) fusion ----------
+fusionReview = false;
+if isfield(result, 'fusion') && isfield(result.fusion, 'available') && result.fusion.available
+    if ~isempty(gov), gov = [gov ' ']; end
+    if result.fusion.discrepancy
+        gov = [gov sprintf('Dual-evidence check: Branch B (an independent lesion-feature model) reads P(referable)=%.0f%%, which disagrees with Branch A; the case is flagged for manual review.', result.fusion.branchB*100)];
+        fusionReview = true;
+    elseif result.fusion.agree
+        gov = [gov sprintf('Dual-evidence check: Branch B (an independent lesion-feature model) agrees with Branch A (P(referable)=%.0f%%).', result.fusion.branchB*100)];
+    else
+        gov = [gov 'Dual-evidence check: Branch B was inconclusive; no conflict with Branch A.'];
+    end
+end
+
 % ---------- recommendation ----------
-needsReview = crowReview || oodReview || result.grade >= 3 || ...
+needsReview = crowReview || oodReview || fusionReview || result.grade >= 3 || ...
     (isfield(result,'ood') && isfield(result.ood,'flag') && result.ood.flag);
 if result.grade >= 3
     rec = 'Recommend urgent specialist review — findings suggest severe or proliferative retinopathy.';
@@ -112,7 +143,11 @@ end
 
 % ---------- assemble ----------
 para = ['This analysis is an engineering demonstration and is NOT intended for clinical use or diagnosis. ' ...
-    assess ' ' scr ' ' ev ' ' qc ' '];
+    assess ' ' scr ' '];
+if ~isempty(cal)
+    para = [para cal ' '];
+end
+para = [para ev ' ' qc ' '];
 if ~isempty(gov)
     para = [para gov ' '];
 end
@@ -121,10 +156,12 @@ narrative.paragraph = para;
 narrative.assessment = assess;
 narrative.evidence = ev;
 narrative.screening = scr;
+narrative.calibration = cal;
 narrative.recommendation = rec;
 narrative.quality = qc;
 narrative.governance = gov;
-narrative.caveats = 'Engineering demonstration only. Automated lesion counts are supportive, not clinical-grade. Clinical correlation is required.';
+narrative.fusion = gov;
+narrative.caveats = 'Engineering demonstration only. Automated lesion counts are supportive, not clinical-grade. Clinical correlation is required. Temperature scaling is an engineering calibration tool, not a clinical accuracy claim.';
 end
 
 function s = gradeDescriptor(g)

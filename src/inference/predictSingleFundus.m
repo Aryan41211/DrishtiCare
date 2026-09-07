@@ -8,7 +8,8 @@ function result = predictSingleFundus(imagePath, varargin)
 %     -> [lesion evidence: {MA,HE,EX} candidates + optic disc] (lesions)
 %
 %   Returns struct: qualityStatus, qualityScore, binaryProbability,
-%   binaryDecision, binaryThreshold, grade, gradeLabel, classProbabilities,
+%   binaryProbabilityCalibrated, calibrationTemperature, binaryDecision,
+%   binaryThreshold, grade, gradeLabel, classProbabilities,
 %   confidence, gradCAM, lesions.
 %
 %   ENGINEERING demo tool. NOT a clinical device.
@@ -19,11 +20,14 @@ function result = predictSingleFundus(imagePath, varargin)
     addParameter(p, 'BinaryThreshold', 0.60, @isnumeric);
     addParameter(p, 'ShowFigure', true, @islogical);
     addParameter(p, 'RunLesions', true, @islogical);
+    addParameter(p, 'RunBranchB', true, @islogical);
     parse(p, varargin{:});
 
     projectRoot = pwd;
     addpath(fullfile(projectRoot, 'src', 'ood_detection'), ...
-            fullfile(projectRoot, 'src', 'cascade_router'));
+            fullfile(projectRoot, 'src', 'cascade_router'), ...
+            fullfile(projectRoot, 'src', 'calibration'), ...
+            fullfile(projectRoot, 'src', 'lesions'));
     modelDir = fullfile(projectRoot, 'data', 'models');
     if isempty(p.Results.BinaryModel)
         binPath = fullfile(modelDir, 'day7_pretrained_resnet18_binary_stage2.mat');
@@ -63,6 +67,14 @@ function result = predictSingleFundus(imagePath, varargin)
     binaryDecision = 'NON-REFERABLE';
     if pRef >= thr, binaryDecision = 'REFERABLE'; end
 
+    % --- Temperature calibration (engineering tool, not clinical) ---
+    try
+        T = loadTemperatureParams();
+    catch
+        T = 1.0;
+    end
+    pCalibrated = temperatureScale(pRef, T);
+
     [pred5, s5] = classify(net5, modelInput);
     s5 = s5(:)';
     [conf, gradeIdx] = max(s5);
@@ -84,14 +96,19 @@ function result = predictSingleFundus(imagePath, varargin)
     result.classProbabilities = s5;
     result.confidence = conf;
     result.gradCAM = overlay;
+    result.binaryProbabilityCalibrated = pCalibrated;
+    result.calibrationTemperature = T;
 
     % 8. Lesion evidence (classical MA/HE/EX candidates + optic disc)
     result.lesions = struct();
     result.lesions.odLocated = false;
     result.lesions.od = [];
+    result.lesions.exudateCentroidX = [];
+    result.lesions.exudateCentroidY = [];
     if p.Results.RunLesions
         try
-            od = locateOpticDiscCnn(raw);
+            odCnn = locateOpticDiscCnn(raw);
+            od = odCnn;
             if isempty(od)
                 od = estimateOpticDisc(raw);   % fallback to classical detector
             end
@@ -108,16 +125,24 @@ function result = predictSingleFundus(imagePath, varargin)
             feat = extractLesionCandidates(imagePath, loos);
             result.lesions.odLocated = ~isempty(od);
             result.lesions.od = od;
+            result.lesions.odCnnOnly = ~isempty(odCnn);  % Branch B feature 8 = CNN-only locate
+            result.lesions.odCnn = odCnn;
             result.lesions.maCount = feat.microaneurysms.count;
             result.lesions.heCount = feat.haemorrhages.count;
             result.lesions.exCount = feat.exudates.count;
             result.lesions.quadrantHemorrhage = feat.quadrantHemorrhage;
+            result.lesions.exudateCentroidX = feat.exudates.centroidX;
+            result.lesions.exudateCentroidY = feat.exudates.centroidY;
             result.lesions.meanExudateDistToFovea = feat.meanExudateDistToFovea;
             result.lesions.minExudateDistToFovea = feat.minExudateDistToFovea;
             result.lesions.overlay = feat.visual;
         catch me
             result.lesions.odLocated = false;
             result.lesions.od = [];
+            result.lesions.odCnnOnly = false;
+            result.lesions.odCnn = [];
+            result.lesions.exudateCentroidX = [];
+            result.lesions.exudateCentroidY = [];
             result.lesions.error = me.message;
         end
     end
@@ -145,6 +170,59 @@ function result = predictSingleFundus(imagePath, varargin)
         catch me
             result.cascade.available = false;
             result.cascade.error = me.message;
+        end
+    end
+
+    % 9b. Dual-evidence: Branch B (lesion features) + evidence agreement
+    result.fusion = struct('branchB', NaN, 'agree', false, 'discrepancy', false, ...
+                           'routeOverride', '', 'available', false, ...
+                           'reason', 'Branch B not run');
+    if p.Results.RunBranchB && p.Results.RunLesions
+        try
+            modelFile = fullfile(projectRoot, 'data', 'analysis', 'day8', ...
+                                 'branch_b', 'branchB_model.mat');
+            if exist(modelFile, 'file') && isfield(result.lesions, 'maCount')
+                SBB = load(modelFile);  % .model
+                featRow = zeros(1, 10);
+                featRow(1) = result.lesions.maCount;
+                featRow(2) = result.lesions.heCount;
+                featRow(3) = result.lesions.exCount;
+                q = result.lesions.quadrantHemorrhage;
+                if numel(q) >= 4, featRow(4:7) = q(1:4); end
+                featRow(8) = double(result.lesions.odCnnOnly);
+                exx = result.lesions.exudateCentroidX;
+                exy = result.lesions.exudateCentroidY;
+                if result.lesions.odCnnOnly && ~isempty(exx)
+                    odc = result.lesions.odCnn;
+                    odr = result.lesions.odCnn(3);
+                    thr = 1.5 * max(odr, 50);
+                    d = sqrt(sum(([exx; exy] - [odc(1); odc(2)]).^2, 1));
+                    featRow(9) = double(sum(d <= thr));
+                    featRow(10) = mean(d);
+                end
+                pRefB = branch_b_predict(featRow, SBB.model);
+                aInfo.grade = result.grade;
+                aInfo.pRefCal = pCalibrated;
+                aInfo.confident = conf >= 0.80;
+                bInfo.pRefB = pRefB;
+                bInfo.available = true;
+                [ag, dis, det] = fuseEvidence(aInfo, bInfo);
+                result.fusion.branchB = pRefB;
+                result.fusion.agree = ag;
+                result.fusion.discrepancy = dis;
+                result.fusion.routeOverride = det.routeOverride;
+                result.fusion.available = true;
+                result.fusion.reason = det.reason;
+                if strcmp(det.routeOverride, 'REVIEW') && result.cascade.available
+                    result.cascade.detail = [result.cascade.detail ...
+                        ' | Branch B conflict -> manual review recommended'];
+                end
+            else
+                result.fusion.reason = 'Branch B model unavailable';
+            end
+        catch me
+            result.fusion.available = false;
+            result.fusion.reason = ['Branch B error: ' me.message];
         end
     end
 
@@ -191,6 +269,11 @@ function result = predictSingleFundus(imagePath, varargin)
             ''
             'Class probabilities:'
         };
+        if abs(pCalibrated - pRef) > 0.01
+            lines = [lines; {sprintf('Calib. P(referable): %.1f%% (T=%.2f)', pCalibrated*100, T)}];
+        elseif T ~= 1.0
+            lines = [lines; {sprintf('Calibration: T=%.2f applied (delta < 1 pp)', T)}];
+        end
         if p.Results.RunLesions
             lines = [lines; {sprintf('Lesions  MA=%d HE=%d EX=%d', ...
                 result.lesions.maCount, result.lesions.heCount, result.lesions.exCount)}];
@@ -209,6 +292,19 @@ function result = predictSingleFundus(imagePath, varargin)
         end
         if result.cascade.available
             lines = [lines; {sprintf('Cascade: %s', result.cascade.route)}];
+        end
+        if isfield(result, 'fusion')
+            if result.fusion.available
+                if result.fusion.discrepancy
+                    lines = [lines; {sprintf('Branch B: P(ref)=%.1f%%  DISCREPANCY', result.fusion.branchB*100)}];
+                elseif result.fusion.agree
+                    lines = [lines; {sprintf('Branch B: P(ref)=%.1f%%  agree (fusion)', result.fusion.branchB*100)}];
+                else
+                    lines = [lines; {sprintf('Branch B: P(ref)=%.1f%%  (no conflict)', result.fusion.branchB*100)}];
+                end
+            else
+                lines = [lines; {'Branch B: unavailable'}];
+            end
         end
         text(0.05, 0.97, lines, 'FontSize', 11, 'VerticalAlignment', 'top', ...
             'BackgroundColor','none', 'FontName','Consolas');
