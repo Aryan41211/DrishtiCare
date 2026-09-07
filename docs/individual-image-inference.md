@@ -23,10 +23,12 @@ explanation narrative.
 
 The decision-metrics panel also reports the out-of-distribution (OOD)
 status (Mahalanobis distance vs. a 99th-percentile threshold on training
-features) and the confidence-router (cascade) decision: CLEAR / REVIEW /
-ABSTAIN. These feed the narrative's governance sentence and, when OOD or
-uncertain, force a "manual review / follow-up" recommendation over an
-auto-answered screening.
+features), the confidence-router (cascade) decision: CLEAR / REVIEW /
+ABSTAIN, and (when `RunBranchB` is on, the default) the **Branch B**
+lesion-feature dual-evidence line. These feed the narrative's governance
+sentence and, when OOD, uncertain, or a Branch A/B conflict is flagged,
+force a "manual review / follow-up" recommendation over an auto-answered
+screening.
 
 Where "lesion evidence" shows lesion candidate overlays plus a green
 optic-disc ring (when the disc is reliably located):
@@ -56,6 +58,8 @@ result = predictSingleFundus("C:\path\to\fundus.jpg", ...
     'BinaryThreshold', 0.5, 'ShowFigure', false);
 result = predictSingleFundus("C:\path\to\fundus.jpg", ...
     'RunLesions', false);      % skip lesion step for speed
+result = predictSingleFundus("C:\path\to\fundus.jpg", ...
+    'RunBranchB', false);      % skip dual-evidence fusion step
 ```
 
 Top-level fields: `qualityStatus`, `qualityScore`, `binaryProbability`,
@@ -80,6 +84,35 @@ gracefully rather than erroring.
 
 Cascade sub-struct `result.cascade`: `available`, `route`
 ('CLEAR'/'REVIEW'/'ABSTAIN'), `detail` (thresholds + reasons used).
+
+Fusion sub-struct `result.fusion` (dual-evidence, from
+`src/lesions/fuseEvidence.m`): `available`, `branchB` (P(referable) from
+the independent Branch B lesion-feature model), `agree`, `discrepancy`,
+`routeOverride` ('REVIEW' when Branch A/B conflict), `reason`. When a
+discrepancy is flagged, `result.cascade.detail` records a "Branch B
+conflict -> manual review recommended" note and the narrative forces a
+review recommendation. Fusion never downgrades a referable decision.
+
+## Branch B (lesion-feature dual-evidence, pilot)
+
+Branch B is an independent, interpretable classifier that maps cached
+lesion-feature counts to P(referable). It is a PILOT: the features are the
+low-recall candidate counts (MA/HE/EX + quadrants + CNN optic-disc flag) —
+not clinical-grade measurements — so Branch B is intended as a second
+opinion cross-check, not a standalone diagnostic.
+
+- Feature cache + model: `data/analysis/day8/branch_b/` (`feat_cache.mat`,
+  `branchB_model.mat`); code `src/lesions/{build_aptos_feature_cache,
+  trainBranchB,branch_b_predict}.m`.
+- Trained on a stratified 250-image APTOS train subsample (50/grade);
+  firewalled eval on 50 held-out-images (10/grade): **eval AUC 0.858**
+  (logistic), **match vs Branch A label at 0.60 = 0.760** (honest: Branch B
+  below Branch A — expected for low-recall lesion cues). Per-grade eval
+  mean P(ref): grade 0 → 0.24, grade 1 → 0.49, grade 2 → 0.66, grade 3 →
+  0.78, grade 4 → 0.78.
+- Honest caveat: the OD CNN accepts only ~13% of APTOS train images
+  (P≥0.90 gate), so the OD-located/exudate-disc features are sparse; the
+  model's signal is mainly MA/HE/EX counts + quadrants.
 
 ## Models used
 
