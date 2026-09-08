@@ -184,6 +184,27 @@ byte-identical to the deployed Branch B.
   useful Branch B addition; Branch B should remain the 10-feature lesion
   classifier.
 
+## Production exclusion (confirmed in code)
+
+Vessel features are **excluded** from the production Branch B path:
+
+- `src/inference/predictSingleFundus.m:230` — `featRow = zeros(1, 10);` the
+  production row is exactly the 10 lesion features:
+  - `:231` MA count, `:232` HE count, `:233` EX count,
+  - `:234–235` quadrant HEs (4), `:236` `odCnnOnly` (OD located flag),
+  - `:243–245` exudate-to-OD distance features (2).
+  - No vessel feature (of the 8 in `predict_vessel_features.m`) is read,
+    computed, or appended anywhere in the inference path.
+- `src/lesions/branch_b_predict.m:9` — rejects any row that is not 10 wide
+  (`numel(X) ~= numel(model.features)`), so the deployed 10-feature model
+  cannot receive vessel features by construction.
+- The vessel-evaluated classifier (18 features) exists only in
+  `data/analysis/day8/task8/branchb_comparison_T8.mat` and was never promoted
+  into `data/analysis/day8/branch_b/branchB_model.mat`.
+
+Production Branch B therefore operates on the original 10 lesion features
+(AUC 0.8969 on the closed 733-val, Task 7).
+
 ## Files created
 
 - `src/lesions/buildDriveVesselDataset.m`
