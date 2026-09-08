@@ -38,7 +38,7 @@ function result = predictSingleFundus(imagePath, varargin)
 
     foveaCenter = p.Results.FoveaCenter;
 
-    projectRoot = pwd;
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(fullfile(projectRoot, 'src', 'ood_detection'), ...
             fullfile(projectRoot, 'src', 'cascade_router'), ...
             fullfile(projectRoot, 'src', 'calibration'), ...
@@ -133,7 +133,8 @@ function result = predictSingleFundus(imagePath, varargin)
     result.lesions.exudateCentroidY = [];
     if p.Results.RunLesions
         try
-            odCnn = locateOpticDiscCnn(raw);
+            [odCx, odCy, odR, ~] = locateOpticDiscCnn(raw);
+            odCnn = [odCx odCy odR];   % locateOpticDiscCnn has 4 outputs
             od = odCnn;
             if isempty(od)
                 od = estimateOpticDisc(raw);   % fallback to classical detector
