@@ -20,7 +20,7 @@ function D = load_dashboard_data()
 %
 %   ENGINEERING demo artifact loader. NOT a clinical device.
 
-    projectRoot = pwd;
+    projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     dd = @(varargin) fullfile(projectRoot, 'data', varargin{:});
 
     D = struct();
@@ -69,14 +69,14 @@ function D = load_dashboard_data()
     D.failureReasons = rows;
 
     % Quality status split by grade (referable = grade >= 2)
-    diag = t.diagnosis;
+    diagVec = t.diagnosis;
     statusMat = zeros(n, 3);  % columns: PASS WARNING FAIL counts per row
     statusMat(st == "PASS", 1) = 1;
     statusMat(st == "WARNING", 2) = 1;
     statusMat(st == "FAIL", 3) = 1;
     byGrade = zeros(5, 3);
     for g = 0:4
-        m = diag == g;
+        m = diagVec == g;
         byGrade(g + 1, :) = sum(statusMat(m, :), 1);
     end
     D.qualityByGrade = byGrade;
