@@ -24,9 +24,11 @@
 **Visual:** Screen recording or live demo
 
 ### Slide 4: Results (1 min)
-- Your real numbers:
-  - Sensitivity: __% (target >90%)
-  - Specificity: __% (target >85%)
+- Your real numbers (733-val, locked split):
+  - Sensitivity: 90.60% (referable DR, ≥Moderate @0.60)
+  - Specificity: 94.71%
+  - Accuracy: 82.81% | QWK 0.8914 | ECE 0.045→0.030 (calibrated)
+  - Ablation: pretraining +0.203 QWK; balancing alone —0.079 QWK; enhancement —0.24 QWK
 - Honest framing: "Here's what we achieved, here's what's needed next"
 
 **Visual:** Confusion matrix or metrics table
