@@ -188,11 +188,11 @@ byte-identical to the deployed Branch B.
 
 Vessel features are **excluded** from the production Branch B path:
 
-- `src/inference/predictSingleFundus.m:230` — `featRow = zeros(1, 10);` the
+- `src/inference/predictSingleFundus.m:231` — `featRow = zeros(1, 10);` the
   production row is exactly the 10 lesion features:
-  - `:231` MA count, `:232` HE count, `:233` EX count,
-  - `:234–235` quadrant HEs (4), `:236` `odCnnOnly` (OD located flag),
-  - `:243–245` exudate-to-OD distance features (2).
+  - `:232` MA count, `:233` HE count, `:234` EX count,
+  - `:235–236` quadrant HEs (4), `:237` `odCnnOnly` (OD located flag),
+  - `:244–246` exudate-to-OD distance features (2).
   - No vessel feature (of the 8 in `predict_vessel_features.m`) is read,
     computed, or appended anywhere in the inference path.
 - `src/lesions/branch_b_predict.m:9` — rejects any row that is not 10 wide
