@@ -78,3 +78,7 @@ data/analysis/day8/od_cnn/od_cnn_hardneg.mat
 # Fovea-CNN regenerable dataset (built by buildFoveaDataset.m), 57 MB.
 # The trained net (fovea_cnn_net.mat) IS committed for reproducibility.
 data/analysis/day8/fovea_cnn/fovea_dataset.mat
+
+# Vessel-CNN regenerable dataset (built by buildDriveVesselDataset.m), ~68 MB.
+# The trained net (vessel_cnn_net.mat) IS committed for reproducibility.
+data/analysis/day8/vessel/vessel_dataset.mat
