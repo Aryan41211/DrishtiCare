@@ -7,10 +7,21 @@ function result = predictSingleFundus(imagePath, varargin)
 %     -> 5-class grading (pretrained) -> Grad-CAM
 %     -> [lesion evidence: {MA,HE,EX} candidates + optic disc] (lesions)
 %
-%   Returns struct: qualityStatus, qualityScore, binaryProbability,
+%   Returns struct: qualityStatus, qualityScore, qualityFailureReasons,
+%   qualityRecaptureAdvice, qualityGate, binaryProbability,
 %   binaryProbabilityCalibrated, calibrationTemperature, binaryDecision,
 %   binaryThreshold, grade, gradeLabel, classProbabilities,
 %   confidence, gradCAM, lesions.
+%
+%   Parameters:
+%     'FoveaCenter'         - [x y] caller-supplied fovea center (original
+%                             image coords). When supplied, exudate-to-fovea
+%                             distances are computed; otherwise they stay NaN
+%                             (Task 11 honest negative, fovea localization
+%                             is unreliable).
+%     'EnforceQualityGate'  - logical (default true). A FAIL quality image
+%                             forces the cascade route to REVIEW (no
+%                             auto-answer; recapture advised), never CLEAR.
 %
 %   ENGINEERING demo tool. NOT a clinical device.
 
@@ -21,7 +32,11 @@ function result = predictSingleFundus(imagePath, varargin)
     addParameter(p, 'ShowFigure', true, @islogical);
     addParameter(p, 'RunLesions', true, @islogical);
     addParameter(p, 'RunBranchB', true, @islogical);
+    addParameter(p, 'FoveaCenter', [], @(x) isempty(x) || (isnumeric(x) && numel(x) == 2));
+    addParameter(p, 'EnforceQualityGate', true, @islogical);
     parse(p, varargin{:});
+
+    foveaCenter = p.Results.FoveaCenter;
 
     projectRoot = pwd;
     addpath(fullfile(projectRoot, 'src', 'ood_detection'), ...
@@ -56,6 +71,14 @@ function result = predictSingleFundus(imagePath, varargin)
     q = assessImageQuality(raw);
     qualityStatus = q.overall;
     qualityScore = q.qualityScore;
+    qualityFailureReasons = q.failureReasons;
+    qualityRecaptureAdvice = q.recaptureAdvice;
+    % Task 9A enforcement: when EnforceQualityGate is true, a FAIL image is
+    % never auto-answered — it forces a manual-review/recapture recommendation.
+    qualityGateEnforced = false;
+    if p.Results.EnforceQualityGate && strcmp(qualityStatus, 'FAIL')
+        qualityGateEnforced = true;
+    end
 
     % 4. Enhancement for display (Day 4, display only)
     [enhanced, ~] = enhanceImage(raw);
@@ -88,6 +111,9 @@ function result = predictSingleFundus(imagePath, varargin)
     result = struct();
     result.qualityStatus = qualityStatus;
     result.qualityScore = qualityScore;
+    result.qualityFailureReasons = qualityFailureReasons;
+    result.qualityRecaptureAdvice = qualityRecaptureAdvice;
+    result.qualityGate = struct('enforced', qualityGateEnforced);
     result.binaryProbability = pRef;
     result.binaryDecision = binaryDecision;
     result.binaryThreshold = thr;
@@ -116,12 +142,14 @@ function result = predictSingleFundus(imagePath, varargin)
             if ~isempty(od)
                 loos.odCenter = od(1:2);
                 loos.odRadius = od(3);
-                loos.fovea = [];
             else
                 loos.odCenter = [];
                 loos.odRadius = 0;
-                loos.fovea = [];
             end
+            % Task 11 fovea (honest negative): fovea localization is unreliable
+            % (0/10 within 300px). The distance is computed ONLY when the caller
+            % supplies a fovea center via the 'FoveaCenter' parameter.
+            loos.fovea = foveaCenter;
             feat = extractLesionCandidates(imagePath, loos);
             result.lesions.odLocated = ~isempty(od);
             result.lesions.od = od;
@@ -135,6 +163,8 @@ function result = predictSingleFundus(imagePath, varargin)
             result.lesions.exudateCentroidY = feat.exudates.centroidY;
             result.lesions.meanExudateDistToFovea = feat.meanExudateDistToFovea;
             result.lesions.minExudateDistToFovea = feat.minExudateDistToFovea;
+            result.lesions.fovea = foveaCenter;
+            result.lesions.foveaSupplied = ~isempty(foveaCenter);
             result.lesions.overlay = feat.visual;
         catch me
             result.lesions.odLocated = false;
@@ -170,6 +200,20 @@ function result = predictSingleFundus(imagePath, varargin)
         catch me
             result.cascade.available = false;
             result.cascade.error = me.message;
+        end
+        % Task 9A: quality-gate enforcement — a FAIL image is never
+        % auto-answered. Override the route to REVIEW (manual review /
+        % recapture) regardless of confidence.
+        if qualityGateEnforced
+            result.cascade.qualityGate = true;
+            result.cascade.qualityGateNote = 'Quality gate: FAIL -> recapture / manual review required';
+            if result.cascade.available
+                result.cascade.route = 'REVIEW';
+            else
+                result.cascade.route = 'REVIEW';
+                result.cascade.available = true;
+                result.cascade.detail = struct();
+            end
         end
     end
 
@@ -269,6 +313,10 @@ function result = predictSingleFundus(imagePath, varargin)
             ''
             'Class probabilities:'
         };
+        if qualityGateEnforced
+            lines = [lines; {'QUALITY GATE ENFORCED (FAIL):'}];
+            lines = [lines; {'  no auto-answer - recapture / manual review'}];
+        end
         if abs(pCalibrated - pRef) > 0.01
             lines = [lines; {sprintf('Calib. P(referable): %.1f%% (T=%.2f)', pCalibrated*100, T)}];
         elseif T ~= 1.0
@@ -281,6 +329,13 @@ function result = predictSingleFundus(imagePath, varargin)
                 lines = [lines; {sprintf('Optic disc: located (r=%.0f px)', result.lesions.od(3))}];
             else
                 lines = [lines; {'Optic disc: NOT located (EX near disc may include it)'}];
+            end
+            if result.lesions.foveaSupplied
+                lines = [lines; {sprintf('Fovea: supplied [%.0f %.0f] (dist %d px)', ...
+                    result.lesions.fovea(1), result.lesions.fovea(2), ...
+                    round(result.lesions.meanExudateDistToFovea))}];
+            else
+                lines = [lines; {'Fovea: NOT localized (T11 negative) - exudate-to-fovea dist n/a'}];
             end
         end
         if result.ood.available

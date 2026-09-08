@@ -52,6 +52,8 @@ if hasLesions
     if isfinite(result.lesions.meanExudateDistToFovea)
         ev = [ev sprintf(' (mean exudate-to-fovea distance %d px, closest %d px)', ...
             round(result.lesions.meanExudateDistToFovea), round(result.lesions.minExudateDistToFovea))];
+    else
+        ev = [ev ' (exudate-to-fovea distance not available — fovea localization is not reliable in this build; supply a fovea center to enable it)'];
     end
     ev = [ev '. These are automated candidate counts (not clinical-grade measurements) and serve as supportive evidence only.'];
 else
@@ -121,9 +123,12 @@ if isfield(result, 'fusion') && isfield(result.fusion, 'available') && result.fu
 end
 
 % ---------- recommendation ----------
-needsReview = crowReview || oodReview || fusionReview || result.grade >= 3 || ...
+qReview = isfield(result, 'qualityGate') && isfield(result.qualityGate, 'enforced') && result.qualityGate.enforced;
+needsReview = crowReview || oodReview || fusionReview || qReview || result.grade >= 3 || ...
     (isfield(result,'ood') && isfield(result.ood,'flag') && result.ood.flag);
-if result.grade >= 3
+if qReview
+    rec = 'Image quality is insufficient (quality gate FAIL). Do not act on automated results — recapture the image or route to manual review.';
+elseif result.grade >= 3
     rec = 'Recommend urgent specialist review — findings suggest severe or proliferative retinopathy.';
 elseif result.grade == 2
     rec = 'Recommend referral for specialist examination — moderate non-proliferative findings.';
@@ -137,7 +142,12 @@ end
 
 % ---------- quality caveat ----------
 qc = sprintf('Image quality: %s (score %.2f).', result.qualityStatus, result.qualityScore);
-if ~strcmp(result.qualityStatus, 'PASS')
+if qReview
+    qc = [qc ' The quality gate is ENFORCED: this FAIL-image is not auto-answered; recapture or manual review is required.'];
+    if isfield(result, 'qualityRecaptureAdvice') && ~isempty(result.qualityRecaptureAdvice)
+        qc = [qc ' ' result.qualityRecaptureAdvice];
+    end
+elseif ~strcmp(result.qualityStatus, 'PASS')
     qc = [qc ' The quality flags advise caution in accepting the prediction.'];
 end
 
