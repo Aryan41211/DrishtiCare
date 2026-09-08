@@ -1,0 +1,6 @@
+bucket,FP_px,bucket_px,FP_rate,lift_vs_overall,share_of_totalFP
+OD-region,16718,657235,0.025437,1.58,0.16
+bright-near,265,20759,0.012766,0.80,0.00
+rim,4083,482935,0.008455,0.53,0.04
+rest,86150,5518078,0.015612,0.97,0.80
+OVERALL,107216,6679007,0.016053,1.00,1.00

@@ -1,0 +1,17 @@
+method,dice,sens,spec,acc,prec,notes
+legacy_original_dev,0.3010,0.1972,0.9849,0.8835,0.7259,original src\extractVessels algorithm (dev)
+legacy_original_test,0.3124,0.2028,0.9868,0.8846,0.7625,original src\extractVessels algorithm (test)
+base_clahe_dev,0.7138,0.6634,0.9720,0.9315,0.7934,round-1 dev
+pre_green_dev,0.5840,0.4385,0.9936,0.9218,0.9232,round-1 dev
+bh_only_k2468_dev,0.6716,0.7615,0.9226,0.9006,0.6294,round-1 dev
+bhgate_w08_dev,0.7026,0.6045,0.9839,0.9345,0.8534,round-1 dev
+fiber_prim_345_dev,0.6590,0.7476,0.9247,0.9014,0.5960,round-1 dev
+mf_sig15_dev,0.5498,0.4107,0.9894,0.9150,0.8727,round-1 dev
+line_L9_dev,0.6877,0.6148,0.9741,0.9275,0.8052,round-1 dev
+mix_all_dev,0.7175,0.7461,0.9513,0.9244,0.7023,round-1 dev
+otsu_105_dev,0.7096,0.6431,0.9759,0.9323,0.8121,round-1 dev
+perc_12_dev,0.7005,0.5967,0.9853,0.9350,0.8552,round-1 dev
+hys_110_70_dev,0.6672,0.7931,0.9099,0.8938,0.5990,round-1 dev
+postDilate1_dev,0.7049,0.7879,0.9344,0.9147,0.6511,round-1 dev
+baseline_0.743_test,0.7428,0.6829,0.9777,0.9390,0.8249,locked test (baseline reproduction)
+champion_test,0.7535,0.6947,0.9784,0.9413,0.8272,locked test (final champion)

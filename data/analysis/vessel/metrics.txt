@@ -1,0 +1,35 @@
+DrishtiCare - retinal vessel segmentation experiment report
+Date: 09-Sep-2026 00:44:17   (research prototype, not clinically validated)
+
+Protocol: DRIVE training (21-40) = DEV tuning; DRIVE test (01-20) = one locked evaluation
+NOTE: 0.743 baseline was tuned partly on test in earlier sessions (test-set tuning limitation).
+
+LEGACY ORIGINAL (src\extractVessels.m):
+  dev : Dice=0.3010 Sens=0.1972 Spec=0.9849 Acc=0.8835 Prec=0.7259
+  test: Dice=0.3124 Sens=0.2028 Spec=0.9868 Acc=0.8846 Prec=0.7625
+
+LOCKED TEST RESULTS (n=20, inside eroded FOV, 1st_manual GT):
+  baseline_0.743: Dice=0.7428 F1=0.7428 Sens=0.6829 Spec=0.9777 Acc=0.9390 Prec=0.8249 AUC=0.9029
+  champion       : Dice=0.7535 F1=0.7535 Sens=0.6947 Spec=0.9784 Acc=0.9413 Prec=0.8272 AUC=0.9029
+
+ROUND-1 top-12 dev results:
+  perc_15                [thresh] Dice=0.7208 Sens=0.6536 Spec=0.9774 Acc=0.9354 Prec=0.8115 AUC=0.8955
+  angles15               [cleanup] Dice=0.7189 Sens=0.6874 Spec=0.9675 Acc=0.9306 Prec=0.7742 AUC=0.8955
+  mix_all                [ensemble] Dice=0.7175 Sens=0.7461 Spec=0.9513 Acc=0.9244 Prec=0.7023 AUC=0.8926
+  mix_morph_mf           [ensemble] Dice=0.7159 Sens=0.6726 Spec=0.9694 Acc=0.9304 Prec=0.7928 AUC=0.9173
+  minArea20              [cleanup] Dice=0.7153 Sens=0.6699 Spec=0.9708 Acc=0.9312 Prec=0.7881 AUC=0.8955
+  otsu_095               [thresh] Dice=0.7150 Sens=0.6834 Spec=0.9668 Acc=0.9296 Prec=0.7714 AUC=0.8955
+  closeDisk1             [cleanup] Dice=0.7147 Sens=0.6460 Spec=0.9772 Acc=0.9338 Prec=0.8197 AUC=0.8955
+  bhgate_gate34567       [enhance] Dice=0.7145 Sens=0.6907 Spec=0.9645 Acc=0.9284 Prec=0.7630 AUC=0.8974
+  mix_morph_mf_line      [ensemble] Dice=0.7142 Sens=0.6488 Spec=0.9750 Acc=0.9324 Prec=0.8188 AUC=0.9261
+  bhgate_gate2468        [enhance] Dice=0.7141 Sens=0.7007 Spec=0.9616 Acc=0.9272 Prec=0.7510 AUC=0.8987
+  base_clahe             [baseline] Dice=0.7138 Sens=0.6634 Spec=0.9720 Acc=0.9315 Prec=0.7934 AUC=0.8955
+  pre_clahe_norm         [preproc] Dice=0.7138 Sens=0.6634 Spec=0.9720 Acc=0.9315 Prec=0.7934 AUC=0.8955
+
+ROUND-2 top-6 dev results (refinement around round-1 champ):
+  R2_angles15            Dice=0.7276 Sens=0.6779 Spec=0.9737 Acc=0.9353 Prec=0.7931 AUC=0.8955
+  R2_minArea20           Dice=0.7229 Sens=0.6606 Spec=0.9764 Acc=0.9354 Prec=0.8061 AUC=0.8955
+  R2_lineLen9            Dice=0.7208 Sens=0.6536 Spec=0.9774 Acc=0.9354 Prec=0.8115 AUC=0.8955
+  R2_minArea40           Dice=0.7208 Sens=0.6536 Spec=0.9774 Acc=0.9354 Prec=0.8115 AUC=0.8955
+  R2_close1              Dice=0.7197 Sens=0.6363 Spec=0.9816 Acc=0.9369 Prec=0.8363 AUC=0.8955
+  R2_minArea60           Dice=0.7188 Sens=0.6485 Spec=0.9780 Acc=0.9353 Prec=0.8141 AUC=0.8955

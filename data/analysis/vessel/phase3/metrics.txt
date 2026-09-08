@@ -1,0 +1,57 @@
+Phase-3 candidate evaluation - DRIVE (research prototype)
+=========================================================
+
+Lock discipline: ALL tuning on DEV (DRIVE training 21-40),
+locked candidate evaluated EXACTLY ONCE on TEST (01-20).
+Metrics inside FOV eroded by 5 px; primary GT = 1st_manual.
+
+Lock rule (dev-only): among candidates within 0.003 Dice of
+the strict best (Dice->Sens->Prec->Spec), pick highest PRECISION
+(the Phase-3 goal is fewer concentrated false positives).
+Strict Dice-first dev pick would be: p3_od_off (dice 0.7207).
+
+DEV sweep (n=20):
+  candidate         dice   f1     sens   spec   acc    prec   auc    runtime_s
+  p3_default       0.6922 0.6922 0.6118 0.9780 0.9307 0.8051 0.8468 6
+  p3_thr_11        0.6787 0.6787 0.5734 0.9839 0.9308 0.8389 0.8468 4
+  p3_thr_15        0.6967 0.6967 0.6417 0.9713 0.9287 0.7708 0.8468 4
+  p3_od_off        0.7207 0.7207 0.6485 0.9788 0.9360 0.8183 0.8857 4
+  p3_od_strong     0.6662 0.6662 0.5804 0.9771 0.9259 0.7918 0.8311 4
+  p3_od_wide       0.6852 0.6852 0.6027 0.9779 0.9294 0.8028 0.8439 5
+  p3_bright_off    0.6924 0.6924 0.6120 0.9780 0.9307 0.8052 0.8476 5
+  p3_bright_d4     0.6922 0.6922 0.6118 0.9780 0.9307 0.8051 0.8467 5
+  p3_gate_03       0.6906 0.6906 0.6189 0.9754 0.9293 0.7891 0.8489 5
+  p3_gate_07       0.6915 0.6915 0.6045 0.9798 0.9313 0.8159 0.8451 5
+  p3_adapt_45      0.5597 0.5597 0.7831 0.8511 0.8420 0.4398 0.8468 5
+  p3_adapt_55      0.5108 0.5108 0.8046 0.8029 0.8027 0.3775 0.8468 5
+  p3_thin_on       0.6765 0.6765 0.6466 0.9621 0.9212 0.7171 0.8468 5
+  p3_close_1       0.6888 0.6888 0.5932 0.9820 0.9318 0.8293 0.8468 5
+  p3_minA_25       0.6941 0.6941 0.6170 0.9773 0.9307 0.8013 0.8468 5
+  p3_nobridge      0.6922 0.6922 0.6116 0.9780 0.9306 0.8051 0.8468 5
+  p3_comb_A        0.6745 0.6745 0.5897 0.9776 0.9275 0.7974 0.8322 5
+  p3_comb_B        0.6617 0.6617 0.6784 0.9464 0.9116 0.6537 0.8422 5
+  p3_ff_on         0.3088 0.3088 0.2797 0.9218 0.8396 0.3533 0.5976 16
+  p3_ff_strong     0.3206 0.3206 0.2910 0.9227 0.8418 0.3652 0.6058 15
+  champion_preset   0.7287 0.7287 0.6848 0.9723 0.9349 0.7863 0.8955 -
+
+LOCKED candidate: p3_od_off
+
+TEST (n=20, exactly one evaluation of the locked config):
+                   dice   f1     sens   spec   acc    prec   auc(FOV)  auc(FOVfull)
+  champion_preset   0.7549 0.7549 0.7009 0.9774 0.9412 0.8220 0.9029 0.9223
+  p3_od_off        0.7438 0.7438 0.6640 0.9826 0.9409 0.8498 0.8923 0.9117
+
+Champion (unchanged reference): DRIVE test Dice 0.7549 (this session).
+Phase-1 baseline Dice 0.7428 / session champion Dice 0.7535 (prior session).
+
+2nd-manual Dice: locked 0.7278 champion 0.7573 (human inter-observer ~0.790).
+
+Root-cause (champion FP on DEV, n=20):
+  bucket        FP_px  bucket_px  FPrate   lift  share
+  OD-region     16718    657235  0.0254   1.58   0.16
+  bright-near     265     20759  0.0128   0.80   0.00
+  rim            4083    482935  0.0085   0.53   0.04
+  rest          86150   5518078  0.0156   0.97   0.80
+  OVERALL       107216   6679007  0.0161   1.00   1.00
+
+Quick smoke run: 0

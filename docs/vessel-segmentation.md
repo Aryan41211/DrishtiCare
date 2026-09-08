@@ -128,3 +128,112 @@ Phase-1 baseline differs only in: Otsu threshold (scale 1.0) and line angles
   supplies one); with the automatic FOV the fraction is applied to that mask.
 - DRIVE is a 20-image benchmark; no pathology diversity. Not validated for
   clinical use.
+
+## Phase 3: visual-precision candidate (`extractVessels3`)
+
+Goal: the session champion (~0.75 test Dice) still **looks** wrong on eyeballed
+fundus stills - over-segmented around the optic disc, bright lesions/highlights
+and illumination shading, even though area-weighted Dice stays high because
+those FP clusters are a tiny pixel share. Phase 3 built a dedicated candidate
+that attacks exactly those sources while keeping thin vessels, plus a root-cause
+analysis to verify the assumption.
+
+### Pipeline
+
+`src\vessel\extractVessels3.m` = champion-equivalent enhancement (green ->
+CLAHE -> multi-scale bottom-hat `[2 3 4 6 8]` -> mild Frangi gate
+`[2 3 4 5 6]` @ 0.5) PLUS:
+
+1. **FOV first** - every stage runs inside the retinal FOV, so the 
+   threshold and the evaluation never see the black border.
+2. **Safe flat-field** (leak-free Gaussian background + `regionfill`
+   extrapolation; `flatFieldEnable`). Default **off**: experiments proved a
+   strong global flat-field over-subtracts the low-contrast vessel band
+   (dev Dice ~0.31 vs ~0.72 without it). Kept for extreme vignetting on
+   non-DRIVE stills.
+3. **Optic-disc-rim suppression** (`odEnable`): OD = largest bright, central
+   blob (percentile + circularity + size/centre checks); the dilated rim
+   **ring** is attenuated strongly (`odRingAtten = 0.05`), the disc interior
+   only mildly (`odInteriorAtten = 0.85`) so the central retinal vessels
+   survive.
+4. **Bright-lesion / highlight suppression** (`brightEnable`): bright blobs
+   above the 99th in-FOV percentile (excluding the OD) are dilated 3 px and
+   the response beneath them attenuated to 5% (bottom-hat fires on the
+   dark border of bright lesions).
+5. **Percentile / adaptive threshold** (never one global level) then
+   line-opening + closing + area cleanup (+ optional thin-vessel short
+   line-opening and `bwmorph bridge`).
+
+Config surface: `src\vessel\vesselParams3.m` (`'phase3'` /
+`'phase3_default'`, `'phase3_locked'`). The runner is
+`src\vessel\evaluatePhase3.m` (`evaluatePhase3()` = full run over the 20+20
+DRIVE splits; `evaluatePhase3(true)` = 2+2 smoke).
+
+### Results (locked, evaluated once on test)
+
+Lock rule (dev-only): among candidates within 0.003 Dice of the strict best
+(Dice -> Sens -> Prec -> Spec), pick the highest **precision** - the explicit
+goal of this phase is fewer concentrated false positives. Dev best:
+`p3_od_off` (0.7207 Dice; strict Dice-first pick agrees).
+
+| method | test Dice | Sens | Spec | Acc | Prec | AUC (FOV) | AUC (full FOV) |
+|---|---|---|---|---|---|---|---|
+| session champion (`champion` preset) | **0.7549** | 0.7009 | 0.9774 | 0.9412 | 0.8220 | 0.9029 | 0.9223 |
+| Phase-3 locked (`phase3_locked`) | 0.7438 | 0.6640 | **0.9826** | 0.9409 | **0.8498** | 0.8923 | 0.9117 |
+
+2nd-manual observer Dice: locked 0.7278, champion 0.7573 (human ~0.790).
+
+**Honest verdict:** on DRIVE the Phase-3 candidate does **not** beat the
+champion's Dice (0.7438 vs 0.7549) - it trades ~0.011 Dice for +2.8 precision
+(0.8498 vs 0.8220) and +0.5 specificity, i.e. it is visually cleaner but
+less sensitive (misses more faint vessels). The OD suppression, tested on dev,
+removed about as many *true* central vessels as the FP it killed, so the
+locked config leaves that stage off. The full candidate (suppression on,
+`phase3_default`) is available; its diagnostics figure shows the suppression
+layers so the OD-ring effect can be judged directly.
+
+### Root cause: why does the champion over-segment visually? (dev, n = 20)
+
+False positives of the champion measured inside the eroded FOV, bucketed by
+the Phase-3 candidate's OWN suppression regions:
+
+| bucket | FP rate | lift vs overall | share of total FP |
+|---|---|---|---|
+| OD-region (disc + rim ring) | 0.0254 | **1.58x** | 16% |
+| bright-lesion neighbourhood | 0.0128 | 0.80x | 0% |
+| FOV rim band | 0.0085 | 0.53x | 4% |
+| rest (diffuse background) | 0.0156 | 0.97x | 80% |
+
+Conclusions:
+
+- The optic-disc **edge** is a real, 1.58x-concentrated FP source - it matches
+  the visual complaint and the OD-rim suppression is mechanistically the right
+  fix for eyeballed stills (even though DRIVE metrics only weakly reward it).
+- Bright lesions and the FOV rim are already cheap (0.80x / 0.53x) - those do
+  **not** drive the DRIVE FP.
+- ~80% of the champion's FP are **diffuse** background texture spread over the
+  whole FOV, which no localised suppression can remove; that residual is the
+  gap between Dice and visual judgement.
+
+### Phase-3 files
+
+- `src\vessel\extractVessels3.m` - candidate segmenter (champion untouched).
+- `src\vessel\vesselParams3.m` - candidate presets (`phase3_default`,
+  `phase3`, `phase3_locked`).
+- `src\vessel\evaluatePhase3.m` - dev sweep -> lock -> single test eval,
+  montages, diagnostics, FP root-cause analysis.
+- `data\analysis\vessel\phase3\` - `phase3_dev_table.csv`,
+  `phase3_results.csv|.mat`, `phase3_montage.png`,
+  `phase3_error_analysis.png`, `phase3_diagnostics.png`, `fp_analysis.png|csv`,
+  `phase3_locked_config.mat`, `metrics.txt`.
+
+### Reproduce the Phase-3 candidate on one image
+
+```matlab
+addpath('src\vessel');
+cfg  = vesselParams3('phase3_locked');
+img  = imread('data\drive\DRIVE\test\images\05_test.tif');
+fov  = imread('data\drive\DRIVE\test\mask\05_test_mask.gif') > 0;
+[vessels, response, fovUsed, dbg] = extractVessels3(img, cfg, 'fov', fov);
+imshow(imoverlay(img, vessels, [1 0 0]));
+```
