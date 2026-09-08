@@ -18,11 +18,14 @@ weighted kappa over the 5 ordinal grades. Source per cell is listed in the right
 | 7 | — without EyePACS pretraining | 0.8322 | 0.9080 | 0.7672 | Data ablation (== row 1 baseline) | [artifact: eval_fixed_day5_resnet18_baseline_stage2.mat] |
 | 8 | day8_5class_v2a (extra candidate) | — | — | — | v2a variant on 733-val | **not measured** — no 733-val artifact; day8/test_evaluation.mat evals day7 models on 1928 test images with **no ground-truth labels** (hasLabels=0), so no Sens/Spec/QWK can be computed ([artifact: test_evaluation.mat → groundTruthAvailability]) |
 | 9 | + Quality gating (Module 1) | — | — | — | Downstream value of quality gating | **not measured** on 733-val. Module-level stats only (documented): PASS 65.48% / WARNING 26.68% / FAIL 7.84% on 3662 train images [documented: data/analysis/day3/quality_assessment_results.csv; docs/day3-quality-assessment.md] |
+| 10 | Enhancement A/B (Task 9B) — same pretrained+balanced protocol, only day-4 enhanceImage differs | raw A acc 0.8322 / B 0.5416 | — | raw A 0.8952 / B 0.6507 | Enhancement (B) **hurts** 5-class grading: acc −0.2906, macro-F1 −0.2789, QWK −0.2445 vs raw control. Raw model is also preprocessing-mismatch-fragile (QWK→0 on enhanced inputs). **5-class-only; binary screening out of scope** | [artifact: data/analysis/day9/task9b_ab_eval.mat → results.primary.raw / .enhanced; doc: docs/validation/2026-09-08-task9b-enhancement-ab.md] |
 
 ### Preprocessing / enhancement ablation
-No separate "with vs without preprocessing" run exists as a saved artifact. The only preprocessing
-option exercised across runs is input resize (all models use imresize to 224×224). Any row for
-"without preprocessing" is **not measured**.
+Row 10 is the enhancement A/B (Task 9B): the same pretrained + balanced 5-class protocol trained with
+and without day-4 `enhanceImage()` (raw imresize-224 control vs enhance → imresize-224). Raw control
+reproduces the champion within noise; enhancement **hurts** (QWK −0.2445 vs raw control) and is
+**5-class-only** — the binary screening model was not part of this ablation. Full details:
+`docs/validation/2026-09-08-task9b-enhancement-ab.md`.
 
 ## The Story
 
