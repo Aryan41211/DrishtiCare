@@ -1,0 +1,13 @@
+dataset,path,on_disk,used_in_pipeline,verified,notes
+APTOS-2019 train,data\aptos2019\train_images,3662 PNG,yes,yes,CSV distro [1805,370,999,193,295]
+APTOS-2019 test,data\aptos2019\test_images,1928 PNG,yes (prediction-only),yes,test.csv has id_code ONLY - no labels -> official test metrics impossible locally
+IDRiD segmentation,data\idrid\*,54 train + 27 test,yes (T6/T8 annotations),yes,masks 2848x4288 aligned; T6 used 54+27=81 images
+IDRiD grading,data\idrid\*,100 images (noted),annotated only,yes,distinct files from segmentation set
+DRIVE,data\drive\DRIVE,20 train/20 test + 1st/2nd manual masks,yes (vessel T8),yes,GT 21.8% vessels; human inter-observer Dice 0.790
+DRIMDB,data\drimdb,~216 images (claimed),NO - zero code references,no,downloaded+documented only -> NOT used
+HRF/STARE/CHASE_EyePACS,data\*,not committed,no,n/a,directory stubs only (gitignored)
+splits,data\splits\train,2929 (1444/296/799/154/236),yes,yes,seed 42 stratified 80/20
+splits,data\splits\val,733 (361/74/200/39/59),yes,yes,match split_info.mat
+splits_binary,data\splits_binary,val nonref=435 ref=298,yes,yes,referable=classes 3,4,5 (1-indexed)
+splits_enhanced,data\splits_enhanced,same counts as splits,yes (T9B),yes,1 corrupted file fixed (a505981d1cab.png)
+leakage,data\splits vs test,zero overlap,yes,yes,integrity_check.mat: trainValOverlap=0 testInTrain=0 testInVal=0

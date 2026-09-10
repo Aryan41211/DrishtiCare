@@ -1,0 +1,20 @@
+metric,value,note
+root,C:\projects\DrishtiCare,
+HEAD,9c553ad docs(T13): final re-audit report (63/63 PASS) + tracker row,
+branch_count,1,main active
+remote,origin -> https://github.com/Aryan41211/DrishtiCare.git,
+commit_count,132,
+working_tree,clean (git status --porcelain empty),
+unpushed_commits,0 (git log origin/main..HEAD empty),
+untracked_files,0 (excl. this audit/ folder created during audit, uncommitted by design),
+total_files,19381,
+matlab_files,134 *.m,
+mat_artifacts,153 *.mat,
+csv_artifacts,18 *.csv (plus 12 in git object db from earlier? counted 18),
+markdown_docs,74 *.md,
+slx_files,1 (src/simulink/simulink_model.slx - 56-byte text placeholder, NOT a model),
+png_images,16674 (train/test/dataset images; raw datasets gitignored),
+gitignore_mat,data/aptos2019 data/idrid data/drive data/drimdb data/hrf data/stare data/chase_db1 data/eyepacs2015 + all images,with !data/analysis/** allow-list
+data/analysis_tracked,true (committed evidence tree 20.2 MB),
+raw_datasets_tracked,false (downloaded locally, gitignored),
+audit_constraint,read-only: no source edit, no commit, no push - honored

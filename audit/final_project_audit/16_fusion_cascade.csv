@@ -1,0 +1,13 @@
+item,value,evidence,status
+router,cascade_router.m:127-149 ABSTAIN (<0.50) / REVIEW (<0.75) / CLEAR,VERIFIED
+threshold,0.60 hard-coded def.pRefLocked (cascade_router.m:75),VERIFIED
+quality gate override,FAIL -> REVIEW enforced (predictSingleFundus.m:208-218); WARNING -> CLEAR (not enforced),VERIFIED (T13 QA checks)
+Branch A (CNN) pRef,from champion binary head @0.60,VERIFIED
+Branch B (feature model) pRef,ClassificationLinear 10-feature fresh fit T=0.7139,VERIFIED
+branchB full-val (T7),aucB 0.89691 vs aucA 0.97962; match 0.82947; agree 598; review-flag 135; align 0; Tcal 2.5382; OD located 0.10641,branchb_fullval_T7.mat,VERIFIED
+fusion,fuseEvidence.m:46-53 REVIEW on A/B conflict; calibrated Branch A prob feeds fusion (predictSingleFundus.m:250),VERIFIED
+route output 'CLEAR',BOTH A and B agree non-referable @0.60,VERIFIED
+route output 'REVIEW',A/B disagree OR quality FAIL,VERIFIED
+ABSTAIN route,only used when pRef < 0.50 (below abstain),VERIFIED
+pathology in production,route values reported as CLEAR/ABSTAIN/REVIEW (no user-facing 'FAIL' string),VERIFIED
+vessel feature exclusion,featRow=zeros(1,10) at predictSingleFundus.m:231; branch_b_predict numel guard branch_b_predict.m:9,RF-6,VERIFIED

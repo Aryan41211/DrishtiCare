@@ -1,0 +1,9 @@
+item,value,evidence,status
+method,Mahalanobis distance on 512-D penultimate features of champion; buildOodStats fit on train,buildOodStats.m:87-176,VERIFIED
+fit n,3662 train images,ood_stats.mat,VERIFIED
+threshold,p99 = 34.2155,ood_stats.mat,VERIFIED
+distance stats,mean 23.7446 median 23.4671 p90 28.6553 p95 30.3908 p99 34.2155 min 14.5794 max 43.0257,ood_stats.mat,VERIFIED
+false OOD rate,1.01% (on train by construction),ood_stats.mat,VERIFIED
+integration,ood_detector called at predictSingleFundus.m:186; loads ood_stats.mat,ood_detector.m:29-34,VERIFIED
+output,predictSingleFundus result.ood substruct,predictSingleFundus.m:182-195,VERIFIED
+caveat,no OOD AUROC vs known-OOD dataset; threshold calibrated to train p99 only (self-derived),computed,UNVERIFIED-external (no external distribution tested)

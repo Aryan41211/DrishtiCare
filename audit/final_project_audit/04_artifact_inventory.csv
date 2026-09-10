@@ -1,0 +1,55 @@
+artifact,location,purpose,verified
+reverify_audit_T0.mat,data\analysis\day8,champion 5-class + binary @0.60 metrics,yes (T0/T13)
+eval_fixed_day7_pretrained_resnet18_5class_stage2.mat,data\analysis\day7,champion per-class metrics,yes
+day7_pretrained_5class_metrics.mat,data\analysis\day7,champion metrics copy,yes
+day7_pretrained_resnet18_binary_metrics.mat,data\analysis\day6\binary,binary metrics @default(0.5)/0.60,yes
+day6_binary_referable_v1_metrics.mat,data\analysis\day6\binary,day6 binary metrics,yes
+eval_fixed_day5_resnet18_baseline_stage2.mat,data\analysis\day7,scratch baseline metrics,yes
+eval_fixed_day6_resnet18_balanced_stage2.mat,data\analysis\day7,balanced metrics,yes
+day6_experiment_comparison.mat,data\analysis\day6,base/bin/ensemble table,yes
+day6_ensemble_v1_results.mat,data\analysis\day6\ensemble,ensemble sweep cache,yes
+current_T.mat,data\analysis\day8\calibration,promoted T=2.5382,yes
+firewalled_calibration.mat,data\analysis\day8\calibration\firewalled,T4 ECE/NLL/flips,yes
+standard_calibration.mat,data\analysis\day8\calibration\standard,T5 T=2.6722,yes
+calibration_verify_T5.mat,data\analysis\day8\calibration,flip verification,yes
+bootstrap_T4.mat,data\analysis\day8,CI B=1000,yes
+branchb_fullval_T7.mat,data\analysis\day8\task7,Branch B full-val,yes
+branchb_comparison_T8.mat,data\analysis\day8\task8,vessel-feature impact,yes
+drive_test_dice.mat,data\analysis\day8\task8,DRIVE test dice (legacy),yes
+vessel_cnn_metrics.mat,data\analysis\day8\vessel,CNN vessel AUC,yes
+final_test_results.mat,data\analysis\vessel,classical champion DRIVE test,yes
+champion_config.mat,data\analysis\vessel,locked config,yes
+phase3_results.mat,data\analysis\vessel\phase3,phase-3 candidate,yes
+phase3_locked_config.mat,data\analysis\vessel\phase3,locked p3_od_off,yes
+metrics.txt,data\analysis\vessel\metrics.txt + phase3\metrics.txt,text metric copies,yes
+drive_vessel_metrics.mat,data\analysis\vessel,DRIVE summary,yes
+task9b_ab_eval.mat,data\analysis\day9,enhancement A/B raw vs enh,yes
+task9b_enhanced_splits_info.mat,data\analysis\day9,enhanced splits meta,yes
+day9_5class_raw/enh_stage1/2_summary.mat,data\analysis\day9,day9 training summaries,yes
+od_discrepancy_investigation.mat,data\analysis\day9,RF-1 OD (78/655/733; IDRiD 10/10),yes
+ensemble_scores_cache.mat,data\analysis\day9,RF-3 scores10 cache,yes
+gradcam_T6.mat,data\analysis\day8,Grad-CAM vs IDRiD masks,yes
+ma_cnn_metrics.mat,data\analysis\day8\ma_cnn,MA patch AUC=0.9755,yes
+od_cnn_metrics.mat,data\analysis\day8\od_cnn,OD patch AUC=0.9955,yes
+fovea_cnn_metrics.mat,data\analysis\day8\fovea_cnn,fovea patch AUC=0.7487,yes
+lesion_gt_validation.mat,data\analysis\day8\lesion_gt_validation,pixel-wise detection,yes
+gt_detection_validation.mat,data\analysis\day8\lesion_gt_validation,instance detection tol20,yes
+matched_filter_validation.mat,data\analysis\day8\lesion_gt_validation,MA/HE matched filter,yes
+ma_multicue.mat,data\analysis\day8\lesion_gt_validation,cues,yes
+lesion_report_test.mat,data\analysis\day8\lesion_report,5-image report,yes
+lesion_summary.csv,data\analysis\day8\lesions,10-image lesion counts,yes
+lesion_features.mat,data\analysis\day8\lesions,10-image features,yes
+ood_stats.mat,data\analysis\day8\ood,Mahalanobis stats p99=34.2155,yes
+test_evaluation.mat,data\analysis\day8,1928 test preds (no labels),yes
+pr_auc_investigation.mat,data\analysis\day7,PRAUC drop diagnosis,yes
+reaudit_T13.mat,data\analysis\day9,T13 63/63 record,yes
+split_info.mat,data\analysis\day5,split meta seed42,yes
+bn_finalization_verification.mat,data\analysis\day7,determinism PASS,yes
+integrity_check.mat,data\analysis\day7,leakage zeros,yes
+training_pipeline_audit.mat,data\analysis\day7,experiment ids,yes
+quality_assessment_summary.mat,data\analysis\day3,thresholds v2.0.0,yes
+quality_assessment_results.csv,data\analysis\day3,3662-row per-image,yes
+quality_metrics.csv,data\analysis\day2,raw metrics,yes
+pretrained_vs_scratch.csv,data\analysis\day7,ablation table,yes
+od_estimator_verification.mat,data\analysis\day8,WEAK: nOk=5 totErr=1458.66 only - limited,flag
+day8_v2a_metrics_verification.mat,data\analysis\day5,qwk 0.887696 cross-check PASSED,yes

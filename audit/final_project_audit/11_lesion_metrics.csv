@@ -1,0 +1,14 @@
+item,value,evidence,status
+MA CNN patch classifier,AUROC=0.975537 acc=0.913514 (T/X/Y=679),ma_cnn_metrics.mat,VERIFIED - patch-level only; artifact has NO det precision/recall
+task-tracker MA claims,"held-out patch AUC 0.976, detection recall 0.113",ma_cnn_detection.mat present - text VERIFIED as claimed (low recall honest)
+HE detection (classical top-hat),extractLesionCandidates.m:74-99,code,VERIFIED
+EX detection (morphological reconstruction + OD exclusion),extractLesionCandidates.m:101-143,code,VERIFIED
+quadrant haemorrhage counts,extractLesionCandidates.m:145-155 feat.quadrantHemorrhage,code,VERIFIED
+lesion pixel-wise GT (10 IDRiD),MA recall 0.000133/IE 0.0023/EX 0.286 dice 0.0003/0.0044/0.1574,gt_validation.mat,VERIFIED - weak EX-only
+instance detection GT (tol 20px),MA recall 0.00233 prec 0.00294 (nGT 370); HE recall 0.3329 prec 0.1118 (nGT 227); EX recall 0.0737 prec 0.160 (nGT 1742),gt_detection_validation.mat,VERIFIED - HE moderate, MA/EX poor
+matched filter,MA prec 0.00264 rec 0.2591 (nC 39397); HE prec 0.00207 rec 0.0978 (nC 9624),matched_filter_validation.mat,VERIFIED - high FP explosion
+lesion_report_test (5 APTOS images),grades 0..4 produced end-to-end incl gradcam, ood, calibration, cascade, explanation fields,lesion_report_test.mat,VERIFIED
+lesion_features (10 IDRiD),ma/he/ex/quadrant/fovea-dist features,lesion_features.mat,VERIFIED
+clinical caveat,counts are ENGINEERING candidates not clinical diagnoses (explicit in doc+code comments),,VERIFIED (honest)
+fovea_cnn,AUROC=0.7487 acc=0.6479 -> NOT reliable; production uses supplied FoveaCenter hook (foveaSupplied disclosure),fovea_cnn_metrics.mat + T11 closure,VERIFIED (honest negative)
+OD CNN patch classifier,AUROC=0.9955 acc=0.9958; locator 4-output (RF-7 fixed),od_cnn_metrics.mat,VERIFIED

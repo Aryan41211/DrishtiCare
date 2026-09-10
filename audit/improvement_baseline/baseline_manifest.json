@@ -1,0 +1,83 @@
+{
+  "snapshot": {
+    "date": "2026-09-09T18:40",
+    "matlab": "26.1.0.3346908 (R2026a) Update 5",
+    "arch": "win64",
+    "git_head": "9c553adff6320074d8376845b44f09e5261dc2d1",
+    "git_branch": "main",
+    "git_synced_with_origin": true
+  },
+  "locked_models": [
+    {
+      "role": "5class_champion",
+      "path": "data/models/day7_pretrained_resnet18_5class_stage2.mat",
+      "sha256": "DD152C917689146F6DEC4687B263EC5E5F237ECF60EC719A59F9FCEEFF737C1B",
+      "size_bytes": 41724762
+    },
+    {
+      "role": "binary_champion",
+      "path": "data/models/day7_pretrained_resnet18_binary_stage2.mat",
+      "sha256": "43E8DF33B429231EE5BD60A775FDB3629AD81F287617AFAA9308EA87D311F9A0",
+      "size_bytes": 41723622
+    }
+  ],
+  "metrics": {
+    "cls5": {
+      "n": 733,
+      "accuracy": 0.8281,
+      "macroF1": 0.6805,
+      "qwk": 0.8914,
+      "recall": { "NoDR": 0.9834, "Mild": 0.6081, "Moderate": 0.785, "Severe": 0.4872, "Proliferative": 0.5254 }
+    },
+    "binary": {
+      "threshold": 0.6,
+      "sens": 0.906,
+      "spec": 0.9471,
+      "rocAuc": 0.9796,
+      "prAuc": 0.7821,
+      "confusion": { "tp": 270, "fp": 23, "fn": 28, "tn": 412 }
+    },
+    "calibration": {
+      "promoted_T": 2.5382,
+      "firewalled": { "ece_raw": 0.031915, "ece_cal": 0.0087196, "nll_raw": 0.1998, "nll_cal": 0.12425, "flipFraction": 0.0074105, "nFlip": 18 },
+      "standard": { "T_fitTrain": 2.6722, "ece_raw_val": 0.045013, "ece_cal_val": 0.029653, "flipFraction": 0.016371 }
+    },
+    "quality": { "n": 3662, "passPct": 65.483, "warningPct": 26.679, "failPct": 7.837 },
+    "branchB": { "auc": 0.8969, "match": 0.8295, "nAgree": 598, "nDiscrepancy": 135, "odLocatedRate": 0.1064 },
+    "lesion": {
+      "odCnn": { "idrid_10_within_300px": 9, "aptos_acceptance": 0.1064 },
+      "maCnn": { "patchAuc": 0.976, "detRecall": 0.113, "detPrecision": 0.595 },
+      "fovea": { "within_300px_of_10": 0, "honest_negative": true }
+    },
+    "vessel": {
+      "champion": { "dice": 0.7549, "precision": 0.822, "auc": 0.9029 },
+      "phase3": { "dice": 0.7438, "precision": 0.8498, "auc": 0.8923, "promoted": false },
+      "branchB_with_vessel_auc_delta": -0.0159
+    },
+    "enhancement": {
+      "raw": { "acc": 0.8322, "qwk": 0.8952, "macroF1": 0.6828 },
+      "enhanced": { "acc": 0.5416, "qwk": 0.6507, "macroF1": 0.4039 },
+      "promoted": false,
+      "classifier_input": "RAW"
+    },
+    "inference": { "secondsPerImg": 0.1028, "imgPerSec": 9.73 },
+    "ood": { "threshold": 34.2, "falseRateOnTrain": 0.0101 },
+    "referable": { "valFrac": 0.4065, "valN": 733 }
+  },
+  "components": {
+    "quality_gate": "DONE+INTEGRATED",
+    "enhancement": "EXPERIMENTAL/NOT_INTEGRATED",
+    "calibration": "DONE+INTEGRATED(display-only)",
+    "branchB": "DONE+INTEGRATED(supporting)",
+    "cascade_router": "DONE+INTEGRATED",
+    "ensemble_tta": "EXPERIMENTAL/NOT_PROMOTED",
+    "vessel": "EXPERIMENTAL/NOT_PROMOTED",
+    "lesion_evidence": "DONE+INTEGRATED(relative-cue,low-recall)",
+    "ood": "DONE+INTEGRATED(guarded)",
+    "fovea": "EXPERIMENTAL/NOT_PROMOTED",
+    "explainability": "DONE+INTEGRATED",
+    "dashboard": "DONE+INTEGRATED",
+    "simulink": "NOT_IMPLEMENTED(placeholder, SimEvents absent)",
+    "external_validation": "NOT_IMPLEMENTED(blocked: Messidor-2 not authorized)"
+  }
+}

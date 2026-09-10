@@ -1,0 +1,14 @@
+item,channel,value,evidence,status
+promoted temperature,current_T.mat,T=2.5382,loadTemperatureParams reads current_T.mat,VERIFIED
+fit temperature (standard split),standard_calibration.mat,T=2.6722,fit on train split,VERIFIED
+firewalled eval ECE raw,firewalled_calibration.mat,0.031915,fit/firewalled both on firewalled split,VERIFIED
+firewalled eval ECE calibrated,firewalled_calibration.mat,0.0087196,VERIFIED
+firewalled eval NLL raw/cal,firewalled_calibration.mat,0.1998 -> 0.12425,VERIFIED
+firewalled flip fraction @0.60,firewalled_calibration.mat,0.0074105 (=18/2429),VERIFIED
+standard val ECE raw/cal,standard_calibration.mat,0.045013 -> 0.029653,uses T=2.6722,VERIFIED
+standard flip fraction,standard_calibration.mat,0.016371,VERIFIED
+binary brier,day7_binary_calibration.mat,0.0562956,VERIFIED
+flip analysis (RF-4),verify_calibration_flips.m,11/733 flips (0.0150) all ref->nonref (3 correct Mild / 8 errors),NET-NEGATIVE on flips but overall ECE 0.045->0.030,Brier 0.056->0.053,VERIFIED
+calibration operating decision,T4,kept T=2.5382 (raw bin decision unchanged on val),,VERIFIED
+integration,loadTemperatureParams.m:34,reads day8/calibration/current_T.mat,VERIFIED
+calibrated prob in fusion,predictSingleFundus.m:99,125-126,250,temperatureScale applied; pRefCal feeds Branch B,binaryProbabilityCalibrated+calibrationTemperature in output,VERIFIED

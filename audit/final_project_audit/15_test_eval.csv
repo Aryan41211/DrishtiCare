@@ -1,0 +1,12 @@
+item,value,evidence,status
+nTest,1928 (test_images dir),test_evaluation.mat,VERIFIED
+threshold,0.60,test_evaluation.mat,VERIFIED
+labels,ABSENT - test.csv is id_code only -> prediction-only evaluation,test_evaluation.mat + test.csv,VERIFIED-honest
+five-class pred distribution,[401 194 1011 127 195],test_evaluation.mat,VERIFIED
+five-class mean/median confidence,0.9122 / 0.9907,test_evaluation.mat,VERIFIED
+five-class pred referable rate,0.6914,test_evaluation.mat,VERIFIED
+binary pred referable rate,0.6006 (1158/770),test_evaluation.mat,VERIFIED
+agreement 5-class-vs-binary,0.8335,test_evaluation.mat,VERIFIED
+borderline count,47 (near 0.60),test_evaluation.mat,VERIFIED
+val->test referable rate shift,0.4065 -> 0.6006 (shift 0.1941),test_evaluation.mat comparison,VERIFIED - flagged (distribution shift to more referable)
+claim accuracy "test accuracy",NOT REPORTED anywhere - correct: impossible without labels,repo-wide,VERIFIED-honest

@@ -1,0 +1,28 @@
+check_group,check,result,evidence
+invariants,threshold 0.60 locked,PASS,cascade_router.m:75 + re_verify_audit.m:142
+invariants,champions read-only (files committed, not overwritten),PASS,git + predictSingleFundus.m:53 default
+invariants,test set closed (1952? 1928 present, no labels),PASS,test.csv id_code only
+T13 re-audit,63/63 checks PASS (T0/T4/T5/T7/T9B/RF1/RF3/T12/QA),PASS,re_audit_T13.m + reaudit_T13.mat (re-run 09-Sep-2026 19:00 -> 63 PASS 0 FAIL)
+leakage,train/val/test zero overlap,PASS,integrity_check.mat
+determinism,BN-finalize identical run1=run2, maxScoreDiff 0,PASS,bn_finalization_verification.mat
+split integrity,2929/733 seed 42 stratified, 5-class counts exact,PASS,split_info.mat + dir counts
+qa_gate,FAIL image -> REVIEW; WARNING -> CLEAR,PASS,T13 QA checks
+day8 v2a qwk cross-check,stored 0.887696 == recomputed,PASS,day8_v2a_metrics_verification.mat
+conflicts,referable confusion @0.60 vs @0.5 (day7 binary mat),RESOLVED,days: tp270/fp23/fn28/tn412 is @0.60; tp275/fp25/fn23/tn410 is @default(0.5) (different thresholds, both valid)
+conflicts,"legacy spec 0.919 / n=313 referable",RESOLVED-absent,0.919 and 313 not found anywhere in repo; 298 positives verified
+conflicts,task8 DRIVE dice doc 0.2576 vs artifact 0.2541,MINOR DISCREPANCY,drive_test_dice.mat dice1 mean 0.25411; doc says 0.2576 (+0.0035) - likely rounding metadata of a slightly different n; flag for doc fix
+conflicts,task8 humanDice doc 0.7881 vs artifact 0.7902,MINOR DISCREPANCY,drive_vessel_metrics meanHumanDice 0.79024; doc 0.7881 - flag
+conflicts,day6-training-results Stage2 73.26/.5016/.7489 sens .8371,SUPERSEDED,matches neither final day5 metrics (0.7367/.5083/.7672/.8307) nor buggy; doc pre-fix/stale - flag as superseded
+conflicts,day7 report section2 scratch spec 90.80%,CONTRADICTED,champion-scratch referable spec 86.667 (day6_experiment_comparison); ablation spec 90.80 vs this report 90.80 - two sources disagree internally (README-pipeline archeology)
+conflicts,day3 doc threshold tables vs live config,CONTRADICTED (ALL 5 metrics),config v2.0.0 (live, used by assessImageQuality) != documented round numbers 0.15/0.20/0.50/0.55 style; RF-2 fixed thresholdDocumentation but module doc day3-quality-assessment tables remain stale - flag
+conflicts,metrics.md explainability targets (60%/70%/0.3/MACE10),CONTRADICTED-by-measurement,targets not met (3.07%/7.4%/0.027/never-measured) - targets stale
+unverified items,day4 "10/10 improved",UNVERIFIED,no numeric artifact
+unverified items,day6-training bug-baseline metrics (49.25/0.1320/QWK0),UNVERIFIED,historical, no artifact
+unverified items,ablation row2 sens/spec 0.8200/0.8966,UNVERIFIED,no artifact for day6 balanced referable
+unverified items,external validation (Messidor-2),NOT PERFORMED (honestly BLOCKED),task10 doc + no data
+unverified items,cross-dataset generalization exercise,NOT EXECUTED,external-validation.md protocol only
+unverified items,OD classical fallback ~44%,UNVERIFIED,small n=50 sample
+simulink,.slx = 56-byte text placeholder; load_system FAILS,NOT IMPLEMENTED,src\simulink\simulink_model.slx
+viewVessels trap,top-level viewVessels calls LEGACY broken src\extractVessels.m,FLAG,src\viewVessels.m:11
+quality_gate dead file,src\quality\quality_gate.m is a 1-line placeholder,FLAG,but real gate = assessImageQuality (VERIFIED-integrated)
+od_estimator_verification,WEAK artifact (nOk=5; totErr only),FLAG,data\analysis\day8\od_estimator_verification.mat

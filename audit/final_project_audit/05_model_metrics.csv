@@ -1,0 +1,15 @@
+model_id,arch,pretrained,image_size,val_n,acc,qwk,macroF1,recall_sev,recall_prolif,role,notes
+day5_resnet18_baseline_resnet18_5class,none(scratch),224,733,0.736698,0.767181,0.508335,0.179,0.220,ablation,referable sens 0.830671 spec 0.866667
+day6_resnet18_balanced,none(scratch)+balance,224,733,0.682128,0.688726,0.504998,0.385,0.288,ablation,balancing alone hurts overall
+day6_binary_referable_v1,binary scratch,224,733,0.869031(bin),-,n/a, (sens0.9262/spec0.8299 AUC0.9496 AUPRC0.90696),ablation,threshold0.6 chosenSens0.9027/spec0.8575
+day7_pretrained_resnet18_5class_stage2,resnet18 (EyePACS),224,733,0.828104,0.891401,0.680459,0.4872,0.5254,CHAMPION 5-class,recall=[0.9834 0.6081 0.7850 0.4872 0.5254]; prec=[0.9807 0.5769 0.7772 0.5000 0.5849]
+day7_pretrained_resnet18_binary_stage2,resnet18 binary,224,733,0.934516(bin),-,n/a, (default sens0.9228/spec0.9425),CHAMPION binary,@0.60 sens0.906040 spec0.947126 tp270 fp23 fn28 tn412; AUC0.979619 PRAUC0.782054
+day8_5class_v2a_stage2,resnet18 retrained,224,733,0.828104,0.887696,0.682676,unchanged per T5a,unchanged,variant A (not promoted),cross-check PASSED (day8_v2a_metrics_verification.mat)
+day9_5class_raw_stage2,resnet18 raw,224,733,0.701228(val),-,n/a,,not promoted,stage1 val 73.53%; stage2 70.12% (in-training log)
+day9_5class_enh_stage2,resnet18 enhanced,224,733,0.676671(val),-,n/a,,not promoted,stage1 66.71%; stage2 67.67%
+branchB_model,ClassificationLinear,10-feat,733,0.89691(AUC),-,match 0.82947,feature model (not CNN),T=0.7139; 10 features; train-AUC 0.8969; pilot dashboard AUC 0.858
+vessel_cnn,binary patch CNN (21 layers),-,AUC0.8478 acc0.78,,,negative (T8),not used
+ma_cnn,patch CNN,AUROC0.9755 acc0.9135,patch AUC held-out,d/report says det-recall 0.113,hard-negative mining,not used for grade
+od_cnn,patch CNN,AUROC0.9955 acc0.9958,locator (4-output after RF-7),,used for OD center + radius,9/10 within 300px on IDRiD
+fovea_cnn,patch CNN,AUROC0.7487 acc0.6479,not reliable -> foveaSupplied hook,used as weak prior only,honest negative
+day7_binary_head,no separate model,-,UNVERIFIED-if-claimed,no artifact,-,only binary model above,day7_pretrained..binary_metrics.mat is the binary model metrics

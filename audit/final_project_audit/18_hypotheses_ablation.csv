@@ -1,0 +1,15 @@
+row,ablation/claim,reported,vetted_value,evidence,verdict
+1,CNN alone scratch no-balance (day5),acc 0.7367 / mF1 0.5083 / qwk 0.7672; Ref sens 0.8322 spec 0.9080,acc 0.736698 mF1 0.508335 qwk 0.767181, eval_fixed_day5 + pretrained_vs_scratch.csv,VERIFIED
+2,scratch + balanced (day6),sens 0.8200 spec 0.8966 qwk 0.6887,qwk 0.688726 matches; sens/spec 0.8200/0.8966 NOT in any artifact (day6 balanced has no referable mat),ablation-study row2,UNVERIFIED (qwk ok; sens/spec no artifact)
+3,pretrained champion (day7),sens 0.9060 spec 0.9471 qwk 0.8914 al0.6565,0.906040/0.947126/0.891401,reverify_audit_T0 + day7 metrics,VERIFIED
+4,pretraining ablation (+EyePACS),row3-row1 QWK delta,computed +0.124 qwk,arithmetic,VERIFIED (derived)
+5,Branch B feature model, sens 0.6913 spec 0.9126 AUC 0.8969,0.6913/0.9126/0.89691,branchb_fullval_T7.mat,VERIFIED
+6,fusion+failover (598 agree/135 review) + quality gating + TTA,598/135; TTA acc 0.8336 qwk 0.8965; ECE 0.045->0.030,598/135; 0.8336/0.8965; 0.045013->0.029653(restandard),branchb_fullval + standard_calibration,VERIFIED
+7,without EyePACS pretrain (== row1),0.8322/0.9080/0.7672,matches row1,verified,VERIFIED
+8,day8 v2a retrain,acc 0.8281 qwk 0.8877 mF1 0.6827,qwk 0.887696 cross-check PASSED,day8_v2a_metrics_verification.mat,VERIFIED
+9,quality gating,not measured on 733-val (module-level only),admitted in doc,doc admission,VERIFIED-honest-unmeasured
+10,enhancement A/B,raw 0.8322/0.8952 vs enh 0.5416/0.6507,matches,task9b_ab_eval.mat,VERIFIED
+11,OD CNN,APTOS 10.6% located; IDRiD 10/10 located 9/10 within 300px,78/733=0.10641; IDRiD 10/10,od_discrepancy_investigation.mat,VERIFIED
+12,ensemble+TTA,QWK 0.8933 / TTA QWK 0.8965,matches,ensemble_scores_cache + run_ensemble_eval,VERIFIED
+a,calibration component,ECE raw 0.0450 cal 0.0297 (standard),0.045013/0.029653,standard_calibration.mat,VERIFIED
+b,OD classical fallback rate,~44% (n=50 sample),approx - small sample,od_discrepancy_investigation.mat (sample),UNVERIFIED-small-sample

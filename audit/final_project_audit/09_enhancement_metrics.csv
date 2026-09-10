@@ -1,0 +1,10 @@
+item,value,evidence,status
+techniques implemented,CLAHE, illumNorm, histMatch, gamma, vessel-hat, OD-norm, noiseAware(wiener+median), denoise, sharpen,enhanceImage.m,VERIFIED
+called in inference?,YES but DISPLAY-ONLY: predictSingleFundus.m:84 enhanced = enhanceImage(raw); model input is raw imresize (line 68); enhanced only imshow (line 283),INTEGRATION-GAP
+feeds classifier?,NO - day4-day5 docs "Enhanced->Classifier" diagram NOT wired; training uses raw datastore,trainClassifier + prepareData use raw 224 images,INTEGRATION-GAP (doc vs code)
+T9B model-agnostic A/B (champion applied),raw acc 0.8322 / qwk 0.8952 / mF1 0.6828; enhanced 0.5416 / 0.6507 / 0.4039 (n=733),task9b_ab_eval.mat,VERIFIED - enhancement HURTS champion by ~29 acc pts
+day9 own training (raw splits),stage1 val 73.53% / stage2 70.12%,day9_5class_raw_summary,VERIFIED
+day9 own training (enhanced splits),stage1 val 66.71% / stage2 67.67%,day9_5class_enh_summary,VERIFIED
+enhanced splits integrity,2929/733 counts match raw; corrupted a505981d1cab.png fixed; 1 bad file logged (bad_enhanced_files),task9b_enhanced_splits_info.mat,VERIFIED
+testEnhancement exists,src\enhancement\testEnhancement.m,yes,VERIFIED (no stored numeric artifact for day4 "10/10 improved" claims -> UNVERIFIED)
+day4 test-claim "10/10 improved",no metric artifact (only enhancement_comparison.png),UNVERIFIED

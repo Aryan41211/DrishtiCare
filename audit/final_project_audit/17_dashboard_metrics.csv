@@ -1,0 +1,13 @@
+item,value,evidence,status
+dashboard app,src\dashboard\DRScreeningDashboard.m (App Designer, 5 tabs: Overview, Quality, Champion, Workload, Inspector),code,VERIFIED
+data loader,src\dashboard\load_dashboard_data.m reads ONLY committed artifacts (quality summary, champion metrics, reverify_audit_T0, inference timing, referable rates, branchB),load_dashboard_data.m + T13,VERIFIED
+quality split,PASS 65.483 / WARNING 26.679 / FAIL 7.837 % (n=3662),D.quality,VERIFIED
+champion acc/macroF1/qwk,0.828104 / 0.680459 / 0.891401,D.champion,VERIFIED
+binary sens/spec @0.60,0.906040 / 0.947126,D.champion.binarySens/Spec,VERIFIED
+inference throughput,0.1028 s/img -> 9.73 img/s (single-stream CPU),D.inference,VERIFIED
+referable val fraction,0.40655,D.referable.valFrac,VERIFIED
+Branch B pilot eval AUC,0.85833,D.branchB.evalAUC,VERIFIED
+workload tab,what-if from static loaded rates + reviewer-capacity narrative text (no Simulink computation),DRScreeningDashboard.m:225 text,VERIFIED-static
+inspector tab,runs LIVE predictSingleFundus on a chosen image,code,VERIFIED
+app packaging,MLAPP packaged; headless verify PASS (recorded in task-tracker T12),task-tracker,VERIFIED
+integration scope,loads summary stats not per-image quality gate results,load_dashboard_data.m,VERIFIED-narrow-scope documented

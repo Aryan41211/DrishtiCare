@@ -1,0 +1,15 @@
+module,path,functions,status
+Quality,src\quality,assessImageQuality, buildMetricsTable, computeDay3Thresholds, computeQualityMetrics, defaultQualityConfig, quality_gate, runQualityAssessment, testQualityAssessment, createRetinalMask, createVisualizations, reviewExtremeExamples, saveDay2Results,IMPLEMENTED+INTEGRATED (predictSingleFundus.m:71; FAIL->REVIEW enforced)
+Enhancement,src\enhancement,enhanceImage, testEnhancement, viewEnhancedImage,IMPLEMENTED-NOT-INTEGRATED (called in predictSingleFundus.m:84 for DISPLAY only; model input is raw resized)
+Grading,src\grading,gradcamExplain + run_day7 etc.,IMPLEMENTED+INTEGRATED (built-in gradCAM, res5b_relu, predicted class; gradFallback for dlnetwork)
+Inference,src\inference,predictSingleFundus, demoSingleImage,IMPLEMENTED+INTEGRATED (entry point: quality->OD->lesions->grade->calibrate->fusion->explanation->ood)
+Cascade,src\cascade_router,cascade_router, fuseEvidence, branch_b_predict,IMPLEMENTED+INTEGRATED (CLEAR/REVIEW/ABSTAIN; thr 0.60 locked)
+Calibration,src\calibration,temperatureScale, loadTemperatureParams,IMPLEMENTED+INTEGRATED (T=2.5382 applied; binaryProbabilityCalibrated)
+Lesions,src\lesions,extractLesionCandidates, detectMaCnn, buildExplanationNarrative, locateOpticDiscCnn, locateFoveaCnn, estimateOpticDisc,IMPLEMENTED+INTEGRATED (MA CNN + HE/EX classical + OD + fovea hook)
+Vessel,src\vessel,extractVessels (classical proto),IMPLEMENTED-NOT-INTEGRATED (NO call in inference/dashboard; excluded by design RF-6)
+Vessel legacy,src\extractVessels.m,broken 25-line single-scale Otsu,UNUSED (Dice 0.312); src\viewVessels.m still calls it - latent trap
+OOD,src\ood_detection,ood_detector, buildOodStats,IMPLEMENTED+INTEGRATED (Mahalanobis; stats from train features)
+Dashboard,src\dashboard,DRScreeningDashboard(mlapp), load_dashboard_data,IMPLEMENTED+INTEGRATED (reads committed artifacts; Inspector tab runs live inference)
+Setup,src\setup,verify_environment etc.,n/a
+quality_gate.m,src\quality\quality_gate.m,1-line comment placeholder -> real code is assessImageQuality,DOCUMENTED-BUT-NOT-IMPLEMENTED (dead file)
+Simulink,src\simulink\simulink_model.slx,56-byte text placeholder (single comment),NOT-IMPLEMENTED (load_system FAILS)

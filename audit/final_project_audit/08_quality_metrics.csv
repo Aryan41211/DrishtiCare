@@ -1,0 +1,14 @@
+metric,lowerWarn,lowerFail,upperWarn,upperFail,live_config_source,notes
+brightness,0.2145,0.1901,0.4586,0.5154,defaultQualityConfig.m v2.0.0,mean gray over foreground (documented day3 thresholds 0.15/0.20/0.50/0.55 are STALE)
+contrast,0.0387,0.0315,0.1065,0.1375,defaultQualityConfig.m v2.0.0,std gray over foreground
+focus,0.000237,0.000142,0.00134,0.00175,defaultQualityConfig.m v2.0.0,var(Laplacian) at 512x512
+foreground,0.4736,0.2651,0.8833,0.9758,defaultQualityConfig.m v2.0.0,fraction of frame
+illumination,0.92,0.8025,1.2615,1.3541,defaultQualityConfig.m v2.0.0,center/edge ratio; WARNING-only severity
+overall_logic,assertImageQuality.m:122-128,FAIL if any fail / WARNING if any warn / else PASS,,,VERIFIED
+assessment n,quality_assessment_results.csv,3662 rows,,,VERIFIED
+PASS rate,quality_assessment_summary.mat,65.483%,2398/3662,VERIFIED
+WARNING rate,26.679%,977/3662,VERIFIED
+FAIL rate,7.837%,287/3662,VERIFIED
+gate in inference,predictSingleFundus.m:71-81,FAIL -> route REVIEW enforced; WARNING -> not enforced (CLEAR),,VERIFIED (T13 QA checks)
+severity.illumination,WARNING (non-fatal),,,VERIFIED
+metric ranges (day2),quality_metrics.csv,brightness 0.1635-0.6134; contrast 0.0089-0.2124; focus 5.15e-5-2.64e-3; fg 0.0114-0.9890; illum 0.7064-1.6643,,VERIFIED

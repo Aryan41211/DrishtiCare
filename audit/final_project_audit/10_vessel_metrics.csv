@@ -1,0 +1,12 @@
+item,value,evidence,status
+classical CHAMPION (DRIVE test, 1st_manual GT, FOV eroded 5px),Dice=0.7535 F1=0.7535 Sens=0.6947 Spec=0.9784 Acc=0.9413 Prec=0.8272 AUC(FOV)=0.9029,final_test_results.mat testChamp + metrics.txt,VERIFIED
+champion dev (train fold),Dice=0.7276 Sens=0.6779 Spec=0.9737 Prec=0.7931 AUC=0.8955,champion_config.mat,VERIFIED
+legacy original src\extractVessels.m,Dice=0.3124 Sens=0.2028 Spec=0.9868 Prec=0.7625 (test),drive_vessel_metrics summaryOld + metrics.txt,VERIFIED - broken legacy quantified
+phase-3 locked p3_od_off (OD suppression OFF, bright-exudate suppress ON),test Dice=0.7438 Sens=0.6640 Spec=0.9826 Prec=0.8498 AUC=0.8923,phase3 metrics.txt,VERIFIED - lower Dice than champion but better precision; NOT promoted
+champion 2nd-manual agreement,Dice=0.7573 (champ) vs 0.7278 (locked) on 2nd manual; human inter-observer 0.7902,phase3_dice2nd.mat + drive_vessel_metrics,VERIFIED
+DRIVE test dice artifact (day8),dice1 mean=0.2541 (legacy orig) / dice2=0.2528; humanDice=0.7884; pixelAUC=0.6120,drive_test_dice.mat,VERIFIED (task8 doc says 0.2576 -> CLOSE but differs by +0.0035 => CONTRADICTED-minor)
+vessel CNN (T8),AUC=0.8478 acc=0.78, 21-layer SeriesNetwork,binary patch model,vessel_cnn_metrics.mat,VERIFIED - negative
+Branch-B with vessel feature (T8),aucBase=0.896914 vs aucVes=0.880984; CI[-0.0312476,-0.000394273]; p=0.022 (base>ves),branchb_comparison_T8.mat,VERIFIED - vessel feature HURTS
+features table,733x8 columns vesselDensity densityInner densityQ1-4 topFrac densityVar,vessel_features_val733.mat,VERIFIED
+production integration,NO call in inference/dashboard; predictSingleFundus.m:231 featRow=zeros(1,10); branch_b_predict.m:9 feature-length guard,RUN_EXCLUDED by design (RF-6),VERIFIED
+viewVessels.m trap,calls src\extractVessels.m (LEGACY broken) not src\vessel\,\FLAG - should re-point to src\vessel\extractVessels

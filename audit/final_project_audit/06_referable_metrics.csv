@@ -1,0 +1,17 @@
+setting,source,threshold,metric,value,n,status
+champion binary @0.60 (production),reverify_audit_T0.mat,0.60,sensitivity,0.906040,298 positive,VERIFIED
+champion binary @0.60 (production),reverify_audit_T0.mat,0.60,specificity,0.947126,435 negative,VERIFIED
+champion binary @0.60 confusion,reverify_audit_T0.mat / task0 report,0.60,tp/fp/fn/tn,270/23/28/412,733,VERIFIED (sens 270/298=0.9060 spec 412/435=0.9471)
+champion binary AUC,day7_pretrained_resnet18_binary_metrics.mat,-,ROC-AUC,0.979619,733,VERIFIED
+champion binary PR-AUC,day7_pretrained_resnet18_binary_metrics.mat,-,PR-AUC,0.782054,733,VERIFIED
+champion binary default(0.5) metrics,day7_pretrained_resnet18_binary_metrics.mat,0.5,acc/sens/spec,0.934516/0.922819/0.942529,733,VERIFIED (tp275 fp25 fn23 tn410; DIFFERENT threshold from @0.60)
+champion binary ppv/npv @0.60,computed,0.60,ppv/npv,0.9215/0.9364,733,VERIFIED derived (270/293, 412/440)
+day6 binary v1,day6_binary_referable_v1_metrics.mat,0.60,acc,0.869031,733,VERIFIED (tp276 fp74 fn22 tn361)
+day6 binary v1,day6_binary_referable_v1_metrics.mat,0.60,sens/spec,0.926174/0.829885,733,VERIFIED
+day6 binary v1 threshold search,day6_experiment_comparison.mat,0.60,chosenSens/spec,0.902685/0.857471,733,VERIFIED
+day6 binary v1 AUC/AUPRC,day6_binary_referable_v1_metrics.mat,-,0.949587/0.906959,733,VERIFIED
+scratch baseline referable,day6_experiment_comparison.mat base,?,sens/spec,0.830671/0.866667,733,VERIFIED
+scratch-baseline ablation row,ablation-study.md row1 / pretrained_vs_scratch.csv,?,sens 0.8322 spec 0.9080,0.8322/0.9080,733,VERIFIED (differs from day6_experiment base 0.8307/0.8667 - two derivations exist; ablation uses its own)
+referable positives val,split_info + splits_binary + day7_binary_calibration,*,n=298 (classes 3/4/5),298,733,VERIFIED (n=313 NOT present anywhere - phantom)
+val referable rate,load_dashboard_data D.referable.valFrac,*,0.406548,298/733,VERIFIED (0.4065)
+legacy "spec 0.919/0.908" doc claim,search all md,?,0.919 NOT FOUND in repo; 0.908=scratch sens in ablation only,none,RESOLVED-no-conflict
