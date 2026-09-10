@@ -88,6 +88,21 @@ function [enhanced, qualityImprovement] = enhanceImage(img, varargin)
         end
     end
 
+    % Phase 12 robustness: CLAHE (adapthisteq) and the morphology filters
+    % require images of at least 2x2. A degenerate image (1x1, empty, or a
+    % collapsed axis) cannot be meaningfully enhanced, so pass it through
+    % untouched instead of throwing.
+    if size(img,1) < 2 || size(img,2) < 2
+        enhanced = img;
+        if nargout > 1
+            qualityImprovement = struct('overallScore', NaN, ...
+                'brightnessDelta', NaN, 'contrastDelta', NaN, ...
+                'focusDelta', NaN, 'foregroundDelta', NaN, ...
+                'note', 'Degenerate input (< 2x2): enhancement skipped (pass-through)');
+        end
+        return;
+    end
+
     %% Analyze image characteristics for adaptive parameter selection
     if opts.adaptive
         [params, noiseInfo] = analyzeImage(img);
