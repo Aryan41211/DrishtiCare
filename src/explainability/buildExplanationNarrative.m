@@ -18,17 +18,23 @@ function narrative = buildExplanationNarrative(result)
 %   clinical device.
 
 hasLesions = isfield(result, 'lesions') && isfield(result.lesions, 'maCount');
+qBlocked = isfield(result, 'qualityGate') && isfield(result.qualityGate, 'autoAnswerBlocked') ...
+    && result.qualityGate.autoAnswerBlocked;
 
 % ---------- severity assessment ----------
-grade = result.grade;                 % 0..4
-desc = gradeDescriptor(grade);
-if result.confidence >= 0.80
-    assess = ['DR severity assessed as ' result.gradeLabel ' (grade ' num2str(grade) ...
-        '): ' desc ', with model confidence ' sprintf('%.1f%%', result.confidence*100) '.'];
+if qBlocked
+    assess = 'No DR severity assessment was produced: the image failed the quality gate and was not passed to the model stack (no auto-answer).';
 else
-    assess = ['DR severity assessed as ' result.gradeLabel ' (grade ' num2str(grade) ...
-        '), model confidence ' sprintf('%.1f%%', result.confidence*100) ...
-        ' — borderline between adjacent grades, manual review advised.'];
+    grade = result.grade;                 % 0..4
+    desc = gradeDescriptor(grade);
+    if result.confidence >= 0.80
+        assess = ['DR severity assessed as ' result.gradeLabel ' (grade ' num2str(grade) ...
+            '): ' desc ', with model confidence ' sprintf('%.1f%%', result.confidence*100) '.'];
+    else
+        assess = ['DR severity assessed as ' result.gradeLabel ' (grade ' num2str(grade) ...
+            '), model confidence ' sprintf('%.1f%%', result.confidence*100) ...
+            ' — borderline between adjacent grades, manual review advised.'];
+    end
 end
 
 % ---------- evidence from lesion candidates ----------
@@ -61,8 +67,12 @@ else
 end
 
 % ---------- screening interpretation ----------
-scr = sprintf('Screening interpretation at the locked referability threshold (%.2f): the image is flagged %s (P(referable) = %.1f%%).', ...
-    result.binaryThreshold, result.binaryDecision, result.binaryProbability*100);
+if qBlocked
+    scr = 'Screening interpretation was withheld: the quality gate flagged the image FAIL, so no referability decision was computed. Recapture or manual review is required.';
+else
+    scr = sprintf('Screening interpretation at the locked referability threshold (%.2f): the image is flagged %s (P(referable) = %.1f%%).', ...
+        result.binaryThreshold, result.binaryDecision, result.binaryProbability*100);
+end
 
 % ---------- temperature calibration ----------
 cal = '';
@@ -124,20 +134,24 @@ end
 
 % ---------- recommendation ----------
 qReview = isfield(result, 'qualityGate') && isfield(result.qualityGate, 'enforced') && result.qualityGate.enforced;
-needsReview = crowReview || oodReview || fusionReview || qReview || result.grade >= 3 || ...
-    (isfield(result,'ood') && isfield(result.ood,'flag') && result.ood.flag);
-if qReview
-    rec = 'Image quality is insufficient (quality gate FAIL). Do not act on automated results — recapture the image or route to manual review.';
-elseif result.grade >= 3
-    rec = 'Recommend urgent specialist review — findings suggest severe or proliferative retinopathy.';
-elseif result.grade == 2
-    rec = 'Recommend referral for specialist examination — moderate non-proliferative findings.';
-elseif needsReview
-    rec = 'Recommend follow-up evaluation — automated confidence is reduced (low confidence, out-of-distribution sample, or borderline case), so clinical confirmation is advised.';
-elseif strcmp(result.binaryDecision, 'REFERABLE')
-    rec = 'Recommend follow-up evaluation — early DR signs warrant clinical confirmation.';
+if qBlocked
+    rec = 'Image quality is insufficient (quality gate FAIL) and the model stack was not run — the image must be recaptured or routed to manual review. No DR decision is returned.';
 else
-    rec = 'No referable DR features were detected by the screening model; routine follow-up per clinical schedule is advised.';
+    needsReview = crowReview || oodReview || fusionReview || qReview || result.grade >= 3 || ...
+        (isfield(result,'ood') && isfield(result.ood,'flag') && result.ood.flag);
+    if qReview
+        rec = 'Image quality is insufficient (quality gate FAIL). Do not act on automated results — recapture the image or route to manual review.';
+    elseif result.grade >= 3
+        rec = 'Recommend urgent specialist review — findings suggest severe or proliferative retinopathy.';
+    elseif result.grade == 2
+        rec = 'Recommend referral for specialist examination — moderate non-proliferative findings.';
+    elseif needsReview
+        rec = 'Recommend follow-up evaluation — automated confidence is reduced (low confidence, out-of-distribution sample, or borderline case), so clinical confirmation is advised.';
+    elseif strcmp(result.binaryDecision, 'REFERABLE')
+        rec = 'Recommend follow-up evaluation — early DR signs warrant clinical confirmation.';
+    else
+        rec = 'No referable DR features were detected by the screening model; routine follow-up per clinical schedule is advised.';
+    end
 end
 
 % ---------- quality caveat ----------
