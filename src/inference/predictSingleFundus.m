@@ -3,9 +3,12 @@ function result = predictSingleFundus(imagePath, varargin)
 %   result = predictSingleFundus(imagePath)
 %
 %   Pipeline (EXACT same preprocessing as training):
-%     raw -> imresize 224 -> quality gate -> binary screening (pretrained)
+%     raw -> imresize 224 -> quality gate (FAIL=>REVIEW; optional WITHHELD) 
+%     -> binary screening (raw PRef decision) -> calibration (auxiliary)
 %     -> 5-class grading (pretrained) -> Grad-CAM
-%     -> [lesion evidence: {MA,HE,EX} candidates + optic disc] (lesions)
+%     -> [lesion evidence: {MA,HE,EX} candidates + optic disc]
+%     -> OOD detection (advisory) -> cascade router -> Branch B fusion
+%     -> explanation narrative
 %
 %   Returns struct: qualityStatus, qualityScore, qualityFailureReasons,
 %   qualityRecaptureAdvice, qualityGate, binaryProbability,
@@ -34,8 +37,10 @@ function result = predictSingleFundus(imagePath, varargin)
     addParameter(p, 'RunBranchB', true, @islogical);
     addParameter(p, 'FoveaCenter', [], @(x) isempty(x) || (isnumeric(x) && numel(x) == 2));
     addParameter(p, 'EnforceQualityGate', true, @islogical);
+    addParameter(p, 'SkipModelOnFail', false, @islogical);
     parse(p, varargin{:});
 
+    runtimeTic = tic;
     foveaCenter = p.Results.FoveaCenter;
 
     projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
@@ -78,6 +83,63 @@ function result = predictSingleFundus(imagePath, varargin)
     qualityGateEnforced = false;
     if p.Results.EnforceQualityGate && strcmp(qualityStatus, 'FAIL')
         qualityGateEnforced = true;
+    end
+
+    % Phase 1 hardening (additive, default off): when a FAIL image is present
+    % and SkipModelOnFail is requested, the model stack is NOT executed — the
+    % DR decision is withheld entirely (no auto-answer). The result still
+    % carries full quality feedback, an explicit WITHHELD decision state and a
+    % REVIEW route so a human reviewer/recapture flow takes over.
+    if qualityGateEnforced && p.Results.SkipModelOnFail
+        result = struct();
+        result.qualityStatus = qualityStatus;
+        result.qualityScore = qualityScore;
+        result.qualityFailureReasons = qualityFailureReasons;
+        result.qualityRecaptureAdvice = qualityRecaptureAdvice;
+        result.qualityGate = struct('enforced', true, 'autoAnswerBlocked', true, ...
+            'modelsSkipped', true, ...
+            'note', 'Quality gate FAIL: no model decision computed - recapture / manual review required');
+        result.binaryProbability = NaN;
+        result.binaryDecision = 'WITHHELD (quality FAIL - not assessed)';
+        result.binaryThreshold = thr;
+        result.grade = NaN;
+        result.gradeLabel = 'NOT ASSESSED (quality FAIL)';
+        result.classProbabilities = NaN(1, 5);
+        result.confidence = NaN;
+        result.gradCAM = [];
+        result.binaryProbabilityCalibrated = NaN;
+        result.calibrationTemperature = NaN;
+        result.cascade = struct('route', 'REVIEW', 'available', true, ...
+            'qualityGate', true, ...
+            'qualityGateNote', 'Quality gate: FAIL -> recapture / manual review required', ...
+            'detail', 'Models skipped on quality FAIL (SkipModelOnFail)');
+        result.ood = struct('flag', false, 'mahalanobis', NaN, 'available', false);
+        result.fusion = struct('branchB', NaN, 'agree', false, 'discrepancy', false, ...
+            'routeOverride', '', 'available', false, ...
+            'reason', 'Not run - quality FAIL short-circuit');
+        result.lesions = struct('odLocated', false, 'od', [], 'odCnnOnly', false, ...
+            'odCnn', [], 'maCount', 0, 'heCount', 0, 'exCount', 0, ...
+            'quadrantHemorrhage', [], 'exudateCentroidX', [], 'exudateCentroidY', [], ...
+            'meanExudateDistToFovea', NaN, 'minExudateDistToFovea', NaN, ...
+            'fovea', [], 'foveaSupplied', ~isempty(foveaCenter), ...
+            'overlay', [], 'error', 'Skipped - quality FAIL short-circuit');
+        result.explanation = buildExplanationNarrative(result);
+        result.runtimeSec = toc(runtimeTic);
+        if p.Results.ShowFigure
+            fig = figure('Name', 'DrishtiCare - Quality Gate FAIL', 'Color', 'w', ...
+                'Position', [300 300 720 480]);
+            subplot(1, 2, 1); imshow(raw); title('Input image', 'FontWeight', 'bold');
+            subplot(1, 2, 2); axis off;
+            txt = {'QUALITY GATE: FAIL', '', 'No DR decision was computed.', ...
+                'Recapture required or route to manual review.', '', ...
+                'Failure reasons:'}; %#ok<UNRCH>
+            for k = 1:numel(qualityFailureReasons)
+                txt{end+1} = [' - ' qualityFailureReasons{k}]; %#ok<AGROW>
+            end
+            text(0.05, 0.95, txt, 'FontSize', 11, 'VerticalAlignment', 'top');
+            result.figure = fig;
+        end
+        return;
     end
 
     % 4. Enhancement for display (Day 4, display only)
@@ -180,7 +242,7 @@ function result = predictSingleFundus(imagePath, varargin)
 
     % 9. OOD detection + cascade routing (unsafe/uncertain -> human review)
     result.ood = struct('flag', false, 'mahalanobis', NaN, 'available', false);
-    result.cascade = struct('route', 'CLEAR', 'available', false);
+    result.cascade = struct('route', 'CLEAR', 'available', false, 'fusionConflict', false);
     if p.Results.RunLesions   % both are lightweight; reuse the same flag
         try
             [oodFlag, mDist, oodDet] = ood_detector(raw);
@@ -258,9 +320,14 @@ function result = predictSingleFundus(imagePath, varargin)
                 result.fusion.routeOverride = det.routeOverride;
                 result.fusion.available = true;
                 result.fusion.reason = det.reason;
-                if strcmp(det.routeOverride, 'REVIEW') && result.cascade.available
-                    result.cascade.detail = [result.cascade.detail ...
-                        ' | Branch B conflict -> manual review recommended'];
+                if strcmp(det.routeOverride, 'REVIEW')
+                    % Phase 11: Branch B discrepancy must ESCALATE the cascade
+                    % route to REVIEW (never downgrade). The old code appended
+                    % a char to the struct detail (runtime error) and left the
+                    % route unchanged.
+                    result.cascade.route = 'REVIEW';
+                    result.cascade.fusionConflict = true;
+                    result.cascade.fusionReason = det.reason;
                 end
             else
                 result.fusion.reason = 'Branch B model unavailable';
@@ -273,6 +340,7 @@ function result = predictSingleFundus(imagePath, varargin)
 
     % 10. Explanation narrative (evidence-based paragraph)
     result.explanation = buildExplanationNarrative(result);
+    result.runtimeSec = toc(runtimeTic);
 
     % 11. Display figure (2-row polished layout)
     if p.Results.ShowFigure
