@@ -1,10 +1,18 @@
-# DrishtiCare — Explainable AI for Diabetic Retinopathy Screening
+# DrishtiCare ï¿½ Explainable AI for Diabetic Retinopathy Screening
 
 **Problem Statement:** SIH 26038 | **Sponsor:** MathWorks | **Internal Round:** 12 September 2026
 
 ## Overview
 
 MATLAB/Simulink-based DR screening pipeline for rural India. 10-day build for internal hackathon round.
+
+> **Status / disclaimer:** Engineering research project for the 12 Sep 2026 internal
+> hackathon round. NO clinical validation has been performed. Automated grade
+> labels, confidence-routed recommendations, Grad-CAM overlays, OOD flags and
+> lesion candidate counts are engineering demonstrations. They must NOT be used
+> for diagnosis, treatment, triage, or any patient-facing decision. Reported
+> metrics are engineering measurements on a validation split (see
+> `docs/validation/metrics.md` and `docs/task-tracker.md`).
 
 ## Quick Start
 
