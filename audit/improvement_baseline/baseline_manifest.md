@@ -25,7 +25,7 @@ Read-only policy: hash must be identical at end of the hardening phase.
 Other committed experimental models (do NOT delete; not promoted):
   data/models/day7_pretrained_resnet18_5class_stage1.mat
   data/models/day7_pretrained_resnet18_binary_stage1.mat
-  data/models/day8_5class_v2a_stage1.mat / _stage2.mat   (Task 5(a), not promoted)
+  data/models/day8_5class_v2a_stage2.mat   (Task 5(a), not promoted; stage1 checkpoint was NOT committed - manifest corrected at P25)
   data/models/day9_5class_raw_stage1.mat / _stage2.mat   (T9B variant A control)
   data/models/day9_5class_enh_stage1.mat / _stage2.mat   (T9B variant B, hurt)
   data/models/day6_resnet18_balanced_stage1/2, day6_binary_referable_v1_stage1/2 (day6)
