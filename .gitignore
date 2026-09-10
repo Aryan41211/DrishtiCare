@@ -82,3 +82,13 @@ data/analysis/day8/fovea_cnn/fovea_dataset.mat
 # Vessel-CNN regenerable dataset (built by buildDriveVesselDataset.m), ~68 MB.
 # The trained net (vessel_cnn_net.mat) IS committed for reproducibility.
 data/analysis/day8/vessel/vessel_dataset.mat
+
+# Pre-hardening rogue eval provenance (Phase 20/25 disposition: keep on disk,
+# do NOT commit - standalone eval/smoke runners + outputs, superseded by
+# hardening artifacts in data/analysis/day10).
+runAPTOS.m
+runFinalAPTOS.m
+runFinalAPTOSBinary.m
+runSmokeTest.m
+data/analysis/final/
+data/analysis/smoke_test/
