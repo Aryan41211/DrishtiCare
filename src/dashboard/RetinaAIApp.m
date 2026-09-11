@@ -367,6 +367,7 @@ classdef RetinaAIApp < matlab.apps.AppBase
             displayQuality(app, r);
             displayGrade(app, r);
             displayGradCAM(app, r);
+            displayReport(app, r);
         end
 
         function displayQuality(app, r)
@@ -442,6 +443,53 @@ classdef RetinaAIApp < matlab.apps.AppBase
                     'Units', 'normalized', 'HorizontalAlignment', 'center', ...
                     'FontSize', 11, 'Color', [0.7 0.7 0.7]);
             end
+        end
+
+        function displayReport(app, r)
+            lines = {};
+            lines{end+1} = sprintf('=== RETINA-AI Analysis Report ===');
+            lines{end+1} = '';
+            lines{end+1} = sprintf('Image Quality: %s (score %.2f)', r.qualityStatus, r.qualityScore);
+            if r.qualityGate.enforced
+                lines{end+1} = '  Quality gate ENFORCED: FAIL -> recapture/manual review';
+            end
+            lines{end+1} = '';
+            lines{end+1} = sprintf('DR Grade: %d / 4 - %s', r.grade, r.gradeLabel);
+            lines{end+1} = sprintf('Referable DR: %s (P=%.1f%%, threshold %.2f)', ...
+                r.binaryDecision, r.binaryProbability * 100, r.binaryThreshold);
+            lines{end+1} = sprintf('Confidence: %.1f%%', r.confidence * 100);
+            if isfield(r, 'binaryProbabilityCalibrated') && abs(r.binaryProbabilityCalibrated - r.binaryProbability) > 0.01
+                lines{end+1} = sprintf('Calibrated P(ref): %.1f%% (T=%.2f)', ...
+                    r.binaryProbabilityCalibrated * 100, r.calibrationTemperature);
+            end
+            lines{end+1} = '';
+            if isfield(r, 'lesions') && isfield(r.lesions, 'maCount')
+                lines{end+1} = sprintf('Lesion candidates: MA=%d HE=%d EX=%d', ...
+                    r.lesions.maCount, r.lesions.heCount, r.lesions.exCount);
+                if r.lesions.odLocated
+                    lines{end+1} = '  Optic disc: located';
+                else
+                    lines{end+1} = '  Optic disc: not located';
+                end
+            end
+            if r.ood.available
+                if r.ood.flag
+                    lines{end+1} = sprintf('OOD: OUT-OF-DISTRIBUTION (Mah=%.1f)', r.ood.mahalanobis);
+                else
+                    lines{end+1} = sprintf('OOD: in-distribution (Mah=%.1f)', r.ood.mahalanobis);
+                end
+            end
+            lines{end+1} = sprintf('Cascade route: %s', r.cascade.route);
+            lines{end+1} = '';
+            if isfield(r, 'explanation') && isfield(r.explanation, 'recommendation')
+                lines{end+1} = sprintf('Recommendation: %s', r.explanation.recommendation);
+            end
+            lines{end+1} = '';
+            lines{end+1} = sprintf('Inference time: %.2fs', r.runtimeSec);
+            lines{end+1} = '';
+            lines{end+1} = 'ENGINEERING DEMO - NOT a clinical device.';
+
+            app.ReportTextArea.Value = lines;
         end
 
         function saveReportCallback(app)
