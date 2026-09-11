@@ -365,6 +365,8 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
         function displayResults(app, r)
             displayQuality(app, r);
+            displayGrade(app, r);
+            displayGradCAM(app, r);
         end
 
         function displayQuality(app, r)
@@ -392,6 +394,54 @@ classdef RetinaAIApp < matlab.apps.AppBase
                 detail = [detail ' | GATE ENFORCED (FAIL)'];
             end
             app.QualityScoreLabel.Text = detail;
+        end
+
+        function displayGrade(app, r)
+            app.GradeValueLabel.Text = sprintf('%d / 4', r.grade);
+            app.GradeNameLabel.Text = upper(r.gradeLabel);
+
+            if r.grade >= 3
+                app.GradeValueLabel.FontColor = [0.85 0.22 0.18];
+                app.GradeNameLabel.FontColor = [0.85 0.22 0.18];
+            elseif r.grade >= 2
+                app.GradeValueLabel.FontColor = [0.85 0.55 0.10];
+                app.GradeNameLabel.FontColor = [0.85 0.55 0.10];
+            else
+                app.GradeValueLabel.FontColor = [0.18 0.65 0.32];
+                app.GradeNameLabel.FontColor = [0.18 0.65 0.32];
+            end
+
+            app.ReferableLabel.Text = sprintf('REFERABLE DR: %s  (%.1f%%)', ...
+                r.binaryDecision, r.binaryProbability * 100);
+            if strcmp(r.binaryDecision, 'REFERABLE')
+                app.ReferableLabel.FontColor = [0.85 0.35 0.15];
+            else
+                app.ReferableLabel.FontColor = [0.18 0.65 0.32];
+            end
+
+            app.ConfidenceLabel.Text = sprintf('Confidence: %.1f%%', r.confidence * 100);
+
+            cascadeText = sprintf('Route: %s', r.cascade.route);
+            if isfield(r, 'fusion') && r.fusion.available
+                if r.fusion.discrepancy
+                    cascadeText = [cascadeText ' | Branch B: DISCREPANCY'];
+                elseif r.fusion.agree
+                    cascadeText = [cascadeText ' | Branch B: agree'];
+                end
+            end
+            app.CascadeLabel.Text = cascadeText;
+        end
+
+        function displayGradCAM(app, r)
+            if ~isempty(r.gradCAM)
+                imshow(r.gradCAM, 'Parent', app.GradCAMAxes);
+                title(app.GradCAMAxes, '');
+            else
+                cla(app.GradCAMAxes);
+                text(app.GradCAMAxes, 0.5, 0.5, 'Grad-CAM unavailable', ...
+                    'Units', 'normalized', 'HorizontalAlignment', 'center', ...
+                    'FontSize', 11, 'Color', [0.7 0.7 0.7]);
+            end
         end
 
         function saveReportCallback(app)
