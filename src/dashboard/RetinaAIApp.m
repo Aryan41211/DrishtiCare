@@ -364,6 +364,34 @@ classdef RetinaAIApp < matlab.apps.AppBase
         end
 
         function displayResults(app, r)
+            displayQuality(app, r);
+        end
+
+        function displayQuality(app, r)
+            status = r.qualityStatus;
+            switch status
+                case 'PASS'
+                    badgeColor = [0.18 0.65 0.32];
+                    badgeText = 'ACCEPT';
+                case 'WARNING'
+                    badgeColor = [0.85 0.65 0.13];
+                    badgeText = 'WARNING';
+                case 'FAIL'
+                    badgeColor = [0.85 0.25 0.22];
+                    badgeText = 'REJECT';
+                otherwise
+                    badgeColor = [0.5 0.5 0.5];
+                    badgeText = status;
+            end
+
+            app.QualityBadge.Text = badgeText;
+            app.QualityBadge.FontColor = badgeColor;
+
+            detail = sprintf('Score: %.2f', r.qualityScore);
+            if r.qualityGate.enforced
+                detail = [detail ' | GATE ENFORCED (FAIL)'];
+            end
+            app.QualityScoreLabel.Text = detail;
         end
 
         function saveReportCallback(app)
