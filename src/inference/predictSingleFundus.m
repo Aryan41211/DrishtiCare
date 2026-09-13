@@ -107,6 +107,7 @@ function result = predictSingleFundus(imagePath, varargin)
         result.classProbabilities = NaN(1, 5);
         result.confidence = NaN;
         result.gradCAM = [];
+        result.gradCAMMap = [];
         result.binaryProbabilityCalibrated = NaN;
         result.calibrationTemperature = NaN;
         result.cascade = struct('route', 'REVIEW', 'available', true, ...
@@ -184,6 +185,7 @@ function result = predictSingleFundus(imagePath, varargin)
     result.classProbabilities = s5;
     result.confidence = conf;
     result.gradCAM = overlay;
+    result.gradCAMMap = hm;
     result.binaryProbabilityCalibrated = pCalibrated;
     result.calibrationTemperature = T;
 
