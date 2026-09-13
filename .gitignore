@@ -100,3 +100,6 @@ runSelectedImage.m
 runSmokeTest100.m
 runVesselVisualization.m
 data/analysis/vessel_visualization/
+
+# Vessel-viz provenance PNGs (same runner disposition: untracked)
+data/analysis/vessel_visualization/
