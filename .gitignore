@@ -99,3 +99,4 @@ runRandomImage.m
 runSelectedImage.m
 runSmokeTest100.m
 runVesselVisualization.m
+data/analysis/vessel_visualization/
