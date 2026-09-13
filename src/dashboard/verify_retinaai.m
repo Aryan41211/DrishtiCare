@@ -1,15 +1,16 @@
 % verify_retinaai.m
 % Headless verification for the RETINA-AI single-image screening app.
 projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+addpath(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 
-fprintf('== RETINA-AI app verification ==\n');
+fprintf('== DRISHTI app verification ==\n');
 
 %% 1. App lifecycle
 a = RetinaAIApp();
 drawnow;
 assert(isvalid(a.UIFigure), 'UIFigure valid');
-assert(strcmp(a.UIFigure.Name, 'RETINA-AI'), 'title');
+assert(strcmp(a.UIFigure.Name, 'DRISHTI'), 'title is DRISHTI');
 fprintf('OK  1. app instantiated\n');
 
 %% 2. Sample list populated from val split
@@ -40,15 +41,25 @@ assert(strcmp(analyzeBtn.Enable, 'on'), 'analyze enabled after selecting sample'
 analyzeBtn.ButtonPushedFcn(analyzeBtn);
 drawnow;
 
-% Find the quality badge label (ACCEPT/WARNING/REJECT among all labels)
+ % Find the quality badge label (judge terms among all labels)
 allLabels = findall(a.UIFigure, 'Type', 'uilabel');
 badgeOk = false;
 for k = 1:numel(allLabels)
-    if any(strcmp(allLabels(k).Text, {'ACCEPT', 'WARNING', 'REJECT'}))
+    if any(strcmp(allLabels(k).Text, {'ACCEPT (PASS)', 'BORDERLINE (WARNING)', 'REJECT (FAIL)'}))
         badgeOk = true;
     end
 end
-assert(badgeOk, 'quality badge populated');
+assert(badgeOk, 'judge-terms quality badge populated');
+fprintf('OK  3b. judge-terms badge present\n');
+
+% Four explainability view buttons must exist
+viewBtns = findall(a.UIFigure, 'Type', 'uibutton');
+viewTexts = cell(numel(viewBtns), 1);
+for k = 1:numel(viewBtns), viewTexts{k} = char(viewBtns(k).Text); end
+for v = {'Original', 'Enhanced', 'Grad-CAM', 'Overlay'}
+    assert(any(strcmp(viewTexts, v{1})), ['view button missing: ' v{1}]);
+end
+fprintf('OK  3c. 4 view buttons present (Original/Enhanced/Grad-CAM/Overlay)\n');
 fprintf('OK  3. analyze path ran through real callback (pipeline comment below)\n');
 
 %% 4. Inference contract check (matches predictSingleFundus fields)
@@ -81,7 +92,7 @@ areas = findall(a.UIFigure, 'Type', 'uitextarea');
 assert(numel(areas) >= 1, 'report textarea exists');
 rep = areas(1).Value;
 assert(numel(rep) >= 10, 'report has many lines');
-assert(any(contains(rep, 'RETINA-AI Analysis Report')), 'report header');
+assert(any(contains(rep, 'DRISHTI Analysis Report')), 'report header');
 assert(any(contains(rep, {'ACCEPT', 'WARNING', 'REJECT'}, 'IgnoreCase', true)) || ...
     any(contains(rep, 'Quality')), 'quality line present');
 fprintf('OK  5. report textarea populated (%d lines)\n', numel(rep));
@@ -97,7 +108,25 @@ for k = 1:numel(allLabels)
 end
 assert(recOk, 'recommendation banner populated');
 
+%% 5c. WITHHELD-on-FAIL contract (reject path runs no classifier)
+failPath = '';
+clsDirs = {'class_0', 'class_1', 'class_2', 'class_3', 'class_4'};
+for c = 1:numel(clsDirs)
+    dd2 = dir(fullfile(projectRoot, 'data', 'splits', 'val', clsDirs{c}, '*.png'));
+    for i = 1:min(6, numel(dd2))
+        p2 = fullfile(projectRoot, 'data', 'splits', 'val', clsDirs{c}, dd2(i).name);
+        q2 = assessImageQuality(imread(p2));
+        if strcmp(q2.overall, 'FAIL'), failPath = p2; break; end
+    end
+    if ~isempty(failPath), break; end
+end
+assert(~isempty(failPath), 'a FAIL val image exists for the reject test');
+rF = predictSingleFundus(failPath, 'ShowFigure', false, 'SkipModelOnFail', true);
+assert(startsWith(rF.binaryDecision, 'WITHHELD'), 'FAIL decision withheld');
+assert(isnan(rF.grade), 'FAIL grade withheld');
+fprintf('OK  5c. reject path verified on %s\n', failPath);
+
 %% 6. Cleanup
 a.delete();
 fprintf('OK  6. closed cleanly\n');
-fprintf('\nALL RETINA-AI APP CHECKS PASS\n');
+fprintf('\nALL DRISHTI APP CHECKS PASS\n');
