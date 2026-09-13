@@ -58,9 +58,16 @@ classdef RetinaAIApp < matlab.apps.AppBase
     methods (Access = public)
 
         function app = RetinaAIApp()
-            appRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
-            addpath(genpath(appRoot));
-            app.ProjectRoot = appRoot;
+            % RetinaAIApp.m lives at the repo root, so its folder is the
+            % project root. Anchor on a known child ('src') so a future
+            % relocation cannot silently change ProjectRoot again.
+            appRoot = fileparts(mfilename('fullpath'));
+            if exist(fullfile(appRoot, 'src'), 'dir')
+                app.ProjectRoot = appRoot;
+            else
+                app.ProjectRoot = fileparts(appRoot);
+            end
+            addpath(genpath(app.ProjectRoot));
             app.CurrentImagePath = '';
             app.CurrentResult = struct();
             createComponents(app);
@@ -249,7 +256,7 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
         function createGradCAMSection(app, parent)
             app.GradCAMPanel = uipanel(parent, ...
-                'Title', ' Model Explanation (attention, not lesion localization) ', ...
+                'Title', ' Model Attention Visualization - not lesion localization ', ...
                 'Position', [30 170 460 190], ...
                 'FontSize', 12, ...
                 'FontWeight', 'bold', ...
@@ -446,20 +453,12 @@ classdef RetinaAIApp < matlab.apps.AppBase
             if isfield(r, 'gradCAM') && ~isempty(r.gradCAM)
                 app.ViewOverlay = r.gradCAM;
             end
-            if isfield(r, 'binaryDecision') && ~startsWith(r.binaryDecision, 'WITHHELD') ...
-                    && isfield(r, 'grade') && ~isnan(r.grade)
-                try
-                    gradePath = fullfile(app.ProjectRoot, 'data', 'models', ...
-                        'day7_pretrained_resnet18_5class_stage2.mat');
-                    S = load(gradePath, 'trainedNet');
-                    modelInput = imresize(raw, [224 224]);
-                    cmap = gradCAM(S.trainedNet, modelInput, r.grade + 1, ...
-                        'FeatureLayer', 'res5b_relu');
-                    hm = imresize(mat2gray(cmap), [224 224]);
-                    app.ViewHeatmap = im2uint8(ind2rgb(im2uint8(hm), jet(256)));
-                catch
-                    app.ViewHeatmap = app.ViewOverlay;
-                end
+            if isfield(r, 'gradCAMMap') && ~isempty(r.gradCAMMap) ...
+                    && isfield(r, 'binaryDecision') && ~startsWith(r.binaryDecision, 'WITHHELD')
+                hm = imresize(mat2gray(r.gradCAMMap), [224 224]);
+                app.ViewHeatmap = im2uint8(ind2rgb(im2uint8(hm), jet(256)));
+            else
+                app.ViewHeatmap = app.ViewOverlay;
             end
         end
 
@@ -559,15 +558,15 @@ classdef RetinaAIApp < matlab.apps.AppBase
                 app.GradeNameLabel.FontColor = [0.18 0.65 0.32];
             end
 
-            app.ReferableLabel.Text = sprintf('REFERABLE DR: %s  (%.1f%%)', ...
-                r.binaryDecision, r.binaryProbability * 100);
+            app.ReferableLabel.Text = sprintf('REFERABLE DR: %s', r.binaryDecision);
             if strcmp(r.binaryDecision, 'REFERABLE')
                 app.ReferableLabel.FontColor = [0.85 0.35 0.15];
             else
                 app.ReferableLabel.FontColor = [0.18 0.65 0.32];
             end
 
-            app.ConfidenceLabel.Text = sprintf('Confidence: %.1f%%', r.confidence * 100);
+            app.ConfidenceLabel.Text = sprintf('Model Score: %.1f%% (engineering prototype threshold %.2f LOCKED)', ...
+                r.binaryProbability * 100, r.binaryThreshold);
 
             cascadeText = sprintf('Route: %s', r.cascade.route);
             if isfield(r, 'fusion') && r.fusion.available
@@ -604,11 +603,6 @@ classdef RetinaAIApp < matlab.apps.AppBase
             end
         end
 
-        function displayGradCAM(app, ~)
-            % Legacy entry: the 4-view switcher owns the axes now.
-            showView(app, 'Overlay');
-        end
-
         function displayReport(app, r)
             lines = {};
             lines{end+1} = sprintf('=== DRISHTI Analysis Report ===');
@@ -623,13 +617,9 @@ classdef RetinaAIApp < matlab.apps.AppBase
             end
             lines{end+1} = '';
             lines{end+1} = sprintf('DR Grade: %d / 4 - %s', r.grade, r.gradeLabel);
-            lines{end+1} = sprintf('Referable DR: %s (P=%.1f%%, threshold %.2f)', ...
-                r.binaryDecision, r.binaryProbability * 100, r.binaryThreshold);
-            lines{end+1} = sprintf('Confidence: %.1f%%', r.confidence * 100);
-            if isfield(r, 'binaryProbabilityCalibrated') && abs(r.binaryProbabilityCalibrated - r.binaryProbability) > 0.01
-                lines{end+1} = sprintf('Calibrated P(ref): %.1f%% (T=%.2f)', ...
-                    r.binaryProbabilityCalibrated * 100, r.calibrationTemperature);
-            end
+            lines{end+1} = sprintf('Referable DR: %s', r.binaryDecision);
+            lines{end+1} = sprintf('Model Score: %.1f%% (engineering prototype threshold %.2f LOCKED)', ...
+                r.binaryProbability * 100, r.binaryThreshold);
             lines{end+1} = '';
             if isfield(r, 'lesions') && isfield(r.lesions, 'maCount')
                 lines{end+1} = sprintf('Lesion candidates: MA=%d HE=%d EX=%d', ...
@@ -671,8 +661,18 @@ classdef RetinaAIApp < matlab.apps.AppBase
             end
             lines = app.ReportTextArea.Value;
             fid = fopen(fullfile(path, file), 'w');
-            for i = 1:numel(lines)
-                fprintf(fid, '%s\n', lines{i});
+            if fid == -1
+                app.StatusLabel.Text = 'Failed to open report file';
+                return;
+            end
+            try
+                for i = 1:numel(lines)
+                    fprintf(fid, '%s\n', lines{i});
+                end
+            catch
+                fclose(fid);
+                app.StatusLabel.Text = 'Error writing report';
+                return;
             end
             fclose(fid);
             savedNote = sprintf('Report saved: %s', file);
