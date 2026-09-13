@@ -92,3 +92,10 @@ runFinalAPTOSBinary.m
 runSmokeTest.m
 data/analysis/final/
 data/analysis/smoke_test/
+
+# Post-hardening provenance runners (same disposition: keep untracked)
+runFinalModelEvaluation.m
+runRandomImage.m
+runSelectedImage.m
+runSmokeTest100.m
+runVesselVisualization.m
