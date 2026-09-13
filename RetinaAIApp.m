@@ -1,5 +1,5 @@
 classdef RetinaAIApp < matlab.apps.AppBase
-%RETINAAIAPP Single-image DR screening demo for DrishtiCare.
+%RETINAAIAPP DRISHTI single-image DR screening demo for DrishtiCare.
 %   RetinaAIApp()
 %
 %   App Designer-style application (programmatic, convertible to .mlapp)
@@ -38,6 +38,14 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
         RecommendLabel     matlab.ui.control.Label
 
+        ViewOriginal
+        ViewEnhanced
+        ViewHeatmap
+        ViewOverlay
+        ViewButtons
+
+        EnhanceLabel       matlab.ui.control.Label
+
         ReportPanel        matlab.ui.container.Panel
         ReportTextArea     matlab.ui.control.TextArea
         GenerateReportBtn  matlab.ui.control.Button
@@ -71,13 +79,13 @@ classdef RetinaAIApp < matlab.apps.AppBase
     methods (Access = private)
 
         function createComponents(app)
-            app.UIFigure = uifigure('Name', 'RETINA-AI', ...
-                'Position', [200 30 520 980], ...
+            app.UIFigure = uifigure('Name', 'DRISHTI', ...
+                'Position', [200 30 520 1040], ...
                 'Color', [0.96 0.97 0.98], ...
                 'Resize', 'off');
 
             scrollable = uipanel(app.UIFigure, ...
-                'Position', [0 0 520 980], ...
+                'Position', [0 0 520 1040], ...
                 'BackgroundColor', [0.96 0.97 0.98], ...
                 'BorderType', 'none', ...
                 'Scrollable', 'on');
@@ -94,15 +102,15 @@ classdef RetinaAIApp < matlab.apps.AppBase
         end
 
         function createHeader(app, parent)
-            uilabel(parent, 'Text', 'RETINA-AI', ...
-                'Position', [0 915 520 40], ...
+            uilabel(parent, 'Text', 'DRISHTI', ...
+                'Position', [0 975 520 40], ...
                 'FontSize', 28, ...
                 'FontWeight', 'bold', ...
                 'FontColor', [0.13 0.22 0.38], ...
                 'HorizontalAlignment', 'center');
 
             uilabel(parent, 'Text', 'AI Retinal Screening Assistant', ...
-                'Position', [0 890 520 25], ...
+                'Position', [0 950 520 25], ...
                 'FontSize', 13, ...
                 'FontColor', [0.45 0.50 0.56], ...
                 'HorizontalAlignment', 'center');
@@ -110,7 +118,7 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
         function createImageSection(app, parent)
             app.ImageAxes = uiaxes(parent, ...
-                'Position', [60 710 400 160], ...
+                'Position', [60 770 400 160], ...
                 'Box', 'on', ...
                 'XTick', [], 'YTick', [], ...
                 'BackgroundColor', [1 1 1]);
@@ -126,7 +134,7 @@ classdef RetinaAIApp < matlab.apps.AppBase
         function createControlsSection(app, parent)
             app.UploadButton = uibutton(parent, 'push', ...
                 'Text', 'Upload Image', ...
-                'Position', [60 665 160 32], ...
+                'Position', [60 725 160 32], ...
                 'FontSize', 12, ...
                 'FontWeight', 'bold', ...
                 'BackgroundColor', [0.20 0.40 0.70], ...
@@ -134,19 +142,19 @@ classdef RetinaAIApp < matlab.apps.AppBase
                 'ButtonPushedFcn', @(~,~) app.uploadCallback());
 
             uilabel(parent, 'Text', 'or select sample:', ...
-                'Position', [235 670 90 20], ...
+                'Position', [235 730 90 20], ...
                 'FontSize', 11, ...
                 'FontColor', [0.45 0.50 0.56]);
 
             app.SampleDropdown = uidropdown(parent, ...
                 'Items', {'(no samples)'}, ...
-                'Position', [330 665 130 32], ...
+                'Position', [330 725 130 32], ...
                 'FontSize', 11, ...
                 'ValueChangedFcn', @(~,~) app.sampleCallback());
 
             app.AnalyzeButton = uibutton(parent, 'push', ...
                 'Text', 'ANALYZE IMAGE', ...
-                'Position', [60 620 400 38], ...
+                'Position', [60 680 400 38], ...
                 'FontSize', 15, ...
                 'FontWeight', 'bold', ...
                 'BackgroundColor', [0.10 0.55 0.35], ...
@@ -158,30 +166,37 @@ classdef RetinaAIApp < matlab.apps.AppBase
         function createQualitySection(app, parent)
             app.QualityPanel = uipanel(parent, ...
                 'Title', ' Image Quality ', ...
-                'Position', [30 535 460 75], ...
+                'Position', [30 585 460 90], ...
                 'FontSize', 12, ...
                 'FontWeight', 'bold', ...
                 'BackgroundColor', [1 1 1]);
 
             app.QualityBadge = uilabel(app.QualityPanel, ...
                 'Text', '—', ...
-                'Position', [15 10 140 35], ...
-                'FontSize', 18, ...
+                'Position', [15 45 220 35], ...
+                'FontSize', 17, ...
                 'FontWeight', 'bold', ...
                 'FontColor', [0.5 0.5 0.5]);
 
             app.QualityScoreLabel = uilabel(app.QualityPanel, ...
                 'Text', 'Upload an image and click ANALYZE', ...
-                'Position', [170 10 270 35], ...
+                'Position', [240 45 205 35], ...
                 'FontSize', 11, ...
                 'FontColor', [0.5 0.5 0.5], ...
+                'VerticalAlignment', 'center');
+
+            app.EnhanceLabel = uilabel(app.QualityPanel, ...
+                'Text', '', ...
+                'Position', [15 10 430 28], ...
+                'FontSize', 11, ...
+                'FontColor', [0.45 0.50 0.56], ...
                 'VerticalAlignment', 'center');
         end
 
         function createGradeSection(app, parent)
             app.GradePanel = uipanel(parent, ...
                 'Title', ' DR Classification ', ...
-                'Position', [30 355 460 170], ...
+                'Position', [30 410 460 170], ...
                 'FontSize', 12, ...
                 'FontWeight', 'bold', ...
                 'BackgroundColor', [1 1 1]);
@@ -223,7 +238,7 @@ classdef RetinaAIApp < matlab.apps.AppBase
         function createRecommendationSection(app, parent)
             app.RecommendLabel = uilabel(parent, ...
                 'Text', '', ...
-                'Position', [30 305 460 40], ...
+                'Position', [30 365 460 40], ...
                 'FontSize', 13, ...
                 'FontWeight', 'bold', ...
                 'FontColor', [0.38 0.42 0.46], ...
@@ -234,14 +249,14 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
         function createGradCAMSection(app, parent)
             app.GradCAMPanel = uipanel(parent, ...
-                'Title', ' Grad-CAM Explanation ', ...
-                'Position', [30 170 460 130], ...
+                'Title', ' Model Explanation (attention, not lesion localization) ', ...
+                'Position', [30 170 460 190], ...
                 'FontSize', 12, ...
                 'FontWeight', 'bold', ...
                 'BackgroundColor', [1 1 1]);
 
             app.GradCAMAxes = uiaxes(app.GradCAMPanel, ...
-                'Position', [10 5 440 100], ...
+                'Position', [10 5 440 150], ...
                 'XTick', [], 'YTick', [], ...
                 'Box', 'on', ...
                 'BackgroundColor', [0.95 0.95 0.95]);
@@ -252,6 +267,18 @@ classdef RetinaAIApp < matlab.apps.AppBase
                 'HorizontalAlignment', 'center', ...
                 'FontSize', 11, ...
                 'Color', [0.7 0.7 0.7]);
+
+            % View switcher: one large axes, Overlay default after analysis
+            app.ViewButtons = gobjects(1, 4);
+            viewNames = {'Original', 'Enhanced', 'Grad-CAM', 'Overlay'};
+            xs = [10 118 226 334];
+            for vi = 1:4
+                app.ViewButtons(vi) = uibutton(app.GradCAMPanel, 'push', ...
+                    'Text', viewNames{vi}, ...
+                    'Position', [xs(vi) 160 105 25], ...
+                    'FontSize', 10, ...
+                    'ButtonPushedFcn', @(src, ~) app.showView(char(src.Text)));
+            end
         end
 
         function createReportSection(app, parent)
@@ -367,8 +394,10 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
             try
                 result = predictSingleFundus(app.CurrentImagePath, ...
-                    'ShowFigure', false, 'RunLesions', true, 'RunBranchB', true);
+                    'ShowFigure', false, 'RunLesions', true, ...
+                    'RunBranchB', true, 'SkipModelOnFail', true);
                 app.CurrentResult = result;
+                cacheViews(app, result);
                 displayResults(app, result);
                 app.StatusLabel.Text = sprintf('Analysis complete (%.2fs)', result.runtimeSec);
             catch e
@@ -380,10 +409,111 @@ classdef RetinaAIApp < matlab.apps.AppBase
 
         function displayResults(app, r)
             displayQuality(app, r);
+            if isfield(r, 'binaryDecision') && startsWith(r.binaryDecision, 'WITHHELD')
+                displayWithheld(app, r);
+                return;
+            end
             displayGrade(app, r);
             displayRecommendation(app, r);
-            displayGradCAM(app, r);
+            showView(app, 'Overlay');
             displayReport(app, r);
+        end
+
+        function t = qualityJudgeTerm(~, status)
+            switch status
+                case 'PASS',    t = 'ACCEPT (PASS)';
+                case 'WARNING', t = 'BORDERLINE (WARNING)';
+                case 'FAIL',    t = 'REJECT (FAIL)';
+                otherwise,      t = status;
+            end
+        end
+
+        function cacheViews(app, r)
+            % Cache the four explainability views (display only; the model
+            % input pipeline inside predictSingleFundus is never re-fed).
+            app.ViewOriginal = [];
+            app.ViewEnhanced = [];
+            app.ViewHeatmap = [];
+            app.ViewOverlay = [];
+            try
+                raw = imread(app.CurrentImagePath);
+                if size(raw, 3) == 1, raw = repmat(raw, 1, 1, 3); end
+                app.ViewOriginal = raw;
+                app.ViewEnhanced = enhanceImage(raw);
+            catch
+                return;
+            end
+            if isfield(r, 'gradCAM') && ~isempty(r.gradCAM)
+                app.ViewOverlay = r.gradCAM;
+            end
+            if isfield(r, 'binaryDecision') && ~startsWith(r.binaryDecision, 'WITHHELD') ...
+                    && isfield(r, 'grade') && ~isnan(r.grade)
+                try
+                    gradePath = fullfile(app.ProjectRoot, 'data', 'models', ...
+                        'day7_pretrained_resnet18_5class_stage2.mat');
+                    S = load(gradePath, 'trainedNet');
+                    modelInput = imresize(raw, [224 224]);
+                    cmap = gradCAM(S.trainedNet, modelInput, r.grade + 1, ...
+                        'FeatureLayer', 'res5b_relu');
+                    hm = imresize(mat2gray(cmap), [224 224]);
+                    app.ViewHeatmap = im2uint8(ind2rgb(im2uint8(hm), jet(256)));
+                catch
+                    app.ViewHeatmap = app.ViewOverlay;
+                end
+            end
+        end
+
+        function showView(app, name)
+            switch name
+                case 'Original', img = app.ViewOriginal;
+                case 'Enhanced', img = app.ViewEnhanced;
+                case 'Grad-CAM', img = app.ViewHeatmap;
+                otherwise,       img = app.ViewOverlay;
+            end
+            if isempty(img)
+                cla(app.GradCAMAxes);
+                text(app.GradCAMAxes, 0.5, 0.5, [name ' view unavailable'], ...
+                    'Units', 'normalized', 'HorizontalAlignment', 'center', ...
+                    'FontSize', 11, 'Color', [0.7 0.7 0.7]);
+            else
+                imshow(img, 'Parent', app.GradCAMAxes);
+                title(app.GradCAMAxes, '');
+            end
+        end
+
+        function displayWithheld(app, r)
+            app.GradeValueLabel.Text = '—';
+            app.GradeValueLabel.FontColor = [0.5 0.5 0.5];
+            app.GradeNameLabel.Text = 'NOT ASSESSED (quality FAIL)';
+            app.GradeNameLabel.FontColor = [0.5 0.5 0.5];
+            app.ReferableLabel.Text = sprintf('DR decision: %s', r.binaryDecision);
+            app.ReferableLabel.FontColor = [0.85 0.25 0.22];
+            app.ConfidenceLabel.Text = 'No model score — classification was not run.';
+            app.ConfidenceLabel.FontColor = [0.5 0.5 0.5];
+            app.CascadeLabel.Text = 'Route: REVIEW (recapture / manual review)';
+            app.RecommendLabel.Text = 'IMAGE NOT SUITABLE FOR ANALYSIS — RECAPTURE RECOMMENDED';
+            app.RecommendLabel.FontColor = [0.85 0.25 0.22];
+            app.RecommendLabel.BackgroundColor = [1 0.92 0.92];
+            cla(app.GradCAMAxes);
+            text(app.GradCAMAxes, 0.5, 0.5, 'No Grad-CAM: analysis withheld (quality FAIL)', ...
+                'Units', 'normalized', 'HorizontalAlignment', 'center', ...
+                'FontSize', 11, 'Color', [0.7 0.7 0.7]);
+            lines = {};
+            lines{end+1} = '=== DRISHTI Analysis Report ===';
+            lines{end+1} = '';
+            lines{end+1} = sprintf('Image Quality: %s (score %.2f)', ...
+                app.qualityJudgeTerm(r.qualityStatus), r.qualityScore);
+            lines{end+1} = 'DR decision WITHHELD: quality gate FAIL — no model decision computed.';
+            lines{end+1} = '';
+            lines{end+1} = 'Failure reasons:';
+            for k = 1:numel(r.qualityFailureReasons)
+                lines{end+1} = [' - ' r.qualityFailureReasons{k}];
+            end
+            lines{end+1} = '';
+            lines{end+1} = ['Recapture advice: ' r.qualityRecaptureAdvice];
+            lines{end+1} = '';
+            lines{end+1} = 'ENGINEERING DEMO - NOT a clinical device.';
+            app.ReportTextArea.Value = lines;
         end
 
         function displayQuality(app, r)
@@ -391,23 +521,24 @@ classdef RetinaAIApp < matlab.apps.AppBase
             switch status
                 case 'PASS'
                     badgeColor = [0.18 0.65 0.32];
-                    badgeText = 'ACCEPT';
+                    enhanceText = 'Enhancement: not required';
                 case 'WARNING'
                     badgeColor = [0.85 0.65 0.13];
-                    badgeText = 'WARNING';
+                    enhanceText = 'Adaptive enhancement: APPLIED (display aid — model input unchanged)';
                 case 'FAIL'
                     badgeColor = [0.85 0.25 0.22];
-                    badgeText = 'REJECT';
+                    enhanceText = '';
                 otherwise
                     badgeColor = [0.5 0.5 0.5];
-                    badgeText = status;
+                    enhanceText = '';
             end
 
-            app.QualityBadge.Text = badgeText;
+            app.QualityBadge.Text = app.qualityJudgeTerm(status);
             app.QualityBadge.FontColor = badgeColor;
+            app.EnhanceLabel.Text = enhanceText;
 
             detail = sprintf('Score: %.2f', r.qualityScore);
-            if r.qualityGate.enforced
+            if isfield(r, 'qualityGate') && r.qualityGate.enforced
                 detail = [detail ' | GATE ENFORCED (FAIL)'];
             end
             app.QualityScoreLabel.Text = detail;
@@ -473,23 +604,20 @@ classdef RetinaAIApp < matlab.apps.AppBase
             end
         end
 
-        function displayGradCAM(app, r)
-            if ~isempty(r.gradCAM)
-                imshow(r.gradCAM, 'Parent', app.GradCAMAxes);
-                title(app.GradCAMAxes, '');
-            else
-                cla(app.GradCAMAxes);
-                text(app.GradCAMAxes, 0.5, 0.5, 'Grad-CAM unavailable', ...
-                    'Units', 'normalized', 'HorizontalAlignment', 'center', ...
-                    'FontSize', 11, 'Color', [0.7 0.7 0.7]);
-            end
+        function displayGradCAM(app, ~)
+            % Legacy entry: the 4-view switcher owns the axes now.
+            showView(app, 'Overlay');
         end
 
         function displayReport(app, r)
             lines = {};
-            lines{end+1} = sprintf('=== RETINA-AI Analysis Report ===');
+            lines{end+1} = sprintf('=== DRISHTI Analysis Report ===');
             lines{end+1} = '';
-            lines{end+1} = sprintf('Image Quality: %s (score %.2f)', r.qualityStatus, r.qualityScore);
+            lines{end+1} = sprintf('Image Quality: %s (score %.2f)', ...
+                app.qualityJudgeTerm(r.qualityStatus), r.qualityScore);
+            if strcmp(r.qualityStatus, 'WARNING')
+                lines{end+1} = 'Adaptive enhancement: APPLIED (display aid — model input unchanged).';
+            end
             if r.qualityGate.enforced
                 lines{end+1} = '  Quality gate ENFORCED: FAIL -> recapture/manual review';
             end
@@ -547,7 +675,18 @@ classdef RetinaAIApp < matlab.apps.AppBase
                 fprintf(fid, '%s\n', lines{i});
             end
             fclose(fid);
-            app.StatusLabel.Text = sprintf('Report saved: %s', file);
+            savedNote = sprintf('Report saved: %s', file);
+            if ~isempty(app.ViewOverlay)
+                [~, base] = fileparts(file);
+                pngName = [base '_overlay.png'];
+                try
+                    imwrite(app.ViewOverlay, fullfile(path, pngName));
+                    savedNote = sprintf('%s + %s', savedNote, pngName);
+                catch
+                    savedNote = [savedNote ' (overlay PNG export failed)'];
+                end
+            end
+            app.StatusLabel.Text = savedNote;
         end
 
         function copyReportCallback(app)
