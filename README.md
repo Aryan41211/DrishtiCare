@@ -1,4 +1,4 @@
-# DrishtiCare � Explainable AI for Diabetic Retinopathy Screening
+# DrishtiCare - Explainable AI for Diabetic Retinopathy Screening
 
 **Problem Statement:** SIH 26038 | **Sponsor:** MathWorks | **Internal Round:** 12 September 2026
 
