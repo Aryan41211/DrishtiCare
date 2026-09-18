@@ -40,16 +40,41 @@ Sep 12 -- INTERNAL ROUND
 
 ```
 DrishtiCare/
++-- RetinaAIApp.m             # Screening app (user-facing entry point)
++-- launchRetinaAI.m          # App launcher: run this in MATLAB
 +-- roadmap-10day.md          # Master roadmap
-+-- context/                  # Problem statement, goals, tools
-+-- team/                     # Roles, risk checklist
-+-- schedule/                 # Day 1-10 tasks
-+-- modules/                  # Module specifications
-+-- pitch/                    # Deck structure, demo script
-+-- src/                      # MATLAB source code
-+-- data/                     # Datasets (APTOS, IDRiD, DRIVE)
-+-- docs/                     # Reference documentation
++-- src/
++-- ├── runs/                 # Runnable scripts: pipeline, eval, smoke tests
++-- │                          (`run src/runs/runSmokeTest` from repo root)
++-- ├── phases/               # Day-10 system audits (phase1..phase25)
++-- ├── verify/               # Independent evaluators + re-verification
++-- ├── quality/              # Image quality assessment
++-- ├── enhancement/          # Image enhancement/preprocessing
++-- ├── grading/              # DR grading + classifier evaluation
++-- ├── explainability/       # Grad-CAM and model explanation
++-- ├── vessel/               # Vessel processing (legacy_* = superseded)
++-- ├── lesions/              # Lesion analysis
++-- ├── inference/            # Single-image inference + cascade router
++-- ├── calibration/          # Temperature scaling (T=2.5382)
++-- ├── ood_detection/        # Mahalanobis OOD detector
++-- ├── dashboard/            # Dashboard app code
++-- ├── reporting/            # PDF screening reports
++-- ├── data_loaders/         # Dataset loading + splits
++-- ├── setup/                # Day-1 setup utilities
++-- └── simulink/             # Simulink workflow model (.slx)
++-- data/
++-- ├── aptos2019/ idrid/ drive/ drimdb/   # Datasets (git-ignored, local only)
++-- ├── models/               # Locked champion weights (convention: kept here)
++-- ├── splits/               # 2929 train / 733 val (seed 42)
++-- └── analysis/             # Metrics + audit evidence (committed)
++-- results/                  # Demo outputs (PDFs, visualizations)
++-- audit/ docs/ pitch/ team/ context/ schedule/ modules/
++-- archive/                  # Legacy scripts + old probes (reference only)
 ```
+
+> Models live under `data/models/` by convention (locked champions + registry).
+> Root runners moved to `src/runs/` — launch them with `run src/runs/<name>`
+> after `cd`-ing to the repo root; each script sets its own paths.
 
 ## Key Files
 
