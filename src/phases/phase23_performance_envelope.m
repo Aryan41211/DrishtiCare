@@ -5,7 +5,7 @@ function phase23_performance_envelope()
 %   labelled operating points, plus a runtime-stationarity check (skew bound)
 %   and an in-process memory probe on one full inference.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot,'src')));
 

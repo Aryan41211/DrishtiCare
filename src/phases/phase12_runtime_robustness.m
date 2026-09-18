@@ -5,7 +5,7 @@ function phase12_runtime_robustness()
 %   silent wrong output. Re-runs the cascade and dashboard verifiers as a
 %   repeatability regression, and profiles per-image runtime.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

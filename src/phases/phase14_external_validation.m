@@ -13,7 +13,7 @@ function phase14_external_validation()
 %   locked val predictions (must reproduce frozen sens/spec), and (b) reports
 %   external validation as PENDING and NOT fabricated.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

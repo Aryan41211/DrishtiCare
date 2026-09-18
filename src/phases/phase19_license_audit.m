@@ -6,7 +6,7 @@ function phase19_license_audit()
 %   installed, and that no dataset images are redistributed under data/ outside
 %   the source datasets dirs.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot,'src')));
 

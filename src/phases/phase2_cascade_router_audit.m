@@ -14,7 +14,7 @@ function phase2_cascade_router_audit()
 %      ones it can trust (low error in CLEAR)?
 %   No retraining, no threshold changes, test set untouched.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

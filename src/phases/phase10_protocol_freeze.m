@@ -9,7 +9,7 @@ function phase10_protocol_freeze()
 %        must be evaluated with the frozen protocol against locked artifacts.
 %   The protocol is the contract policing every downstream claim.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 
@@ -34,8 +34,9 @@ evalScripts = {'re_verify_audit.m','re_audit_T13.m','verify_cascade.m', ...
 clean = true;
 detail = '';
 for si = 1:numel(evalScripts)
-    p = fullfile('src', evalScripts{si});
-    if ~exist(p,'file'), continue; end
+    hits = dir(fullfile('src','**',evalScripts{si}));
+    if isempty(hits), continue; end
+    p = fullfile(hits(1).folder, hits(1).name);
     txt = fileread(p);
     hit = '';
     for tj = 1:numel(trainCalls)

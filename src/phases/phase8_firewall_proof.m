@@ -15,7 +15,7 @@ function phase8_firewall_proof()
 %   distribution, not a true held-out generalization figure. The sealed
 %   official test set is the true held-out eval, untouched throughout.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

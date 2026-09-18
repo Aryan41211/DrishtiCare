@@ -6,7 +6,7 @@ function phase18_environment_pin()
 %   phase scripts, the default RNG, and that every eval-critical project
 %   function resolves from THIS repository (no shadowing by other versions).
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 
 auditRes = struct('check',{},'status',{},'measured',{},'expected',{},'note',{});

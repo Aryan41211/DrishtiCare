@@ -6,7 +6,7 @@ function phase25_final_capstone()
 %     - Rogue-file + manifest-drift dispositions (carried from P17/P20).
 %     - Final recommendation. P25 makes NO code/pipeline changes.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 
 fprintf('============================================================\n');

@@ -20,7 +20,7 @@ function phase9_ood_audit()
 %   unseen populations. OOD is a post-hoc flag, does not touch model weights
 %   and never alters decisions.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

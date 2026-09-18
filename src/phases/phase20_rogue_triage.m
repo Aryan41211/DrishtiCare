@@ -6,7 +6,7 @@ function phase20_rogue_triage()
 %   unreferenced by src, contain no training call-sites, contain no leaked
 %   model weights, and records a disposition decision for Phase 25.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot,'src')));
 

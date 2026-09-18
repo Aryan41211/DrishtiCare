@@ -20,7 +20,7 @@ function phase5_error_analysis()
 %   Each observed pattern is checked against the committed numbers to ensure
 %   the story is DATA-backed, not assumed.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

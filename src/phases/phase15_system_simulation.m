@@ -14,7 +14,7 @@ function phase15_system_simulation()
 %
 %   ENGINEERING discrete-event simulation, NOT a clinical operations claim.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

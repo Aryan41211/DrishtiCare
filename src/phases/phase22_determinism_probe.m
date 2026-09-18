@@ -9,7 +9,7 @@ function phase22_determinism_probe()
 %        global RNG state bit-identical (probes the entire reached call graph,
 %        including helpers not in the static list).
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot,'src')));
 

@@ -11,7 +11,7 @@ function phase4_stability_audit()
 %      print precision of the committed artifacts.
 %   No retraining, no cache writes, no test set access.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

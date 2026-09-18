@@ -23,7 +23,7 @@ function phase6_decision_lock()
 %   The sealed test set + external datasets (Messidor-2, Phases 14/16) are
 %   the held-out evidence.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

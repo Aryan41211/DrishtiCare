@@ -9,7 +9,7 @@ function phase11_pipeline_order_audit()
 %   Also reproduces (and fixes) the latent Branch B / cascade.detail
 %   concatenation crash, and exercises the quality-FAIL WITHHELD path.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

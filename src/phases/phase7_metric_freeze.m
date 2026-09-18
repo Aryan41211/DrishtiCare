@@ -19,7 +19,7 @@ function phase7_metric_freeze()
 %     bin sens       = TP/(TP+FN+eps); bin spec = TN/(TN+FP+eps)
 %     ROC-AUC / PR-AUC: perfcurve(posclass=true)
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

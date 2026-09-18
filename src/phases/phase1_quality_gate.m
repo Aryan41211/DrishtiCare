@@ -13,7 +13,7 @@ function phase1_quality_gate()
 %
 % Locked models / threshold 0.60 / sealed test set are NOT touched.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

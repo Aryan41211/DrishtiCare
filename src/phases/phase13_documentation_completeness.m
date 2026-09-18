@@ -4,7 +4,7 @@ function phase13_documentation_completeness()
 %   phases: disclaimer coverage, manifest completeness, tracker integrity,
 %   honest-negative markers, and cross-referenced artifact existence.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

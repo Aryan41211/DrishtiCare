@@ -9,7 +9,7 @@ function phase3_calibration_contract()
 %
 %   No re-training, no cache mutation, test set untouched.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 

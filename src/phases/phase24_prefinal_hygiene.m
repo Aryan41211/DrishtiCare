@@ -10,7 +10,7 @@ function phase24_prefinal_hygiene()
 %     4. README carries the research disclaimer.
 %     5. Phase artifacts present for 4..23 (P16 excluded: blocked).
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 
 auditRes = struct('check',{},'status',{},'measured',{},'expected',{},'note',{});

@@ -12,7 +12,7 @@ function phase17_model_immutability()
 %   Also captures a fresh full-program hash snapshot (JSON) so later programs
 %   can detect drift the same way.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 
 addpath(genpath(fullfile(projectRoot,'src')));

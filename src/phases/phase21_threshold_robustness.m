@@ -7,7 +7,7 @@ function phase21_threshold_robustness()
 %   threshold shift would cost in sensitivity/specificity and referral load.
 %   NO tuning: this is a disclosure, not an optimisation.
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot,'src')));
 
