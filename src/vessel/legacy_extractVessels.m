@@ -1,4 +1,8 @@
-function vessels = extractVessels(img)
+function vessels = legacy_extractVessels(img)
+% LEGACY - single-scale Otsu vessel extractor (Dice ~0.312, superseded).
+% Kept for audit provenance. Production code lives in extractVessels.m
+% (same folder). Renamed 18-Sep-2026 during src/ reorganization to end
+% the shadowing of the production version (see FINAL_DRISHTICARE_TECHNICAL_AUDIT P1).
 
 gray = im2double(rgb2gray(img));
 
