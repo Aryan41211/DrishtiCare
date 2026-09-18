@@ -2,7 +2,7 @@
 % Compares old scratch binary vs new pretrained binary on validation set
 % Plots overlaid PR curves, reports precision at locked threshold 0.60
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(projRoot,'src'), fullfile(projRoot,'src','grading'), fullfile(projRoot,'src','inference'));
 cd(projRoot);
 fprintf('=== TASK 3: PR-AUC REGRESSION INVESTIGATION ===\n\n');

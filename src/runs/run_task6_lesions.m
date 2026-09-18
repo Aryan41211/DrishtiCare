@@ -4,7 +4,7 @@
 % visual-inspection montages. Validation-only (IDRiD train); official
 % APTOS test set untouched.
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(projRoot,'src'), fullfile(projRoot,'src','lesions'));
 cd(projRoot);
 

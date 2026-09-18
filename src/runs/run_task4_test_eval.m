@@ -3,7 +3,7 @@
 % Uses day7_pretrained_resnet18_5class and day7_pretrained_resnet18_binary.
 % Binary threshold LOCKED at 0.60.
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(projRoot,'src'), fullfile(projRoot,'src','grading'), fullfile(projRoot,'src','inference'));
 cd(projRoot);
 

@@ -3,7 +3,7 @@
 % test.csv contains only id_code (no diagnosis column).
 % Therefore accuracy/F1/QWK/sens/spec/AUC/PR-AUC CANNOT be computed on test.
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 resFile = fullfile(projRoot, 'data', 'analysis', 'day8', 'test_evaluation.mat');
 d = load(resFile, 'results');
 results = d.results;

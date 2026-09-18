@@ -10,7 +10,7 @@
 RUN_VARIANT_B = false;
 RUN_VARIANT_C = false;
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(projRoot,'src'), fullfile(projRoot,'src','grading'), fullfile(projRoot,'src','inference'));
 cd(projRoot);
 

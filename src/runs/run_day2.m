@@ -28,7 +28,7 @@ function run_day2(mode)
 
     %% Setup paths
     script_dir = fileparts(mfilename('fullpath'));
-    project_root = fileparts(script_dir);
+    project_root = fileparts(fileparts(script_dir));
     cd(project_root);
 
     % Add source folders to path
