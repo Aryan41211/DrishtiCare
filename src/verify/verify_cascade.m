@@ -2,7 +2,7 @@
 %  Runs the router on representative synthetic cases to verify the band
 %  logic, then optionally on a handful of real APTOS training images.
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(genpath(fullfile(projRoot, 'src')));
 cd(projRoot);
 

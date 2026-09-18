@@ -3,7 +3,7 @@
 %  same 10 training images used in Task 6. Measures center error and radius
 %  vs. the OD segmentation masks. Validation-only; official test set untouched.
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(projRoot,'src','lesions'));
 cd(projRoot);
 

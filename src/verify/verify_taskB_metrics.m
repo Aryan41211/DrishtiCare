@@ -4,7 +4,7 @@
 % docs/day8/day8-task5-minority-recall.md. No training, no test set, no
 % threshold changes. CPU-light (loads two .mat files, arithmetic only).
 
-projRoot = fileparts(fileparts(mfilename('fullpath')));
+projRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 addpath(fullfile(projRoot,'src'));
 cd(projRoot);
 

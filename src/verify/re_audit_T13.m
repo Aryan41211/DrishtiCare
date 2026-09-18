@@ -22,7 +22,7 @@ fprintf('  TASK 13 - FINAL RE-AUDIT (extends Task 0)\n');
 fprintf('  Date: %s\n', datestr(now));
 fprintf('============================================================\n');
 
-projectRoot = fileparts(fileparts(mfilename('fullpath')));
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 cd(projectRoot);
 addpath(genpath(fullfile(projectRoot, 'src')));
 
