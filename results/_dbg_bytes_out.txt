@@ -1,0 +1,242 @@
+FILE: C:\projects\DrishtiCare\src\reporting\generateDrishtiReport.m
+SIZE: 10885 bytes
+PRINT_TO_PDF_NO_HEADER FOUND AT (1-based): 7509
+DUMP [7409..7609]:
+    7409  109  m
+    7410  100  d
+    7411   32   
+    7412   61  =
+    7413   32   
+    7414  115  s
+    7415  112  p
+    7416  114  r
+    7417  105  i
+    7418  110  n
+    7419  116  t
+    7420  102  f
+    7421   40  (
+    7422   39  '
+    7423   34  "
+    7424   37  %
+    7425  115  s
+    7426   34  "
+    7427   32   
+    7428   45  -
+    7429   45  -
+    7430  104  h
+    7431  101  e
+    7432   97  a
+    7433  100  d
+    7434  108  l
+    7435  101  e
+    7436  115  s
+    7437  115  s
+    7438   32   
+    7439   45  -
+    7440   45  -
+    7441  100  d
+    7442  105  i
+    7443  115  s
+    7444   97  a
+    7445   98  b
+    7446  108  l
+    7447  101  e
+    7448   45  -
+    7449  103  g
+    7450  112  p
+    7451  117  u
+    7452   32   
+    7453   45  -
+    7454   45  -
+    7455  110  n
+    7456  111  o
+    7457   45  -
+    7458  115  s
+    7459   97  a
+    7460  110  n
+    7461  100  d
+    7462   98  b
+    7463  111  o
+    7464  120  x
+    7465   32   
+    7466   39  '
+    7467   32   
+    7468   46  .
+    7469   46  .
+    7470   46  .
+    7471   10  <10>
+    7472   32   
+    7473   32   
+    7474   32   
+    7475   32   
+    7476   32   
+    7477   32   
+    7478   32   
+    7479   32   
+    7480   32   
+    7481   32   
+    7482   32   
+    7483   32   
+    7484   32   
+    7485   32   
+    7486   39  '
+    7487   45  -
+    7488   45  -
+    7489  112  p
+    7490  114  r
+    7491  105  i
+    7492  110  n
+    7493  116  t
+    7494   45  -
+    7495  116  t
+    7496  111  o
+    7497   45  -
+    7498  112  p
+    7499  100  d
+    7500  102  f
+    7501   61  =
+    7502   34  "
+    7503   37  %
+    7504  115  s
+    7505   34  "
+    7506   32   
+    7507   45  -
+    7508   45  -
+    7509  112  p
+    7510  114  r
+    7511  105  i
+    7512  110  n
+    7513  116  t
+    7514   45  -
+    7515  116  t
+    7516  111  o
+    7517   45  -
+    7518  112  p
+    7519  100  d
+    7520  102  f
+    7521   45  -
+    7522  110  n
+    7523  111  o
+    7524   45  -
+    7525  104  h
+    7526  101  e
+    7527   97  a
+    7528  100  d
+    7529  101  e
+    7530  114  r
+    7531   32   
+    7532   34  "
+    7533  102  f
+    7534  105  i
+    7535  108  l
+    7536  101  e
+    7537   58  :
+    7538   47  /
+    7539   47  /
+    7540   47  /
+    7541   37  %
+    7542  115  s
+    7543   34  "
+    7544   39  '
+    7545   44  ,
+    7546   32   
+    7547   46  .
+    7548   46  .
+    7549   46  .
+    7550   10  <10>
+    7551   32   
+    7552   32   
+    7553   32   
+    7554   32   
+    7555   32   
+    7556   32   
+    7557   32   
+    7558   32   
+    7559   32   
+    7560   32   
+    7561   32   
+    7562   32   
+    7563   32   
+    7564   32   
+    7565  101  e
+    7566  100  d
+    7567  103  g
+    7568  101  e
+    7569   44  ,
+    7570   32   
+    7571  112  p
+    7572  100  d
+    7573  102  f
+    7574   80  P
+    7575   97  a
+    7576  116  t
+    7577  104  h
+    7578   44  ,
+    7579   32   
+    7580  115  s
+    7581  116  t
+    7582  114  r
+    7583  114  r
+    7584  101  e
+    7585  112  p
+    7586   40  (
+    7587  104  h
+    7588  116  t
+    7589  109  m
+    7590  108  l
+    7591   80  P
+    7592   97  a
+    7593  116  t
+    7594  104  h
+    7595   44  ,
+    7596   32   
+    7597   39  '
+    7598   92  \
+    7599   39  '
+    7600   44  ,
+    7601   32   
+    7602   39  '
+    7603   47  /
+    7604   39  '
+    7605   41  )
+    7606   41  )
+    7607   59  ;
+    7608   10  <10>
+    7609  114  r
+
+FULL LINE HEX OF LINES 176..184:
+LINE 176 (len 35):
+25 20 68 65 61 64 6C 65 73 73 20 45 64 67 65 2F 43 68 72 6F 6D 65 20 70 72 69 6E 74 2D 74 6F 2D 70 64 66 
+LINE 177 (len 31):
+65 64 67 65 20 3D 20 6C 6F 63 61 74 65 48 65 61 64 6C 65 73 73 42 72 6F 77 73 65 72 28 29 3B 
+LINE 178 (len 74):
+61 73 73 65 72 74 28 7E 69 73 65 6D 70 74 79 28 65 64 67 65 29 2C 20 27 68 65 61 64 6C 65 73 73 20 45 64 67 65 2F 43 68 72 6F 6D 65 20 61 76 61 69 6C 61 62 6C 65 20 66 6F 72 20 50 44 46 20 66 61 6C 6C 62 61 63 6B 27 29 3B 
+LINE 179 (len 63):
+63 6D 64 20 3D 20 73 70 72 69 6E 74 66 28 27 22 25 73 22 20 2D 2D 68 65 61 64 6C 65 73 73 20 2D 2D 64 69 73 61 62 6C 65 2D 67 70 75 20 2D 2D 6E 6F 2D 73 61 6E 64 62 6F 78 20 27 20 2E 2E 2E 
+LINE 180 (len 78):
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 27 2D 2D 70 72 69 6E 74 2D 74 6F 2D 70 64 66 3D 22 25 73 22 20 2D 2D 70 72 69 6E 74 2D 74 6F 2D 70 64 66 2D 6E 6F 2D 68 65 61 64 65 72 20 22 66 69 6C 65 3A 2F 2F 2F 25 73 22 27 2C 20 2E 2E 2E 
+LINE 181 (len 57):
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 65 64 67 65 2C 20 70 64 66 50 61 74 68 2C 20 73 74 72 72 65 70 28 68 74 6D 6C 50 61 74 68 2C 20 27 5C 27 2C 20 27 2F 27 29 29 3B 
+LINE 182 (len 17):
+72 63 20 3D 20 73 79 73 74 65 6D 28 63 6D 64 29 3B 
+LINE 183 (len 49):
+61 73 73 65 72 74 28 72 63 20 3D 3D 20 30 2C 20 27 68 65 61 64 6C 65 73 73 20 62 72 6F 77 73 65 72 20 70 72 6F 64 75 63 65 64 20 50 44 46 27 29 3B 
+LINE 184 (len 47):
+64 65 6C 65 74 65 28 68 74 6D 6C 50 61 74 68 29 3B 20 25 20 63 6C 65 61 6E 20 74 68 65 20 69 6E 74 65 72 6D 65 64 69 61 74 65 20 48 54 4D 4C 
+
+CHECKCODE (string form):
+L 56 (C 12-18): 'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.
+L 56 (C 20-22): 'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.
+L 101 (C 21-26): Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+L 124 (C 21-26): Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+L 146 (C 13-21): LASTERR and LASTERROR are not recommended. Use an identifier on the CATCH block instead.
+L 180 (C 15-73): Parse error at ''--print-to-pdf="%s" --print-to-pdf-no-header "file:///%s"'': usage might be invalid MATLAB syntax.
+L 181 (C 15-18): Add a semicolon after the statement to hide the output (in a function).
+L 181 (C 21-27): Add a semicolon after the statement to hide the output (in a function).
+L 181 (C 56): Parse error at ')': usage might be invalid MATLAB syntax.
+L 252 (C 13-68): Parse error at '<div class="cell"><strong>%s</strong> %s</div></div>\n': usage might be invalid MATLAB syntax.
+L 253 (C 73): Parse error at ')': usage might be invalid MATLAB syntax.
+L 266 (C 53): Consider using newline, semicolon, or comma before this statement for readability.
+L 270 (C 29): Consider using newline, semicolon, or comma before this statement for readability.
+L 274 (C 19): Consider using newline, semicolon, or comma before this statement for readability.
+

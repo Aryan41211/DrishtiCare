@@ -1,0 +1,21 @@
+MATLAB VERSION: 26.1.0.3346908 (R2026a) Update 5
+
+CASE 1: standalone single-quoted string with double quotes
+  CODE: v = 'a"b%s"'; ||   CHECKCODE: PARSE-ERROR
+    L 0 (C 0): Invalid MATLAB file name. MATLAB file names must start with a letter, contain only letters, numbers, or underscores, and have no more than 2048 characters. / 
+
+CASE 2: cross-line char concat no double quotes
+  CODE: v = 'head --flag ' ... ||                 'tail %s'; ||   CHECKCODE: PARSE-ERROR
+    L 0 (C 0): Invalid MATLAB file name. MATLAB file names must start with a letter, contain only letters, numbers, or underscores, and have no more than 2048 characters. / L 2 (C 17-25): Parse error at ''tail %s'': usage might be invalid MATLAB syntax. / 
+
+CASE 3: cross-line char concat WITH double quotes (failing shape)
+  CODE: v = 'head --flag ' ... ||                 '--pdf="%s" file="file:///%s"'; ||   CHECKCODE: PARSE-ERROR
+    L 0 (C 0): Invalid MATLAB file name. MATLAB file names must start with a letter, contain only letters, numbers, or underscores, and have no more than 2048 characters. / L 2 (C 17-46): Parse error at ''--pdf="%s" file="file:///%s"'': usage might be invalid MATLAB syntax. / 
+
+CASE 4: same-line char with double quotes (no continuation)
+  CODE: v = 'head ' '--pdf="%s" file:///%s'; ||   CHECKCODE: PARSE-ERROR
+    L 0 (C 0): Invalid MATLAB file name. MATLAB file names must start with a letter, contain only letters, numbers, or underscores, and have no more than 2048 characters. / L 1 (C 13-35): Parse error at ''--pdf="%s" file:///%s'': usage might be invalid MATLAB syntax. / 
+
+CASE 5: new double-quoted string literal
+  CODE: v = "--pdf=\"%s\""; ||   CHECKCODE: PARSE-ERROR
+    L 0 (C 0): Invalid MATLAB file name. MATLAB file names must start with a letter, contain only letters, numbers, or underscores, and have no more than 2048 characters. / L 1 (C 3): Add a semicolon after the statement to hide the output (in a script). / 

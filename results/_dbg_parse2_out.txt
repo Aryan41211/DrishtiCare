@@ -1,0 +1,8 @@
+MATLAB VERSION: 26.1.0.3346908 (R2026a) Update 5
+CASE 1 (same-line adjacent char literals (classic auto-concat)): PARSE-ERROR
+    L 1 (C 10): Function return value might be unset. / L 2 (C 20-42): Parse error at ''--pdf="%s" file:///%s'': usage might be invalid MATLAB syntax. / 
+CASE 2 (cross-line continuation + adjacent char literal): PARSE-ERROR
+    L 1 (C 10): Function return value might be unset. / L 3 (C 17-39): Parse error at ''--pdf="%s" file:///%s'': usage might be invalid MATLAB syntax. / 
+CASE 3 (single char literal with %s and double quotes (no concat)): PARSE-OK
+CASE 4 (single char literal simple (baseline)): PARSE-ERROR
+    L 1 (C 10): Function return value might be unset. / L 1 (C 23): Parse error at '\': usage might be invalid MATLAB syntax. / L 1 (C 41): Parse error at '\': usage might be invalid MATLAB syntax. / 

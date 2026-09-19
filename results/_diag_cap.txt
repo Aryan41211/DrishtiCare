@@ -1,0 +1,4 @@
+ cd('C:\Users\aryan\AppData\Local\Temp\opencode'); try, _mirror_build; catch e, fprintf(1,'ID=%s\n', e.identifier); fprintf(1,'MSG=%s\n', e.message); for k=1:numel(e.stack), fprintf(1,'STACK %s:%d\n', e.stack(k).name, e.stack(k).line); end; end; disp('CAPTURE-DONE')
+                                                        ↑
+{Error: Invalid text character. Check for unsupported symbol, invisible character, or pasting of non-ASCII characters.
+} 

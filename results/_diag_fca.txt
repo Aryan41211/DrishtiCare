@@ -1,0 +1,3 @@
+{Error: File: C:\Users\aryan\AppData\Local\Temp\opencode\test_fca.m Line: 4 Column: 5
+Unexpected ''b''. Check for missing multiplication operator, missing or unbalanced delimiters, or other syntax error. To construct matrices, use brackets instead of parentheses.
+} 

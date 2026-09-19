@@ -1,0 +1,4 @@
+ cd('C:\Users\aryan\AppData\Local\Temp\opencode'); _mirror_build
+                                                   ↑
+{Error: Invalid text character. Check for unsupported symbol, invisible character, or pasting of non-ASCII characters.
+} 

@@ -1,0 +1,4 @@
+BASELINE: FAIL
+ERROR_ID: MATLAB:m_missing_operator
+ERROR_MSG: Error: File: C:\projects\DrishtiCare\src\reporting\generateDrishtiReport.m Line: 180 Column: 15
+Unexpected ''--print-to-pdf="%s" --print-to-pdf-no-header "file:///%s"''. Check for missing multiplication operator, missing or unbalanced delimiters, or other syntax error. To construct matrices, use brackets instead of parentheses.
