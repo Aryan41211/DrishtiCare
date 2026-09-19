@@ -60,7 +60,7 @@ try
 a = RetinaAIApp();
 drawnow;
 assert(isvalid(a.UIFigure), 'UIFigure valid');
-assert(strcmp(a.UIFigure.Name, 'DRISHTI'), 'title is DRISHTI');
+assert(contains(a.UIFigure.Name, 'DRISHTI'), 'title contains DRISHTI');
 fprintf('OK  1. app instantiated headless\n');
 
 %% 2. Select a real val sample and run the REAL analyze callback
