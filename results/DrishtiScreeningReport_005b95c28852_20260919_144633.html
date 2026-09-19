@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+body{font-family:Georgia,serif;color:#222;margin:36px;font-size:12px;}
+h1{color:#0b3d91;border-bottom:2px solid #0b3d91;font-size:20px;}
+h2{color:#0b3d91;font-size:15px;margin-top:18px;}
+.badge{display:inline-block;padding:3px 9px;border-radius:3px;font-weight:bold;}
+.green{background:#d8f0dc;color:#166534;}
+.red{background:#fde8e8;color:#b91c1c;}
+.verdict{font-size:15px;font-weight:bold;padding:8px;}
+.row{display:flex;}
+.cell{flex:1;}
+.footer{margin-top:30px;border-top:1px solid #ccc;padding-top:8px;font-size:9px;color:#666;}
+</style></head><body>
+<h1>DRISHTI \u2013 DR Screening Report</h1>
+<p><em>Patient ID: 005b95c28852 &mdash; ENGINEERING DEMO - NOT a clinical device.</em></p>
+<h2>1. Screening Summary</h2>
+<span class="badge green">Quality: PASS (0.65)</span>
+<div class="verdict green">NON-REFERABLE <span style="font-weight:normal">model score 1% (threshold 0.60)</span></div>
+<h2>2. Diabetic Retinopathy Grade</h2>
+<div class="row"><div class="cell"><strong>Grade</strong> 0 / 4</div><div class="cell"><strong>Stage</strong> NO DR</div></div>
+<h2>3. Image Quality Assessment</h2>
+<p><strong>Quality status:</strong> PASS (score 0.65)</p>
+<h2>4. Explainability (Grad-CAM)</h2>
+<p>Grad-CAM highlights the retinal regions that most influenced the model decision.</p>
+<h2>5. Recommendation</h2>
+<div class="verdict green">Referable DR: NON-REFERABLE <span style="font-weight:normal">model score 1% (threshold 0.60)</span></div>
+<div class="footer">This report was produced by an ENGINEERING DEMO screening prototype (DRISHTI). It is NOT a clinical device and must not be used alone to make treatment decisions. Always confirm with a qualified ophthalmologist.</div>
+</body></html>
