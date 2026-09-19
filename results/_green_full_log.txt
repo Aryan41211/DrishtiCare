@@ -1,0 +1,5 @@
+== DRISHTI professional PDF report verification ==
+86692 bytes written to file C:\projects\DrishtiCare\results\DrishtiScreeningReport_DRISHTI-0001_20260914_121323.pdf 
+OK  3. PDF artifact: C:\projects\DrishtiCare\results\DrishtiScreeningReport_DRISHTI-0001_20260914_121323.pdf (86692 bytes, engine=edge)
+86301 bytes written to file C:\projects\DrishtiCare\results\DrishtiScreeningReport_DRISHTI-0001_20260914_121410.pdf 
+GREEN-DONE

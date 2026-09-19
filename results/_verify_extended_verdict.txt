@@ -1,0 +1,14 @@
+VERDICT: PASS
+PDF_PATH: C:\projects\DrishtiCare\results\DrishtiScreeningReport_005b95c28852_20260919_173811.pdf
+PDF_BYTES: 86802
+PDF_HEADER: %PDF-1.4
+PDF_ENGINE: edge
+DECISION: NON-REFERABLE
+STATUS_LABEL: PDF saved (edge): DrishtiScreeningReport_005b95c28852_20260919_173811.pdf
+ENGINE_LABEL: PDF: Edge fallback
+SAMPLE: class_0/005b95c28852.png (NoDR)
+CALLBACKS_DRIVEN: analyzeCallback (ANALYZE ButtonPushedFcn) | displayReport (inside analyzeCallback -> displayResults) | savePdfReportCallback (Save PDF Report ButtonPushedFcn)
+CALLBACK_GAP: 
+BASELINE: verify_drishti_report(projectRoot)
+FAIL_STEP: 
+ERROR: 

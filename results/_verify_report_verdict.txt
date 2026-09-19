@@ -1,0 +1,5 @@
+VERDICT=PASS
+PDF=C:\projects\DrishtiCare\results\DrishtiScreeningReport_DRISHTI-0001_20260919_143400.pdf
+ENGINE=edge
+BYTES=86691
+HEADER=%PDF
