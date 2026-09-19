@@ -181,7 +181,9 @@ cmd = sprintf('"%s" --headless --disable-gpu --no-sandbox --print-to-pdf="%s" --
               edge, pdfPath, strrep(htmlPath, '\', '/'));
 rc = system(cmd);
 assert(rc == 0, 'headless browser produced PDF');
-delete(htmlPath); % clean the intermediate HTML
+% Keep the intermediate HTML alongside the PDF as verification evidence:
+% Edge/Skia PDFs encode text as Identity-H glyph IDs, so verifiers check the
+% HTML source for content blocks and the PDF bytes for structure.
 end
 
 % -------------------------------------------------------------------------

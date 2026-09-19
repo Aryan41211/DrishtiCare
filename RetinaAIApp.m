@@ -71,7 +71,12 @@ classdef RetinaAIApp < matlab.apps.AppBase
             else
                 app.ProjectRoot = fileparts(appRoot);
             end
-            addpath(genpath(app.ProjectRoot));
+            % Path: repo root plus the src tree ONLY. A repo-wide genpath would
+            % also pull in archive/ and host-managed worktrees (e.g.
+            % .kilo/worktrees/), whose stale function copies shadow the live
+            % src/ code and silently change app behavior.
+            addpath(app.ProjectRoot);
+            addpath(genpath(fullfile(app.ProjectRoot, 'src')));
             app.CurrentImagePath = '';
             app.CurrentResult = struct();
             createComponents(app);
