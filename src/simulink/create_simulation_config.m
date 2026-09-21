@@ -1,126 +1,196 @@
-% SIMULINK DISTRICT SCREENING SIMULATION CONFIGURATION
-% DrishtiCare - Engineering Resource Planning Simulation
-% This file defines ALL simulation inputs, clearly separating measured
-% project validation metrics from simulation assumptions.
-
-clear; clc;
-
-% ============================================================
-% SECTION 1: MEASURED INPUTS (from project validation artifacts)
-% ============================================================
+function create_simulation_config()
+% CREATE_SIMULATION_CONFIG  Central configuration for the DrishtiCare
+% district-level screening / resource-allocation simulation.
 %
-% Source: VERIFIED_RESULTS_SIMPLE.md (fresh-tested 17-Sep-2026, n=733 val)
-% Source: data/analysis/day7/day7_pretrained_resnet18_5class_referable_threshold.mat
-% Source: data/analysis/day7/day7_binary_calibration.mat
-
-measuredInputs = struct();
-
-% Binary screening metrics at fixed referral threshold 0.60
-% These are VALIDATED on held-out APTOS validation set (n=733)
-measuredInputs.sensitivity = 0.9060;      % 90.60% (270/298 referable correctly identified)
-measuredInputs.specificity = 0.9471;      % 94.71% (412/435 non-referable correctly identified)
-measuredInputs.referralThreshold = 0.60;  % Fixed, locked threshold
-
-% Threshold-specific metrics (VALIDATED from day7_pretrained_resnet18_5class_referable_threshold.mat)
-% These are MEASURED at each threshold on the validation set
-thresholdData = struct();
-thresholdData.thresholds    = [0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90];
-thresholdData.sensitivity   = [0.8115, 0.8019, 0.7891, 0.7891, 0.7827, 0.7764, 0.7732, 0.7636, 0.7604, 0.7540, 0.7412, 0.7380, 0.7284, 0.7252, 0.7061, 0.6933, 0.6805];
-thresholdData.specificity   = [0.8571, 0.8619, 0.8643, 0.8643, 0.8667, 0.8667, 0.8667, 0.8667, 0.8690, 0.8690, 0.8690, 0.8690, 0.8714, 0.8714, 0.8738, 0.8738, 0.8738];
-thresholdData.ppv           = [0.8089, 0.8123, 0.8125, 0.8125, 0.8140, 0.8127, 0.8121, 0.8102, 0.8123, 0.8110, 0.8084, 0.8077, 0.8085, 0.8078, 0.8066, 0.8037, 0.8008];
-thresholdData.f1            = [0.8102, 0.8071, 0.8006, 0.8006, 0.7980, 0.7941, 0.7921, 0.7862, 0.7855, 0.7815, 0.7733, 0.7713, 0.7664, 0.7643, 0.7530, 0.7444, 0.7358];
-
-measuredInputs.thresholdData = thresholdData;
-
-% Quality gate metrics (from VERIFIED_RESULTS_SIMPLE.md, 3,662 images)
-measuredInputs.qualityGate = struct();
-measuredInputs.qualityGate.passRate   = 0.655;  % PASS 65.5%
-measuredInputs.qualityGate.warningRate = 0.267; % WARNING 26.7%
-measuredInputs.qualityGate.failRate   = 0.078;  % FAIL 7.8%
-
-% ROC-AUC and PR-AUC (for reference)
-measuredInputs.rocAUC = 0.9796;
-measuredInputs.prAUC  = 0.7821;
-
-% Validation set size
-measuredInputs.validationN = 733;
-
-% ============================================================
-% SECTION 2: SIMULATION ASSUMPTIONS (explicitly labeled)
-% ============================================================
+%   ENGINEERING / RESOURCE-PLANNING SIMULATION - NOT clinical validation.
 %
-% These are ENGINEERING ASSUMPTIONS for resource planning.
-% They are NOT clinical measurements.
-% Each is clearly labeled with its assumption basis.
+%   This function does NOT hard-code model performance. It READS the
+%   project's saved, verified evaluation artifacts and derives the measured
+%   inputs from them:
+%     * data/analysis/day8/reverify_audit_T0.mat      (locked 733-val PRef)
+%     * data/analysis/day3/quality_assessment_summary.mat (quality gate, n=3662)
+%     * data/analysis/day10/phase21/phase21_threshold_robustness.mat
+%
+%   Threshold-specific sensitivity/specificity are COMPUTED from the saved
+%   locked validation probabilities (PRef) at each requested threshold, so no
+%   threshold operating point is invented.
+%
+%   The locked 0.60 threshold and the locked ResNet-18 models are NOT touched.
 
-simAssumptions = struct();
+projectRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+cd(projectRoot);
 
-% --- Annual volume ---
-simAssumptions.annualPatientVolume = 100000;    % patients/year
-simAssumptions.screeningDaysPerYear = 250;      % working days/year (assumption)
-simAssumptions.patientsPerDay = simAssumptions.annualPatientVolume / simAssumptions.screeningDaysPerYear;  % 400/day
+fprintf('============================================================\n');
+fprintf('  DRISHTICARE DISTRICT SCREENING - SIMULATION CONFIG\n');
+fprintf('  ENGINEERING / RESOURCE-PLANNING SIMULATION (not clinical)\n');
+fprintf('  Generated: %s\n', datestr(now));
+fprintf('============================================================\n');
+
+%% ============================================================
+%  SECTION 1: MEASURED INPUTS (derived from saved artifacts)
+%  ============================================================
+
+% ---- Locked binary screening operating point (threshold 0.60) ----
+auditFile = fullfile('data','analysis','day8','reverify_audit_T0.mat');
+assert(exist(auditFile,'file')==2, 'Missing locked validation artifact: %s', auditFile);
+A = load(auditFile);
+pRef   = A.PRef(:);          % saved P(referable) for the locked 733-val set
+yTrue5 = A.YTrue5(:);        % true 5-class labels (1-based)
+isRef  = yTrue5 >= 3;        % frozen definition: referable = 1-based label >= 3
+
+measured = struct();
+measured.sensitivity         = A.sens;                 % locked @0.60
+measured.specificity         = A.spec;                 % locked @0.60
+measured.referralThreshold   = 0.60;                   % locked
+measured.validationN         = numel(pRef);
+measured.rocAUC              = A.aucFresh;
+measured.prAUC               = A.praucFresh;
+measured.referableValCount   = sum(isRef);
+measured.nonReferableValCount= sum(~isRef);
+measured.sources = {
+    'data/analysis/day8/reverify_audit_T0.mat (locked 733-val PRef, YTrue5)'
+    'data/analysis/day3/quality_assessment_summary.mat (quality gate, n=3662)'
+    'data/analysis/day10/phase21/phase21_threshold_robustness.mat (0.55-0.65 sweep)'
+    };
+
+% ---- Threshold-specific metrics COMPUTED from saved PRef scores ----
+%   Option A of the task: use stored validation probabilities to calculate
+%   sensitivity/specificity at several thresholds. Nothing is fabricated.
+thresholds = [0.40 0.50 0.60 0.70 0.80];
+tSens = zeros(size(thresholds));
+tSpec = zeros(size(thresholds));
+tPPV  = zeros(size(thresholds));
+tRefs = zeros(size(thresholds));
+for i = 1:numel(thresholds)
+    dec = pRef >= thresholds(i);
+    tp = sum(dec &  isRef); fp = sum(dec & ~isRef);
+    fn = sum(~dec & isRef); tn = sum(~dec & ~isRef);
+    tSens(i) = tp / max(tp+fn, eps);
+    tSpec(i) = tn / max(tn+fp, eps);
+    tPPV(i)  = tp / max(tp+fp, eps);
+    tRefs(i) = sum(dec);
+end
+measured.thresholdData = struct( ...
+    'thresholds', thresholds, 'sensitivity', tSens, ...
+    'specificity', tSpec, 'ppv', tPPV, 'referrals', tRefs, ...
+    'n', numel(pRef), ...
+    'note', 'Computed from locked 733-val PRef; referable = YTrue5>=3.');
+
+% ---- Quality-gate metrics from the saved Day-3 assessment ----
+qFile = fullfile('data','analysis','day3','quality_assessment_summary.mat');
+assert(exist(qFile,'file')==2, 'Missing quality-gate artifact: %s', qFile);
+Q = load(qFile);
+qStatus = string(Q.summary.resultsTable.quality_status);
+measured.qualityGate = struct();
+measured.qualityGate.passRate    = mean(qStatus=="PASS");
+measured.qualityGate.warningRate = mean(qStatus=="WARNING");
+measured.qualityGate.failRate    = mean(qStatus=="FAIL");
+measured.qualityGate.n           = numel(qStatus);
+measured.qualityGate.source      = 'data/analysis/day3/quality_assessment_summary.mat';
+
+% ---- Cross-check the locked operating point against the saved PRef ----
+dec60 = pRef >= measured.referralThreshold;
+sens60 = sum(dec60 & isRef) / sum(isRef);
+spec60 = sum(~dec60 & ~isRef) / sum(~isRef);
+measured.thresholdReproducesFrozen = ...
+    abs(sens60 - measured.sensitivity) < 5e-4 && abs(spec60 - measured.specificity) < 5e-4;
+measured.recomputedSensAt060 = sens60;
+measured.recomputedSpecAt060 = spec60;
+
+%% ============================================================
+%  SECTION 2: SIMULATION ASSUMPTIONS (explicitly labeled)
+%  ============================================================
+
+assumptions = struct();
+
+% --- Screening volume ---
+assumptions.annualPatientVolume   = 100000;   % patients/year  (assumption)
+assumptions.screeningDaysPerYear  = 250;      % working days/year (assumption)
+assumptions.patientsPerDay        = assumptions.annualPatientVolume / assumptions.screeningDaysPerYear;
 
 % --- Disease prevalence ---
-% IMPORTANT: This is a SIMULATION ASSUMPTION, not measured prevalence.
-% The validation set has referable proportion = 298/733 = 40.6%.
-% Real-world screening populations may have different prevalence.
-simAssumptions.prevalence = 0.406;  % Simulation assumption - not measured clinical prevalence
-simAssumptions.prevalenceNote = 'Simulation assumption - not measured clinical prevalence. Based on APTOS validation set referable proportion (298/733=40.6%).';
+%   SIMULATION ASSUMPTION - not measured clinical prevalence.
+%   Default derived from the locked validation set referable proportion.
+assumptions.prevalence            = measured.referableValCount / measured.validationN;
+assumptions.prevalenceNote        = ...
+    'Simulation assumption - not measured clinical prevalence. Default = locked validation referable proportion (298/733).';
 
 % --- Specialist review capacity ---
-simAssumptions.specialistCasesPerDay = 20;      % cases/day per specialist (assumption)
-simAssumptions.numberOfSpecialists = 3;         % number of specialists (assumption)
-simAssumptions.totalSpecialistCapacityPerDay = simAssumptions.specialistCasesPerDay * simAssumptions.numberOfSpecialists;  % 60/day
+assumptions.specialistCasesPerDay = 20;       % cases/day per specialist (assumption)
+assumptions.numberOfSpecialists   = 3;        % specialists (assumption)
+assumptions.totalSpecialistCapacityPerDay = ...
+    assumptions.specialistCasesPerDay * assumptions.numberOfSpecialists;
 
-% --- Processing capacity ---
-simAssumptions.imagesPerHour = 60;              % AI screening throughput (assumption)
-simAssumptions.workingHoursPerDay = 8;          % hours/day (assumption)
-simAssumptions.dailyProcessingCapacity = simAssumptions.imagesPerHour * simAssumptions.workingHoursPerDay;  % 480/day
+% --- Screening / processing capacity ---
+assumptions.imagesPerHour         = 60;       % AI screening throughput (assumption)
+assumptions.workingHoursPerDay    = 8;        % hours/day (assumption)
+assumptions.dailyProcessingCapacity = ...
+    assumptions.imagesPerHour * assumptions.workingHoursPerDay;
 
 % --- Recapture ---
-simAssumptions.recaptureRate = 0.50;            % 50% of FAIL images recaptured (assumption)
+assumptions.recaptureRate         = 0.50;     % fraction of FAIL images recaptured (assumption)
 
-% --- Simulation time ---
-simAssumptions.simulationDays = 250;            % 1 year simulation
-simAssumptions.timeStepDays = 1;                % daily time step
+% --- Simulation time resolution ---
+assumptions.simulationDays        = 250;      % 1 year (assumption)
+assumptions.timeStepDays          = 1;        % daily aggregate time step
+assumptions.resolutionNote        = ...
+    'Daily aggregate (mean-field) flow model; counts are expected flows, not per-patient events.';
 
-% ============================================================
-% SECTION 3: DERIVED PARAMETERS
-% ============================================================
+assumptions.assumptionBasis = {
+    'annual volume, working days, processing capacity: engineering planning assumptions'
+    'specialist review capacity: engineering assumption, not a sourced staffing standard'
+    'prevalence: simulation assumption derived from validation set composition'
+    'recapture rate: engineering assumption'
+    };
 
-% Referable and non-referable patients per day (from prevalence)
-simAssumptions.referablePerDay = simAssumptions.patientsPerDay * simAssumptions.prevalence;
-simAssumptions.nonReferablePerDay = simAssumptions.patientsPerDay * (1 - simAssumptions.prevalence);
+%% ============================================================
+%  SECTION 3: PACKAGE + SAVE
+%  ============================================================
 
-% Quality gate flow
-simAssumptions.usableImagesPerDay = simAssumptions.patientsPerDay * (measuredInputs.qualityGate.passRate + measuredInputs.qualityGate.warningRate);
-simAssumptions.failImagesPerDay = simAssumptions.patientsPerDay * measuredInputs.qualityGate.failRate;
-simAssumptions.recapturedPerDay = simAssumptions.failImagesPerDay * simAssumptions.recaptureRate;
-
-% ============================================================
-% SAVE CONFIGURATION
-% ============================================================
 config = struct();
-config.measuredInputs = measuredInputs;
-config.simAssumptions = simAssumptions;
-config.generated = datetime('now');
-config.version = '1.0';
-config.description = 'DrishtiCare District Screening Resource Simulation Configuration';
+config.measuredInputs = measured;
+config.assumptions    = assumptions;
+config.generated      = datetime('now');
+config.version        = '2.0';
+config.label          = 'ENGINEERING / RESOURCE-PLANNING SIMULATION - NOT clinical validation';
+config.description    = 'DrishtiCare district screening resource simulation configuration';
 
-outDir = 'C:\projects\DrishtiCare\data\analysis\simulink_resource_simulation';
-if ~exist(outDir, 'dir')
-    mkdir(outDir);
+outDir = fullfile('data','analysis','simulink_resource_simulation');
+if ~exist(outDir,'dir'), mkdir(outDir); end
+save(fullfile(outDir,'simulation_config.mat'), 'config');
+
+%% ---- Report ----
+fprintf('\nMEASURED INPUTS (from saved artifacts)\n');
+fprintf('  Sensitivity @0.60     : %.4f  (%.2f%%)\n', measured.sensitivity, 100*measured.sensitivity);
+fprintf('  Specificity @0.60     : %.4f  (%.2f%%)\n', measured.specificity, 100*measured.specificity);
+fprintf('  Referral threshold    : %.2f (locked)\n', measured.referralThreshold);
+fprintf('  Validation population : %d\n', measured.validationN);
+fprintf('  ROC-AUC / PR-AUC      : %.4f / %.4f\n', measured.rocAUC, measured.prAUC);
+fprintf('  Quality gate (n=%d)  : PASS %.4f / WARN %.4f / FAIL %.4f\n', ...
+    measured.qualityGate.n, measured.qualityGate.passRate, ...
+    measured.qualityGate.warningRate, measured.qualityGate.failRate);
+fprintf('  Frozen @0.60 reproduced: %d (sens %.4f / spec %.4f)\n', ...
+    measured.thresholdReproducesFrozen, sens60, spec60);
+
+fprintf('\n  Threshold-specific metrics (computed from locked PRef):\n');
+fprintf('    t      sens     spec     ppv    referrals\n');
+for i = 1:numel(thresholds)
+    fprintf('    %.2f   %.4f   %.4f   %.4f   %4d\n', ...
+        thresholds(i), tSens(i), tSpec(i), tPPV(i), tRefs(i));
 end
-save(fullfile(outDir, 'simulation_config.mat'), 'config');
 
-fprintf('=== SIMULATION CONFIGURATION ===\n');
-fprintf('Measured Sensitivity: %.2f%%\n', measuredInputs.sensitivity * 100);
-fprintf('Measured Specificity: %.2f%%\n', measuredInputs.specificity * 100);
-fprintf('Referral Threshold: %.2f\n', measuredInputs.referralThreshold);
-fprintf('Annual Volume: %d patients/year\n', simAssumptions.annualPatientVolume);
-fprintf('Patients/Day: %.0f\n', simAssumptions.patientsPerDay);
-fprintf('Prevalence (assumption): %.1f%%\n', simAssumptions.prevalence * 100);
-fprintf('Specialist Capacity: %d cases/day (%d specialists x %d/day)\n', ...
-    simAssumptions.totalSpecialistCapacityPerDay, ...
-    simAssumptions.numberOfSpecialists, simAssumptions.specialistCasesPerDay);
-fprintf('Config saved to data/analysis/simulink_resource_simulation/simulation_config.mat\n');
+fprintf('\nSIMULATION ASSUMPTIONS (labeled)\n');
+fprintf('  Annual volume         : %d patients/year\n', assumptions.annualPatientVolume);
+fprintf('  Working days          : %d /year\n', assumptions.screeningDaysPerYear);
+fprintf('  Patients / day        : %.1f\n', assumptions.patientsPerDay);
+fprintf('  Prevalence (assump.)  : %.4f (%.2f%%)\n', assumptions.prevalence, 100*assumptions.prevalence);
+fprintf('  Specialist capacity   : %d cases/day (%d specialists x %d/day)\n', ...
+    assumptions.totalSpecialistCapacityPerDay, assumptions.numberOfSpecialists, ...
+    assumptions.specialistCasesPerDay);
+fprintf('  Processing capacity   : %d images/day\n', assumptions.dailyProcessingCapacity);
+fprintf('  Recapture rate        : %.2f\n', assumptions.recaptureRate);
+fprintf('  Simulation length     : %d days @ %d-day step\n', ...
+    assumptions.simulationDays, assumptions.timeStepDays);
+
+fprintf('\nConfig saved: %s\n', fullfile(outDir,'simulation_config.mat'));
+end

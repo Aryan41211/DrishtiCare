@@ -1,0 +1,11 @@
+id,label,annualVolume,threshold,sensitivity,specificity,metricsSource,annualAiScreened,annualReferrals,referralsPerDay,capPerDay,capNote,utilizationPct,specialistsRequired,reviewedAnnual,yearEndBacklog,peakQueue,flag
+A,"Baseline (t=0.60, 100k/yr)",100000,0.6,0.906,0.9471,measured @0.60 (locked),96081.4,38406.3,153.63,60,3 specialists x 20/day (assumption),100,7.68,15000,23406.3,23406.3,Specialist capacity exceeded
+B,"Lower threshold (t=0.50)",100000,0.5,0.9228,0.9425,measured @0.50 (from locked PRef),96081.4,39323.9,157.3,60,3 specialists x 20/day (assumption),100,7.86,15000,24323.9,24323.9,Specialist capacity exceeded
+C,"Higher threshold (t=0.70)",100000,0.7,0.8859,0.9517,measured @0.70 (from locked PRef),96081.4,37357.7,149.43,60,3 specialists x 20/day (assumption),100,7.47,15000,22357.7,22357.7,Specialist capacity exceeded
+D50,"Volume scaling 50k/yr",50000,0.6,0.906,0.9471,measured @0.60 (locked),48040.7,19203.2,76.81,60,3 specialists x 20/day (assumption),100,3.84,15000,4203.2,4203.2,Specialist capacity exceeded
+D100,"Volume scaling 100k/yr",100000,0.6,0.906,0.9471,measured @0.60 (locked),96081.4,38406.3,153.63,60,3 specialists x 20/day (assumption),100,7.68,15000,23406.3,23406.3,Specialist capacity exceeded
+D150,"Volume scaling 150k/yr",150000,0.6,0.906,0.9471,measured @0.60 (locked),144122.1,57609.5,230.44,60,3 specialists x 20/day (assumption),100,11.52,15000,42609.5,42609.5,Specialist capacity exceeded
+D200,"Volume scaling 200k/yr",200000,0.6,0.906,0.9471,measured @0.60 (locked),192162.8,76812.7,307.25,60,3 specialists x 20/day (assumption),100,15.36,15000,61812.7,61812.7,Specialist capacity exceeded
+E60,"Capacity 60/day",100000,0.6,0.906,0.9471,measured @0.60 (locked),96081.4,38406.3,153.63,60,3 specialists x 20/day (assumption),100,7.68,15000,23406.3,23406.3,Specialist capacity exceeded
+E120,"Capacity 120/day",100000,0.6,0.906,0.9471,measured @0.60 (locked),96081.4,38406.3,153.63,120,6 specialists x 20/day (assumption),100,7.68,30000,8406.3,8406.3,Specialist capacity exceeded
+E180,"Capacity 180/day",100000,0.6,0.906,0.9471,measured @0.60 (locked),96081.4,38406.3,153.63,180,9 specialists x 20/day (assumption),85.3,7.68,38406.3,0,0,Review capacity sufficient

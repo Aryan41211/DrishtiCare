@@ -27,6 +27,7 @@ data/DR_Training_Set/
 *.m~
 *.mlappinstall
 *.mlpkginstall
+*.slxc
 slprj/
 sccprj/
 
