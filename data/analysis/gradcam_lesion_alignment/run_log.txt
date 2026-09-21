@@ -1,0 +1,1216 @@
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:06:39
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+{Unrecognized function or variable 'sha256Hex'.
+
+Error in run_gradcam_lesion_alignment (line 76)
+shaBefore = sha256Hex(CONFIG.modelPath);
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:07:30
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Subscripted assignment between dissimilar structures.
+
+Error in audit_idrid_lesion_dataset (line 103)
+            pairs(end+1) = rec; %#ok<AGROW>
+            ^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:11:04
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Scalar structure required for this assignment.
+
+Error in audit_idrid_lesion_dataset (line 44)
+            rec.id    = id;
+            ^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:12:22
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Scalar structure required for this assignment.
+
+Error in audit_idrid_lesion_dataset (line 44)
+            rec.id    = id;
+            ^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:17:40
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Scalar structure required for this assignment.
+
+Error in audit_idrid_lesion_dataset (line 44)
+            rec.id    = id;
+            ^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:19:20
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Scalar structure required for this assignment.
+
+Error in audit_idrid_lesion_dataset (line 44)
+            rec.id    = id;
+            ^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:23:28
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Error using cell2struct
+Number of field names must match number of fields in new structure.
+
+Error in audit_idrid_lesion_dataset (line 108)
+    pairs = cell2struct(pairsCell, fieldnames(pairsCell{1}), 1);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:25:22
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in audit_idrid_lesion_dataset (line 136)
+    T = table({pairs.id}, {pairs.split}, arrayfun(@(p) p.imgW, pairs)', ...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:28:28
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in audit_idrid_lesion_dataset (line 143)
+    T = table({pairs.id}, {pairs.split}, arrayfun(@(p) p.imgW, pairs)', ...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:30:31
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+{Error using cellfun
+Input #2 expected to be a cell array, was struct instead.
+
+Error in audit_idrid_lesion_dataset (line 144)
+    maskExistsCell = cellfun(@(p) p.maskExists, pairs, 'UniformOutput', false);
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:31:41
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in audit_idrid_lesion_dataset (line 147)
+    T = table({pairs.id}, {pairs.split}, arrayfun(@(p) p.imgW, pairs)', ...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:33:06
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Error: File: C:\projects\DrishtiCare\src\analysis\gradcam_alignment\audit_idrid_lesion_dataset.m Line: 150 Column: 80
+Unmatched ')'. Check for missing '('.
+
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:34:02
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] pairs.id: [1 81]
+[DEBUG] pairs.split: [1 81]
+[DEBUG] imgW: [81 1]
+[DEBUG] imgH: [81 1]
+[DEBUG] pairs.status: [1 81]
+[DEBUG] pairs.skipReason: [1 81]
+[DEBUG] nLesionTypes: [81 1]
+[DEBUG] pairs.lesionTypes: [1 81]
+[DEBUG] hasAnyLesionPx: [81 1]
+[DEBUG] maskExistsCell: [1 81]
+[DEBUG] maskPxFullCell: [1 81]
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in audit_idrid_lesion_dataset (line 160)
+    T = table({pairs.id}, {pairs.split}, arrayfun(@(p) p.imgW, pairs)', ...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:35:38
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in audit_idrid_lesion_dataset (line 160)
+    T = table(idCol, splitCol, imgWCol, imgHCol, statusCol, skipReasonCol, ...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:36:48
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [1 81]
+[DEBUG] imgHCol: [1 81]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [1 81]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [1 81]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in audit_idrid_lesion_dataset (line 173)
+    T = table(idCol, splitCol, imgWCol, imgHCol, statusCol, skipReasonCol, ...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 82)
+[audit, pairs] = audit_idrid_lesion_dataset(projRoot, outDir);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:38:48
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+{Error using load
+Unable to read file "C:\projects\DrishtiCare\data\models\day7_pretrained_resnet18_5class_stage2.mat". Permission denied.
+
+Error in run_gradcam_lesion_alignment (line 89)
+S5 = load(CONFIG.modelPath, 'trainedNet');   % read-only load, like T6
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:40:34
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+{Error using load
+Unable to read file "C:\projects\DrishtiCare\data\models\day7_pretrained_resnet18_5class_stage2.mat". Permission denied.
+
+Error in run_gradcam_lesion_alignment (line 89)
+S5 = load(CONFIG.modelPath, 'trainedNet');   % read-only load, like T6
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:42:36
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+{Error using load
+Unable to read file "C:\projects\DrishtiCare\data\models\day7_pretrained_resnet18_5class_stage2.mat". Permission denied.
+
+Error in run_gradcam_lesion_alignment (line 90)
+S5 = load(CONFIG.modelPath, 'trainedNet');   % read-only load, like T6
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:44:34
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+{Error using load
+Unable to read file "C:\projects\DrishtiCare\data\models\day7_pretrained_resnet18_5class_stage2.mat". Permission denied.
+
+Error in run_gradcam_lesion_alignment (line 82)
+S5 = load(CONFIG.modelPath, 'trainedNet');   % read-only load, like T6
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:46:03
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+{No method 'java.lang.reflect.Array.newInstance' with matching signature found.
+
+Error in sha256Hex (line 10)
+    buffer = java.lang.reflect.Array.newInstance('byte', 8192);
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 76)
+shaBefore = sha256Hex(CONFIG.modelPath);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:48:18
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+{Error using javaArray
+No class byte can be located on the Java class path.
+
+Error in sha256Hex (line 10)
+    buffer = javaArray('byte', 8192);
+             ^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 76)
+shaBefore = sha256Hex(CONFIG.modelPath);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:50:06
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+{Error using assert
+Locked 5-class model SHA-256 does not match the baseline manifest! got=7F152C7F767F146F6D7F467F7F637F5E5F237E7F607F717F597F7F7F7F737C1B
+
+Error in run_gradcam_lesion_alignment (line 77)
+assert(strcmpi(shaBefore, CONFIG.expectedSha256), ...
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:51:05
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+{Error using javaArray
+No class byte can be located on the Java class path.
+
+Error in sha256Hex (line 25)
+        javaBytes = javaArray('byte', length(nRead));
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 76)
+shaBefore = sha256Hex(CONFIG.modelPath);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:54:27
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+{Error using assert
+Locked 5-class model SHA-256 does not match the baseline manifest! got=7F70587F2978657F28547F7F7F7F0F4A7F7F7F7F0C7F597F7F7F7F547F6C7F7F
+
+Error in run_gradcam_lesion_alignment (line 77)
+assert(strcmpi(shaBefore, CONFIG.expectedSha256), ...
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:56:53
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+{Unrecognized function or variable 'newRec'.
+
+Error in blankRecord (line 3)
+    rec = newRec(p);
+    ^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 121)
+        rec = blankRecord(pairs(pi), CONFIG);
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 01:58:29
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [ERROR] IDRiD_01: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_02: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_03: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_04: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_05: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_06: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_07: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_08: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_09: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_10: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_11: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_12: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_13: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_14: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_15: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_16: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_17: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_18: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_19: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_20: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_21: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_22: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_23: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_24: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_25: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_26: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_27: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_28: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_29: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_30: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_31: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_32: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_33: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_34: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_35: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_36: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_37: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_38: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_39: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_40: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_41: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_42: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_43: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_44: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_45: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_46: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_47: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_48: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_49: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_50: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_51: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_52: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_53: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_54: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_55: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_56: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_57: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_58: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_59: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_60: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_61: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_62: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_63: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_64: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_65: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_66: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_67: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_68: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_69: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_70: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_71: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_72: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_73: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_74: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_75: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_76: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_77: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_78: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_79: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_80: Not enough input arguments. (logged; evaluation continues)
+  [ERROR] IDRiD_81: Not enough input arguments. (logged; evaluation continues)
+{Error using save
+Unknown command option.
+
+Error in run_gradcam_lesion_alignment (line 141)
+save(fullfile(outDir, 'results_checkpoint.mat'), 'perImage', 'CONFIG', 'v', '-v');
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:00:02
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (65.6 s)
+{The logical indices contain a true value outside of the array bounds.
+
+Error in run_gradcam_lesion_alignment (line 159)
+        arrayfun(@(r) r.massIn(t),      recs(selT)), ...
+                                        ^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:02:37
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (60.7 s)
+{The logical indices contain a true value outside of the array bounds.
+
+Error in run_gradcam_lesion_alignment (line 160)
+        arrayfun(@(r) r.massIn(t),      recs(selT)), ...
+                                        ^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:04:29
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (60.2 s)
+{The logical indices contain a true value outside of the array bounds.
+
+Error in run_gradcam_lesion_alignment (line 162)
+        arrayfun(@(r) r.massIn(t),      recs(selT)), ...
+                                        ^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:06:39
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (62.6 s)
+
+===== CORRECT-vs-INCORRECT =====
+IDRiD segmentation images (IDRiD_01..IDRiD_81) are a distinct image set from the IDRiD Disease-Grading set (IDRiD_001..IDRiD_413 / 001..103). No 5-class DR grade labels exist for the segmentation images (verified in this run: the grading label CSVs contain zero two-digit image names), so an exact correct-vs-incorrect 5-class split is NOT computable. A clearly-labelled referable-DR PROXY split (GT = any lesion present, from real annotations) is reported instead. Consistent with the Day-8 T6 finding (docs/validation/2026-09-08-task6-gradcam.md).
+Proxy confusion (GT=any lesion): TP=72 FN=9 FP=0 TN=0
+[FIG] sanity check IDRiD_73
+[FIG] sanity check IDRiD_11
+[FIG] sanity check IDRiD_43
+[FIG] sanity check IDRiD_59
+[FIG] sanity check IDRiD_30
+[FIG] example IDRiD_17 (best_alignment)
+[FIG] example IDRiD_15 (worst_alignment)
+[FIG] example IDRiD_49 (median_alignment)
+[FIG] example IDRiD_10 (proxy_correct_random)
+[FIG] example IDRiD_41 (proxy_incorrect_random)
+{Error using table (line 57)
+All table variables must have the same number of rows.
+
+Error in run_gradcam_lesion_alignment (line 265)
+T = table(ids, splits, paths, rowStatus, lesionTypesCol, predLbl, predIdx, ...
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:09:24
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (58.8 s)
+
+===== CORRECT-vs-INCORRECT =====
+IDRiD segmentation images (IDRiD_01..IDRiD_81) are a distinct image set from the IDRiD Disease-Grading set (IDRiD_001..IDRiD_413 / 001..103). No 5-class DR grade labels exist for the segmentation images (verified in this run: the grading label CSVs contain zero two-digit image names), so an exact correct-vs-incorrect 5-class split is NOT computable. A clearly-labelled referable-DR PROXY split (GT = any lesion present, from real annotations) is reported instead. Consistent with the Day-8 T6 finding (docs/validation/2026-09-08-task6-gradcam.md).
+Proxy confusion (GT=any lesion): TP=72 FN=9 FP=0 TN=0
+[FIG] sanity check IDRiD_73
+[FIG] sanity check IDRiD_11
+[FIG] sanity check IDRiD_43
+[FIG] sanity check IDRiD_59
+[FIG] sanity check IDRiD_30
+[FIG] example IDRiD_17 (best_alignment)
+[FIG] example IDRiD_15 (worst_alignment)
+[FIG] example IDRiD_49 (median_alignment)
+[FIG] example IDRiD_10 (proxy_correct_random)
+[FIG] example IDRiD_41 (proxy_incorrect_random)
+{Error using '
+Too many input arguments.
+
+Error in run_gradcam_lesion_alignment (line 252)
+proxyOk  = double([recs.proxyPredictionCorrect'])';
+                                              ^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:12:27
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (58.8 s)
+
+===== CORRECT-vs-INCORRECT =====
+IDRiD segmentation images (IDRiD_01..IDRiD_81) are a distinct image set from the IDRiD Disease-Grading set (IDRiD_001..IDRiD_413 / 001..103). No 5-class DR grade labels exist for the segmentation images (verified in this run: the grading label CSVs contain zero two-digit image names), so an exact correct-vs-incorrect 5-class split is NOT computable. A clearly-labelled referable-DR PROXY split (GT = any lesion present, from real annotations) is reported instead. Consistent with the Day-8 T6 finding (docs/validation/2026-09-08-task6-gradcam.md).
+Proxy confusion (GT=any lesion): TP=72 FN=9 FP=0 TN=0
+[FIG] sanity check IDRiD_73
+[FIG] sanity check IDRiD_11
+[FIG] sanity check IDRiD_43
+[FIG] sanity check IDRiD_59
+[FIG] sanity check IDRiD_30
+[FIG] example IDRiD_17 (best_alignment)
+[FIG] example IDRiD_15 (worst_alignment)
+[FIG] example IDRiD_49 (median_alignment)
+[FIG] example IDRiD_10 (proxy_correct_random)
+[FIG] example IDRiD_41 (proxy_incorrect_random)
+[SAVE] per_image_results.csv + gradcam_lesion_alignment.mat
+[CHECK] all sanity assertions passed
+{Intermediate dot '.' indexing produced a comma-separated list with 5 values, but it must produce a single value when followed by
+subsequent indexing operations.
+
+Error in writeReport (line 25)
+    fprintf(fid, '- **Grad-CAM layer**: %s\n', R.config.featLayer);
+                                               ^^^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 329)
+writeReport(R, outDir);
+^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:16:13
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (62.0 s)
+
+===== CORRECT-vs-INCORRECT =====
+IDRiD segmentation images (IDRiD_01..IDRiD_81) are a distinct image set from the IDRiD Disease-Grading set (IDRiD_001..IDRiD_413 / 001..103). No 5-class DR grade labels exist for the segmentation images (verified in this run: the grading label CSVs contain zero two-digit image names), so an exact correct-vs-incorrect 5-class split is NOT computable. A clearly-labelled referable-DR PROXY split (GT = any lesion present, from real annotations) is reported instead. Consistent with the Day-8 T6 finding (docs/validation/2026-09-08-task6-gradcam.md).
+Proxy confusion (GT=any lesion): TP=72 FN=9 FP=0 TN=0
+[FIG] sanity check IDRiD_73
+[FIG] sanity check IDRiD_11
+[FIG] sanity check IDRiD_43
+[FIG] sanity check IDRiD_59
+[FIG] sanity check IDRiD_30
+[FIG] example IDRiD_17 (best_alignment)
+[FIG] example IDRiD_15 (worst_alignment)
+[FIG] example IDRiD_49 (median_alignment)
+[FIG] example IDRiD_10 (proxy_correct_random)
+[FIG] example IDRiD_41 (proxy_incorrect_random)
+[SAVE] per_image_results.csv + gradcam_lesion_alignment.mat
+[CHECK] all sanity assertions passed
+{Brace indexing is not supported for variables of type char.
+
+Error in writeReport (line 159)
+        fprintf(fid, '- %s\n', R.sanityIds{i});
+                               ^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 329)
+writeReport(R, outDir);
+^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:19:02
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (57.6 s)
+
+===== CORRECT-vs-INCORRECT =====
+IDRiD segmentation images (IDRiD_01..IDRiD_81) are a distinct image set from the IDRiD Disease-Grading set (IDRiD_001..IDRiD_413 / 001..103). No 5-class DR grade labels exist for the segmentation images (verified in this run: the grading label CSVs contain zero two-digit image names), so an exact correct-vs-incorrect 5-class split is NOT computable. A clearly-labelled referable-DR PROXY split (GT = any lesion present, from real annotations) is reported instead. Consistent with the Day-8 T6 finding (docs/validation/2026-09-08-task6-gradcam.md).
+Proxy confusion (GT=any lesion): TP=72 FN=9 FP=0 TN=0
+[FIG] sanity check IDRiD_73
+[FIG] sanity check IDRiD_11
+[FIG] sanity check IDRiD_43
+[FIG] sanity check IDRiD_59
+[FIG] sanity check IDRiD_30
+[FIG] example IDRiD_17 (best_alignment)
+[FIG] example IDRiD_15 (worst_alignment)
+[FIG] example IDRiD_49 (median_alignment)
+[FIG] example IDRiD_10 (proxy_correct_random)
+[FIG] example IDRiD_41 (proxy_incorrect_random)
+[SAVE] per_image_results.csv + gradcam_lesion_alignment.mat
+[CHECK] all sanity assertions passed
+{Unrecognized field name "expectedAttnPx".
+
+Error in writeReport (line 172)
+    fprintf(fid, '3. Attention region size fixed at %d px for all images\n', R.expectedAttnPx);
+                                                                             ^^^^^^^^^^^^^^^^
+Error in run_gradcam_lesion_alignment (line 329)
+writeReport(R, outDir);
+^^^^^^^^^^^^^^^^^^^^^^
+Error in run (line 100)
+evalin('caller', strcat(scriptStem, ';'));
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+============================================================
+  DRISHTICARE GRAD-CAM LESION ALIGNMENT (offline, CPU)
+  Date: 21-Sep-2026 02:21:12
+============================================================
+[ENV] Deep Learning Toolbox 26.1
+[ENV] built-in gradCAM present; feature layer fixed to res5b_relu
+[INTEGRITY] model SHA-256 pre-run OK (DD152C917689146F...)
+[MODEL] input 224x224x3, layer res5b_relu, classes: class_0, class_1, class_2, class_3, class_4 -> grades [0 1 2 3 4]
+[MODEL] attention region (primary rule): top 20% of pixels = 10036 px
+[DEBUG] pairs size: [1 81]
+[DEBUG] pairs fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] first element fields: id, split, imagePath, status, skipReason, imgH, imgW, lesionTypes, nLesionTypes, hasAnyLesionPx, maskPaths, maskExists, maskReadable, maskDimsMatch, maskPxFull
+[DEBUG] idCol: [81 1]
+[DEBUG] splitCol: [81 1]
+[DEBUG] imgWCol: [81 1]
+[DEBUG] imgHCol: [81 1]
+[DEBUG] statusCol: [81 1]
+[DEBUG] skipReasonCol: [81 1]
+[DEBUG] nLesionTypesCol: [81 1]
+[DEBUG] lesionTypesCol: [81 1]
+[DEBUG] hasAnyLesionPxCol: [81 1]
+[DEBUG] maskExistsCol: [81 1]
+[DEBUG] maskPxFullCol: [81 1]
+[AUDIT] candidates=81 valid=81 skipped=0 (train=54 test=27)
+[DATA] evaluating 81 valid pairs (81 candidates, 0 skipped with reasons)
+[PLAN] sanity-check images: IDRiD_73, IDRiD_11, IDRiD_43, IDRiD_59, IDRiD_30
+  [10/81] IDRiD_10 pred=Severe        p=0.563 | any-lesion: mass=0.166 pt=0 iou=0.209
+  [20/81] IDRiD_20 pred=Moderate      p=1.000 | any-lesion: mass=0.037 pt=0 iou=0.063
+  [30/81] IDRiD_30 pred=Moderate      p=0.838 | any-lesion: mass=0.005 pt=0 iou=0.006
+  [40/81] IDRiD_40 pred=Mild          p=0.987 | any-lesion: mass=0.002 pt=0 iou=0.002
+  [50/81] IDRiD_50 pred=Proliferative p=0.927 | any-lesion: mass=0.020 pt=0 iou=0.013
+  [60/81] IDRiD_60 pred=Moderate      p=0.998 | any-lesion: mass=0.012 pt=0 iou=0.010
+  [70/81] IDRiD_70 pred=Moderate      p=0.668 | any-lesion: mass=0.017 pt=0 iou=0.012
+  [80/81] IDRiD_80 pred=Mild          p=1.000 | any-lesion: mass=0.001 pt=0 iou=0.001
+  [81/81] IDRiD_81 pred=Moderate      p=0.992 | any-lesion: mass=0.030 pt=0 iou=0.009
+[RUN] scored=81 errors=0 (59.0 s)
+
+===== CORRECT-vs-INCORRECT =====
+IDRiD segmentation images (IDRiD_01..IDRiD_81) are a distinct image set from the IDRiD Disease-Grading set (IDRiD_001..IDRiD_413 / 001..103). No 5-class DR grade labels exist for the segmentation images (verified in this run: the grading label CSVs contain zero two-digit image names), so an exact correct-vs-incorrect 5-class split is NOT computable. A clearly-labelled referable-DR PROXY split (GT = any lesion present, from real annotations) is reported instead. Consistent with the Day-8 T6 finding (docs/validation/2026-09-08-task6-gradcam.md).
+Proxy confusion (GT=any lesion): TP=72 FN=9 FP=0 TN=0
+[FIG] sanity check IDRiD_73
+[FIG] sanity check IDRiD_11
+[FIG] sanity check IDRiD_43
+[FIG] sanity check IDRiD_59
+[FIG] sanity check IDRiD_30
+[FIG] example IDRiD_17 (best_alignment)
+[FIG] example IDRiD_15 (worst_alignment)
+[FIG] example IDRiD_49 (median_alignment)
+[FIG] example IDRiD_10 (proxy_correct_random)
+[FIG] example IDRiD_41 (proxy_incorrect_random)
+[SAVE] per_image_results.csv + gradcam_lesion_alignment.mat
+[CHECK] all sanity assertions passed
+[REPORT] C:\projects\DrishtiCare\data\analysis\gradcam_lesion_alignment\README.md
+
+========================================
+DRISHTICARE GRAD-CAM LESION ALIGNMENT
+========================================
+Model:
+  Day-7 pretrained ResNet-18 5-class (LOCKED, SHA-256 verified)
+Evaluation images:
+  81 valid lesion-mask pairs (train 54 / test 27), scored 81, errors 0
+Grad-CAM layer:
+  res5b_relu
+Attention threshold:
+  Top 20% of pixels by activation (fixed a priori)
+Overall (any lesion, n=81):
+  Saliency mass in lesion: 3.1%
+  Pointing-game accuracy:  7.4%
+  Mean IoU:                0.035
+MA (n=81):  mass 0.1% / point 1.2% / IoU 0.002
+HE (n=80):  mass 1.3% / point 1.2% / IoU 0.013
+EX (n=81):  mass 1.4% / point 4.9% / IoU 0.019
+SE (n=40):  mass 0.5% / point 0.0% / IoU 0.006
+Proxy-correct predictions (n=72):
+  Saliency mass = 3.4%, Pointing = 8.3%, IoU = 0.039
+Proxy-incorrect predictions (n=9):
+  Saliency mass = 0.3%, Pointing = 0.0%, IoU = 0.002
+Exact 5-class correct/incorrect split: NOT COMPUTABLE (no IDRiD grades
+for the segmentation set - see README for the proxy definition)
+Outputs: C:\projects\DrishtiCare\data\analysis\gradcam_lesion_alignment
+Runtime: 97.5 s
+========================================
