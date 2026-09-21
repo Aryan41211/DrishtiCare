@@ -1,0 +1,11 @@
+id,role,available,classFolder,fileName,relPath,expectedQuality,reasonCategory,selectionRule
+case_pass_referable,pass_referable,1,class_2,77f69c7ff324.png,class_2\77f69c7ff324.png,PASS,,"PASS quality, true grade class_2..4"
+case_pass_nodr,pass_nodr,1,class_0,a7673ac44509.png,class_0\a7673ac44509.png,PASS,,"PASS quality, true grade class_0"
+case_warning,warning,1,class_0,cffc50047828.png,class_0\cffc50047828.png,WARNING,Uneven Illumination,"WARNING overall, illumination check WARNING"
+case_fail_blur,fail_blur,1,class_1,cae51154e1ce.png,class_1\cae51154e1ce.png,FAIL,Blur,"FAIL overall, focus check FAIL (lowest focus score)"
+case_fail_dark,fail_dark,1,class_0,d91635f380b4.png,class_0\d91635f380b4.png,FAIL,Underexposure,"FAIL overall, brightness below lowerFail (underexposed)"
+case_fail_bright,fail_bright,1,class_2,4ed31cc07366.png,class_2\4ed31cc07366.png,FAIL,Overexposure,"FAIL overall, brightness above upperFail (overexposed)"
+case_fail_illumination,fail_illumination,1,class_3,913490237ad4.png,class_3\913490237ad4.png,FAIL,Uneven Illumination,"FAIL overall, illumination check FAIL (most extreme)"
+case_fail_fov,fail_fov,1,class_0,ccd6dcb2f568.png,class_0\ccd6dcb2f568.png,FAIL,Low Foreground,"FAIL overall, foreground check FAIL (lowest foreground)"
+case_fail_contrast,fail_contrast,1,class_2,e65a2ff90494.png,class_2\e65a2ff90494.png,FAIL,Low Contrast,"FAIL overall, contrast check FAIL (lowest contrast)"
+case_fail_mask,fail_mask,0,,,,FAIL,Mask Failure,"FAIL overall, mask validity check FAIL"

@@ -661,7 +661,7 @@
             [qres, qmet] = app.assessQualityForDisplay();
             displayQualityRows(app, r, qres, qmet);
             if isfield(r, 'binaryDecision') && startsWith(r.binaryDecision, 'WITHHELD')
-                displayWithheld(app, r);
+                displayWithheld(app, r, qres);
                 return;
             end
             displayGradeRows(app, r);
@@ -765,7 +765,10 @@
             end
         end
 
-        function displayWithheld(app, r)
+        function displayWithheld(app, r, qres)
+            if nargin < 3
+                qres = struct('overall', '', 'checks', {});
+            end
             app.SeverityValue.Text = '—';
             app.IcdrValue.Text = '— / 4';
             app.ReferableValue.Text = '—';
@@ -787,6 +790,26 @@
             lines{end+1} = 'Failure reasons:';
             for k = 1:numel(r.qualityFailureReasons)
                 lines{end+1} = [' - ' r.qualityFailureReasons{k}];
+            end
+            lines{end+1} = '';
+            lines{end+1} = 'AI GRADING: SKIPPED (model stack not executed)';
+            lines{end+1} = '';
+            lines{end+1} = 'Threshold detail:';
+            try
+                det = quality_failure_detail(qres.checks);
+                if isempty(det)
+                    lines{end+1} = ' - (no per-metric detail available)';
+                end
+                for k = 1:numel(det)
+                    if isfinite(det(k).threshold)
+                        lines{end+1} = sprintf(' - %s = %.4g  (bound %s = %.4g)', ...
+                            det(k).metric, det(k).value, det(k).bound, det(k).threshold);
+                    else
+                        lines{end+1} = sprintf(' - %s: %s', det(k).metric, det(k).status);
+                    end
+                end
+            catch
+                lines{end+1} = ' - (no per-metric detail available)';
             end
             lines{end+1} = '';
             lines{end+1} = ['Recapture advice: ' r.qualityRecaptureAdvice];

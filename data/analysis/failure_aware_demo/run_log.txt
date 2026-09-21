@@ -1,0 +1,24 @@
+==== DrishtiCare failure-aware demo ====
+started: 2026-09-21 19:48:51
+projectRoot: C:\projects\DrishtiCare
+quality config version: 2.0.0 (Prototype - NOT clinically validated)
+binary model SHA-256: 43E8DF33B429231EE5BD60A775FDB3629AD81F287617AFAA9308EA87D311F9A0
+5-class model SHA-256: DD152C917689146F6DEC4687B263EC5E5F237ECF60EC719A59F9FCEEFF737C1B
+cases loaded: 10 (9 available)
+PASS  case_pass_referable    -> grade 4 Proliferative  P(ref)=1.000 -> REFERABLE (route CLEAR, 13.4s)
+PASS  case_pass_nodr         -> grade 0 No DR          P(ref)=0.000 -> NON-REFERABLE (route REVIEW, 6.4s)
+WARNING case_warning           -> grade 0 No DR          P(ref)=0.000 -> NON-REFERABLE (route CLEAR, 1.4s)
+FAIL  case_fail_blur         -> AI GRADING SKIPPED (Image is too dark. Consider retaking with better illumination. | Image has very low contrast. Lesions may be hard to detect. | Image appears blurry. Please retake with steady camera.)
+FAIL  case_fail_dark         -> AI GRADING SKIPPED (Image is too dark. Consider retaking with better illumination. | Image has very low contrast. Lesions may be hard to detect. | Image appears blurry. Please retake with steady camera. | Insufficient retinal area visible. Adjust camera position.)
+FAIL  case_fail_bright       -> AI GRADING SKIPPED (Image is overexposed. Consider retaking with reduced flash. | Image has unusual sharpness. May contain noise or artifacts.)
+FAIL  case_fail_illumination -> AI GRADING SKIPPED (Image has unusually high contrast. May indicate artifacts. | Unusually large foreground. May include non-retinal tissue. | Uneven illumination (center brighter than edges, vignetting).)
+FAIL  case_fail_fov          -> AI GRADING SKIPPED (Image is too dark. Consider retaking with better illumination. | Insufficient retinal area visible. Adjust camera position. | Uneven illumination (center brighter than edges, vignetting).)
+FAIL  case_fail_contrast     -> AI GRADING SKIPPED (Image has very low contrast. Lesions may be hard to detect.)
+SKIP (no natural example): case_fail_mask
+inference executed on 3 of 9 available cases.
+audit log -> C:\projects\DrishtiCare\data\analysis\failure_aware_demo\audit_log.csv
+models unchanged: 1
+figures written to C:\projects\DrishtiCare\data\analysis\failure_aware_demo\figures
+results -> C:\projects\DrishtiCare\data\analysis\failure_aware_demo\demo_results.mat
+done: 2026-09-21 19:49:28
+==== end ====
