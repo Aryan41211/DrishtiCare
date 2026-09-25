@@ -2,7 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Upgrade `src/dashboard/RetinaAIApp.m` into the judge-ready DRISHTI screening demo (DRISHTI header, 4-view explainability, BORDERLINE mapping, WITHHELD reject path, report+PNG, checkpoint).
+**Goal:** Upgrade `RetinaAIApp.m` (repo root) into the judge-ready DRISHTI screening demo (DRISHTI header, 4-view explainability, BORDERLINE mapping, WITHHELD reject path, report+PNG, checkpoint).
+
+> *Path correction, 2026-09-25: this plan originally said
+> `src/dashboard/RetinaAIApp.m`. The commit that added this plan (`4560f4b`)
+> **also renamed the file to the repo root** (`src/dashboard/RetinaAIApp.m =>
+> RetinaAIApp.m`), so every step below that names the old path is corrected
+> inline. `src/dashboard/verify_retinaai.m` is unaffected and still exists.*
+
 
 **Architecture:** Thin AppBase front-end calling only `predictSingleFundus()`; new view-cache state + switch buttons; `verify_retinaai.m` extended first (RED) then implementation (GREEN); checkpoint saver script writes `results/V2_DrishtiApp_checkpoint.mat`.
 
@@ -86,7 +93,7 @@ git commit -m "test(retinaai): DRISHTI title, judge-terms badge, 4-view buttons,
 ### Task 2: GREEN — upgrade RetinaAIApp.m to the DRISHTI demo
 
 **Files:**
-- Modify: `src/dashboard/RetinaAIApp.m`
+- Modify: `RetinaAIApp.m` *(repo root — was `src/dashboard/RetinaAIApp.m`; renamed in `4560f4b`)*
 
 **Interfaces:**
 - Consumes: `predictSingleFundus` fields listed in spec §3; `enhanceImage` output via pipeline `enhanced` display variable (recompute locally with `enhanceImage(raw)` for the Enhanced view — display only, never fed back to the model).
@@ -129,7 +136,7 @@ Expected: `ALL RETINA-AI APP CHECKS PASS` with new OK lines.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/dashboard/RetinaAIApp.m
+git add RetinaAIApp.m
 git commit -m "feat(retinaai): DRISHTI judge demo - 4-view explanation, judge-terms quality, WITHHELD reject path"
 ```
 
@@ -187,7 +194,7 @@ git commit -m "chore(retinaai): V2 DRISHTI app checkpoint"
 Run: `matlab -batch` snippet calling `predictSingleFundus` on the three images with the app's exact flags.
 Expected: PASS→grade+REVIEW/CLEAR route; WARNING→grade+BORDERLINE badge data; FAIL→WITHHELD.
 
-- [ ] **Step 2: Document .mlapp packaging** in plan execution notes (not code): open desktop MATLAB → `appdesigner('src/dashboard/RetinaAIApp.m')` → Save As `src/dashboard/RetinaAIApp.mlapp`. The `.m` remains source of truth.
+- [x] **Step 2: Choose and document the packaging path** (superseded 2026-09-25). The original step read: *"Document `.mlapp` packaging … open desktop MATLAB → `appdesigner('src/dashboard/RetinaAIApp.m')` → Save As `src/dashboard/RetinaAIApp.mlapp`. The `.m` remains source of truth."* **That path was not taken and the step is closed as superseded, not as unticked:** as of 2026-09-25 the repo contains **zero `.mlapp` files** (`Get-ChildItem -Recurse -Filter *.mlapp` → 0 hits), so leaving the checkbox open would have left a step that could never be completed. The packaging actually shipped is the **class file at the repo root plus the launcher**: `RetinaAIApp.m` (1,430 lines, `matlab.apps.AppBase`, the single source of truth) run via `launchRetinaAI.m`, which `addpath`s the root and `src/` recursively and instantiates the class. No App Designer Save-As step, no `.mlapp` artifact.
 
 - [ ] **Step 3: Commit launcher string**
 

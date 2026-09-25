@@ -7,8 +7,16 @@ lesion evidence) on one fundus image.
 
 ```matlab
 cd('C:\projects\DrishtiCare')
-addpath('src','src/setup','src/quality','src/enhancement','src/grading','src/inference','src/lesions','src/explainability','src/ood_detection','src/cascade_router')
+addpath('src','src/setup','src/quality','src/enhancement','src/grading','src/inference','src/lesions','src/explainability','src/ood_detection','src/calibration')
 ```
+
+> **Path note:** the cascade router is `src/inference/cascade_router.m`, i.e. it
+> ships inside `src/inference/` — there is **no** `src/cascade_router/`
+> directory (an earlier version of this doc listed one). `src/calibration` is
+> listed for `temperatureScale`. In practice `predictSingleFundus` also
+> `addpath`s `src/ood_detection`, `src/inference`, `src/calibration` and
+> `src/lesions` itself, so the explicit list above is mainly needed for
+> `demoSingleImage`.
 
 ## Demo
 
@@ -17,9 +25,28 @@ demoSingleImage("C:\path\to\fundus.jpg")
 ```
 
 This prints quality, referable probability/decision (threshold 0.60),
-grade with confidence, and shows a 2-row explanation figure with panels:
-original | enhanced | Grad-CAM // lesion evidence | decision metrics |
-explanation narrative.
+grade with confidence, and shows a 2-row explanation figure. The figure is a
+2×3 grid of six panels — top row: **original fundus | enhanced / model input |
+Grad-CAM (pred. class N)**; bottom row: **lesion evidence | decision metrics |
+explanation narrative**.
+(`src/inference/predictSingleFundus.m` still builds this figure with
+`subplot(2,3,1..6)`, so this description is current as of 2026-09-25.)
+
+Note that the **primary written deliverable is now a branded A4 PDF**, not the
+on-screen figure. The DRISHTI app writes one via
+`src/reporting/generateDrishtiReport.m`, which takes the *same* `result` struct
+and lays it out as six numbered sections — 1. Screening Summary · 2. Diabetic
+Retinopathy Grade · 3. Image Quality Assessment · 4. Visual Evidence
+(Grad-CAM) · 5. Interpretation · 6. Recommendation — under
+`results/DrishtiScreeningReport_<patientID>_<yyyyMMdd_HHmmss>.pdf`. Its Visual
+Evidence block renders the original, the Grad-CAM overlay and the heatmap
+through the shared `src/ui/renderGradCAMViews.m`, so the app and the PDF use
+one colormap and one blending policy. It picks its engine in two tiers —
+`mlreportgen.pdf.Document` if that toolbox is licensed, otherwise headless
+Edge/Chrome HTML→PDF — and it degrades gracefully: a missing image, an absent
+Grad-CAM map or a fixture cell omits the Visual Evidence block rather than
+failing the export. From the app, press **Save PDF Report**; headlessly, call
+`generateDrishtiReport(result, 'PatientID', 'DRISHTI-0001')`.
 
 The decision-metrics panel also reports the out-of-distribution (OOD)
 status (Mahalanobis distance vs. a 99th-percentile threshold on training

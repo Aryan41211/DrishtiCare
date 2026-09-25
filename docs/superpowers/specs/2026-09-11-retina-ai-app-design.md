@@ -9,9 +9,18 @@ Date: 2026-09-11 | Status: approved + implemented 2026-09-11 | Owner: SIH 26038 
 ## 1. Goal
 
 Upgrade the existing programmatic App Designer front-end
-(`src/dashboard/RetinaAIApp.m`, `matlab.apps.AppBase`) into a
+(`RetinaAIApp.m` at the **repo root**, `matlab.apps.AppBase`) into a
 judge-ready RETINA-AI screening demo. No ML pipeline rebuild: the app
 is a thin caller of `predictSingleFundus()` (`src/inference/`).
+
+> *Path correction, 2026-09-25: this spec named the class
+> `src/dashboard/RetinaAIApp.m`. In the very same commit that added this spec
+> (`4560f4b`, 2026-09-13) the file was **relocated to the repo root** as
+> `RetinaAIApp.m` (git records it as a rename:
+> `src/dashboard/RetinaAIApp.m => RetinaAIApp.m`), so the path below was stale
+> from the moment it was written. `src/dashboard/` holds the separate 5-tab
+> `DRScreeningDashboard.m` plus the verifiers. `launchRetinaAI.m` is the
+> launcher and is also at the root.*
 
 ## 2. Non-goals
 
@@ -93,15 +102,26 @@ populates axes, FAIL short-circuit yields WITHHELD + no grade,
 report `.txt` content, checkpoint file non-zero. Run:
 `matlab -batch "run('src/dashboard/verify_retinaai.m')"`.
 Manual judge-flow rehearsal on ≥3 real val images (one per quality
-status) on desktop MATLAB + App Designer Save-As to
-`src/dashboard/RetinaAIApp.mlapp`.
+status) on desktop MATLAB. Packaging path: the class is a plain `.m` file
+at the repo root (`RetinaAIApp.m`) launched via `launchRetinaAI.m`; that
+`.m` file is the source of truth. **No `.mlapp` is produced** — the
+App Designer Save-As step described in the original spec was dropped
+rather than ticked, because as of 2026-09-25 the repo contains **zero**
+`.mlapp` files and a class-file launcher is the path actually taken.
 
 ## 8. Checkpoint (MATLAB Drive / repo source of truth)
 
-`results/V2_RetinaAIApp_checkpoint.mat` containing: app config
+`results/V2_DrishtiApp_checkpoint.mat` containing: app config
 (threshold 0.60, SkipModelOnFail, layer res5b_relu), quality config
 version, model file paths, timestamp, verification log. Verified
 non-zero after save.
+
+> *Path correction, 2026-09-25: this spec originally named
+> `results/V2_RetinaAIApp_checkpoint.mat`. The file the saver
+> (`src/dashboard/save_drishti_checkpoint.m`) actually writes — and the
+> file that exists — is `results/V2_DrishtiApp_checkpoint.mat` (14,008
+> bytes). The name follows the DRISHTI display-name decision, per plan
+> Task 3.*
 
 ## 9. Self-review
 

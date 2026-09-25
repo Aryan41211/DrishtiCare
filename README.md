@@ -40,11 +40,14 @@ Sep 12 -- INTERNAL ROUND
 
 ```
 DrishtiCare/
-+-- RetinaAIApp.m             # Screening app (user-facing entry point)
++-- RetinaAIApp.m             # USER-FACING APP CLASS — at the REPO ROOT, not
++-- │                          #   under src/ (matlab.apps.AppBase, 1430 lines).
++-- │                          #   Launch via launchRetinaAI.m; it is a thin
++-- │                          #   caller of predictSingleFundus.
 +-- launchRetinaAI.m          # App launcher: run this in MATLAB
 +-- roadmap-10day.md          # Master roadmap
 +-- src/
-+-- ├── runs/                 # Runnable scripts: pipeline, eval, smoke tests
++-- ├── runs/                 # Runnable eval + smoke-test scripts
 +-- │                          (`run src/runs/runSmokeTest` from repo root)
 +-- ├── phases/               # Day-10 system audits (phase1..phase25)
 +-- ├── verify/               # Independent evaluators + re-verification
@@ -57,16 +60,32 @@ DrishtiCare/
 +-- ├── inference/            # Single-image inference + cascade router
 +-- ├── calibration/          # Temperature scaling (T=2.5382)
 +-- ├── ood_detection/        # Mahalanobis OOD detector
-+-- ├── dashboard/            # Dashboard app code
-+-- ├── reporting/            # PDF screening reports
++-- ├── ui/                   # Shared presentation layer: drishtiTheme,
++-- │                          #   drishtiColormap, gradcamColorbarStrip,
++-- │                          #   renderGradCAMViews (used by BOTH the app
++-- │                          #   and the PDF report)
++-- ├── demo/                 # Failure-aware end-to-end screening demo
++-- │                          #   (quality FAIL never reaches the AI stage)
++-- │                          #   + tests/ contract suite
++-- ├── analysis/             # Grad-CAM alignment analysis helpers
++-- │                          #   (gradcam_alignment/)
++-- ├── dashboard/            # App Designer 5-tab dashboard (DRScreeningDashboard)
++-- │                          #   + headless verifiers / visual-QA harness.
++-- │                          #   NOTE: the user-facing app class is
++-- │                          #   RetinaAIApp.m at the ROOT, not here.
++-- ├── reporting/            # PDF screening reports (branded A4, 2-tier engine)
 +-- ├── data_loaders/         # Dataset loading + splits
 +-- ├── setup/                # Day-1 setup utilities
-+-- └── simulink/             # Simulink workflow model (.slx)
++-- └── simulink/             # District screening & resource-allocation model
++--                              #   DrishtiCare_DistrictScreening.slx + build
++--                              #   script + reference engine
 +-- data/
 +-- ├── aptos2019/ idrid/ drive/ drimdb/   # Datasets (git-ignored, local only)
 +-- ├── models/               # Locked champion weights (convention: kept here)
 +-- ├── splits/               # 2929 train / 733 val (seed 42)
 +-- └── analysis/             # Metrics + audit evidence (committed)
++--                              #   e.g. simulink_resource_simulation/,
++--                              #        failure_aware_demo/
 +-- results/                  # Demo outputs (PDFs, visualizations)
 +-- audit/ docs/ pitch/ team/ context/ schedule/ modules/
 +-- archive/                  # Legacy scripts + old probes (reference only)
@@ -75,11 +94,24 @@ DrishtiCare/
 > Models live under `data/models/` by convention (locked champions + registry).
 > Root runners moved to `src/runs/` — launch them with `run src/runs/<name>`
 > after `cd`-ing to the repo root; each script sets its own paths.
+>
+> **Launch the app:** run `launchRetinaAI.m` from the repo root (it adds the root
+> plus `src/` recursively to the path and instantiates `RetinaAIApp`).
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
+| [launchRetinaAI.m](launchRetinaAI.m) | **Start the screening app** — launcher wrapper (adds paths, instantiates the class) |
+| [RetinaAIApp.m](RetinaAIApp.m) | The user-facing screening app class (repo root, `matlab.apps.AppBase`) — DRISHTI dashboard |
+| [src/inference/predictSingleFundus.m](src/inference/predictSingleFundus.m) | Single-image pipeline: quality → grade → referable → route (caller behind the app) |
+| [src/reporting/generateDrishtiReport.m](src/reporting/generateDrishtiReport.m) | Branded A4 PDF screening report (visual evidence; `mlreportgen` → headless Edge) |
+| [src/simulink/DrishtiCare_DistrictScreening.slx](src/simulink/DrishtiCare_DistrictScreening.slx) | Simulink district screening & resource-allocation model (`.slx` + build script) |
+| [data/analysis/simulink_resource_simulation/README.md](data/analysis/simulink_resource_simulation/README.md) | Simulation method, measured inputs, labelled assumptions, scenario results, limitations |
+| [src/demo/run_failure_aware_demo.m](src/demo/run_failure_aware_demo.m) | Failure-aware end-to-end demo (quality FAIL never reaches the AI stage) |
+| [src/ui/drishtiTheme.m](src/ui/drishtiTheme.m) | Shared theme: one source of truth for app + report colours and Grad-CAM rendering |
+| [docs/task-tracker.md](docs/task-tracker.md) | Per-task status, evidence paths and honest negative results |
+| [docs/validation/metrics.md](docs/validation/metrics.md) | Frozen metric definitions and headline numbers |
 | [roadmap-10day.md](roadmap-10day.md) | Master roadmap with navigation |
 | [context/goals-internal-round.md](context/goals-internal-round.md) | What we're delivering Sep 12 |
 | [team/roles.md](team/roles.md) | Who does what |
