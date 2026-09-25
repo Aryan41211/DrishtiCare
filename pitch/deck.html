@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DrishtiCare &mdash; Smart India Hackathon 2026 &mdash; National Screening Stage</title>
+<style>
+@page { size: 1280px 720px; margin: 0; }
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: #ffffff;
+  color: #1B2430;
+  font-family: "Segoe UI", Calibri, "Helvetica Neue", Arial, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 44px 56px 46px;
+  overflow: hidden;
+  background: #ffffff;
+  page-break-after: always;
+  break-after: page;
+}
+.slide:last-child { page-break-after: auto; break-after: auto; }
+
+/* ---------- shared typography ---------- */
+.eyebrow {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 2.1px;
+  text-transform: uppercase; color: #7C8B9A;
+}
+.stitle {
+  font-size: 33px; font-weight: 600; letter-spacing: -0.4px;
+  color: #0F2A4A; margin: 7px 0 0; line-height: 1.16;
+}
+.stitle .lite { color: #5A6B7C; font-weight: 400; }
+.rule { width: 62px; height: 3px; background: #0F2A4A; margin-top: 15px; }
+.lede {
+  font-size: 15.5px; line-height: 1.52; color: #40505F;
+  margin: 14px 0 0; max-width: 1000px;
+}
+.body { font-size: 14px; line-height: 1.5; color: #40505F; }
+.muted { color: #7C8B9A; }
+.tiny { font-size: 11px; line-height: 1.45; color: #7C8B9A; }
+.mono { font-family: Consolas, "SF Mono", Menlo, monospace; }
+
+.foot {
+  position: absolute; left: 56px; right: 56px; bottom: 18px;
+  border-top: 1px solid #E4E9EE; padding-top: 7px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  font-size: 9.5px; line-height: 1.4; color: #97A5B2;
+}
+.foot .disc { color: #8C6A22; max-width: 900px; }
+.foot .pg { font-weight: 600; color: #7C8B9A; padding-left: 14px; white-space: nowrap; }
+
+/* ---------- title slide ---------- */
+.title-slide { padding: 0; }
+.title-band {
+  height: 430px; background: #0F2A4A; color: #ffffff;
+  padding: 74px 72px 0; position: relative; overflow: hidden;
+}
+.title-band::after {
+  content: ""; position: absolute; right: -120px; top: -120px;
+  width: 460px; height: 460px; border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 50%;
+}
+.title-band::before {
+  content: ""; position: absolute; right: 40px; top: 40px;
+  width: 300px; height: 300px; border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 50%;
+}
+.t-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 2.6px; text-transform: uppercase; color: #8FB3D9; }
+.t-name { font-size: 74px; font-weight: 600; letter-spacing: -2px; margin: 20px 0 0; line-height: 1; }
+.t-tag { font-size: 21px; font-weight: 400; color: #C7D8EA; margin: 20px 0 0; max-width: 830px; line-height: 1.42; }
+.t-rule { width: 84px; height: 3px; background: #4E8FC4; margin-top: 28px; }
+.t-meta {
+  background: #ffffff; padding: 34px 72px 0; display: flex; gap: 56px;
+}
+.t-meta .cell { min-width: 0; }
+.t-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: 1.7px; text-transform: uppercase; color: #97A5B2; }
+.t-meta .v { font-size: 16px; color: #0F2A4A; font-weight: 600; margin-top: 7px; }
+.t-meta .v.id { font-size: 16px; color: #A9700B; letter-spacing: 1px; }
+.t-strip {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 46px;
+  background: #F4F7FA; border-top: 1px solid #E4E9EE;
+  display: flex; align-items: center; padding: 0 72px;
+  font-size: 11px; color: #8C6A22; letter-spacing: 0.2px;
+}
+
+/* ---------- generic panels ---------- */
+.panel { background: #F6F8FA; border: 1px solid #E4E9EE; border-radius: 5px; padding: 16px 18px; }
+.panel-h {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase;
+  color: #5A6B7C; margin-bottom: 10px;
+}
+.panel.warn { background: #FDF8EC; border-color: #EBDDBB; }
+.panel.warn .panel-h { color: #8C6A22; }
+.panel.cool { background: #F1F6F9; border-color: #D8E3EB; }
+.panel.cool .panel-h { color: #1D4370; }
+
+.cols { display: flex; gap: 26px; }
+.col { flex: 1; min-width: 0; }
+
+/* ---------- lists ---------- */
+ul.clean { list-style: none; margin: 0; padding: 0; }
+ul.clean li {
+  position: relative; padding-left: 16px; margin-bottom: 9px;
+  font-size: 13.5px; line-height: 1.46; color: #40505F;
+}
+ul.clean li:last-child { margin-bottom: 0; }
+ul.clean li::before {
+  content: ""; position: absolute; left: 0; top: 8px;
+  width: 5px; height: 5px; background: #1D4370; border-radius: 1px;
+}
+ul.clean.amber li::before { background: #A9700B; }
+ul.clean.teal li::before { background: #10656D; }
+
+/* ---------- figures ---------- */
+figure { margin: 0; }
+figure img { display: block; width: 100%; height: auto; border: 1px solid #DDE3E9; border-radius: 3px; }
+figcaption { font-size: 10.5px; line-height: 1.35; color: #7C8B9A; margin-top: 6px; }
+.shot { border: 1px solid #C9D2DB; border-radius: 3px; padding: 4px; background: #ffffff; }
+.shot img { border: none; }
+
+/* ---------- workflow ---------- */
+.flow { display: flex; align-items: stretch; gap: 0; }
+.fbox {
+  flex: 1; background: #ffffff; border: 1.5px solid #1D4370; border-radius: 4px;
+  padding: 11px 9px; text-align: center;
+}
+.fbox.gate { background: #0F2A4A; border-color: #0F2A4A; }
+.fbox.gate .fn { color: #ffffff; }
+.fbox.gate .fs { color: #A8C4DE; }
+.fbox.hold { background: #FBEFEF; border-color: #9B2226; }
+.fbox.hold .fn { color: #9B2226; }
+.fbox.hold .fs { color: #A96A6C; }
+.fbox.hold2 { background: #FDF8EC; border-color: #A9700B; }
+.fbox.hold2 .fn { color: #8C6A22; }
+.fbox.hold2 .fs { color: #A99055; }
+.fbox .fn { font-size: 13px; font-weight: 700; color: #0F2A4A; letter-spacing: 0.2px; }
+.fbox .fs { font-size: 10.5px; color: #7C8B9A; margin-top: 4px; line-height: 1.3; }
+.fsep { width: 17px; display: flex; align-items: center; justify-content: center; color: #AEBAC5; font-size: 15px; flex: none; }
+.fbranch { display: flex; align-items: center; gap: 0; margin-top: 12px; }
+.fbranch .stub { width: 86px; height: 1px; background: #C9A0A2; flex: none; }
+
+/* ---------- stat tiles ---------- */
+.tiles { display: flex; gap: 12px; }
+.tile {
+  flex: 1; background: #F6F8FA; border: 1px solid #E4E9EE; border-radius: 4px;
+  padding: 12px 10px 11px; text-align: center;
+}
+.tile .v { font-size: 25px; font-weight: 600; color: #0F2A4A; letter-spacing: -0.6px; line-height: 1; }
+.tile .k { font-size: 10px; color: #7C8B9A; margin-top: 7px; letter-spacing: 0.5px; line-height: 1.25; }
+.tile.hero { background: #0F2A4A; border-color: #0F2A4A; }
+.tile.hero .v { color: #ffffff; }
+.tile.hero .k { color: #A8C4DE; }
+.tile.warnv .v { color: #8C6A22; }
+
+.kv { display: flex; gap: 10px; }
+.kv .cell {
+  flex: 1; background: #ffffff; border: 1px solid #E4E9EE; border-radius: 4px; padding: 9px 11px;
+}
+.kv .k { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: #97A5B2; font-weight: 700; }
+.kv .v { font-size: 16px; font-weight: 600; color: #0F2A4A; margin-top: 4px; }
+
+/* ---------- tables ---------- */
+table.t { width: 100%; border-collapse: collapse; }
+table.t th {
+  text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.3px;
+  text-transform: uppercase; color: #5A6B7C;
+  padding: 0 10px 7px 0; border-bottom: 1.5px solid #0F2A4A;
+}
+table.t td {
+  font-size: 12.5px; line-height: 1.42; color: #40505F;
+  padding: 8px 10px 8px 0; border-bottom: 1px solid #E9EDF1; vertical-align: top;
+}
+table.t td:first-child { color: #1B2430; font-weight: 600; }
+table.t tr:last-child td { border-bottom: none; }
+table.t td.num { font-family: Consolas, Menlo, monospace; font-size: 12px; white-space: nowrap; color: #0F2A4A; font-weight: 600; }
+table.t td.flag { color: #8C6A22; font-weight: 600; white-space: nowrap; }
+table.t.dense td { padding: 6px 10px 6px 0; font-size: 12px; }
+table.t.dense td:first-child { font-size: 12.5px; }
+
+.tag {
+  display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 2px;
+}
+.tag.built { background: #E7F1F1; color: #10656D; }
+.tag.block { background: #FBF0DC; color: #8C6A22; }
+.tag.meas { background: #E8EEF4; color: #1D4370; }
+.tag.no { background: #FBEFEF; color: #9B2226; }
+
+/* ---------- built / planned ---------- */
+.bp { display: flex; gap: 20px; }
+.bpcol { flex: 1; min-width: 0; }
+.bphead {
+  display: flex; align-items: center; gap: 9px; padding-bottom: 9px;
+  border-bottom: 1.5px solid #0F2A4A; margin-bottom: 12px;
+}
+.bphead .n { font-size: 14px; font-weight: 700; color: #0F2A4A; letter-spacing: 0.2px; }
+.bphead .c { font-size: 10px; color: #7C8B9A; margin-left: auto; letter-spacing: 0.4px; }
+.bpcol.warn .bphead { border-bottom-color: #A9700B; }
+.bpcol.warn .bphead .n { color: #8C6A22; }
+.irow { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px dotted #E4E9EE; }
+.irow:last-child { border-bottom: none; }
+.irow .bar { width: 3px; background: #10656D; flex: none; border-radius: 2px; }
+.irow.warn .bar { background: #A9700B; }
+.irow .txt { font-size: 12.5px; line-height: 1.4; color: #40505F; }
+.irow .txt b { color: #1B2430; font-weight: 600; }
+.irow .own { font-size: 10.5px; color: #8C6A22; margin-top: 2px; }
+
+/* ---------- sources ---------- */
+.src { font-size: 10.5px; line-height: 1.42; color: #7C8B9A; margin-top: 8px; }
+.stat-block { border-left: 3px solid #1D4370; padding-left: 14px; }
+.stat-block.amber { border-left-color: #A9700B; }
+.stat-block .big { font-size: 25px; font-weight: 600; color: #0F2A4A; letter-spacing: -0.5px; line-height: 1.1; }
+.stat-block .say { font-size: 12.5px; line-height: 1.45; color: #40505F; margin-top: 7px; }
+.stat-block .cite {
+  font-size: 10px; line-height: 1.4; color: #8C8C8C; margin-top: 7px;
+  padding-top: 6px; border-top: 1px dotted #DDE3E9;
+}
+.stat-block .prov { font-size: 9.5px; letter-spacing: 0.8px; text-transform: uppercase; color: #A9700B; margin-top: 6px; font-weight: 700; }
+
+.note {
+  background: #FDF8EC; border-left: 3px solid #A9700B; border-radius: 0 3px 3px 0;
+  padding: 10px 13px; font-size: 12px; line-height: 1.45; color: #6B5518;
+}
+.note b { color: #4A3A10; }
+
+.rehearse { display: flex; gap: 11px; margin-top: 12px; }
+.rcell {
+  flex: 1; background: #ffffff; border: 1px solid #E4E9EE; border-top: 3px solid #0F2A4A;
+  border-radius: 3px; padding: 10px 11px;
+}
+.rcell .v { font-size: 21px; font-weight: 600; color: #0F2A4A; line-height: 1; letter-spacing: -0.4px; }
+.rcell .k { font-size: 10px; color: #7C8B9A; margin-top: 6px; line-height: 1.3; }
+.rcell.alert { border-top-color: #9B2226; }
+.rcell.alert .v { color: #9B2226; }
+.rcell.good { border-top-color: #10656D; }
+</style>
+</head>
+<body>
+
+<!-- ============================ SLIDE 1 : TITLE ============================ -->
+<section class="slide title-slide">
+  <div class="title-band">
+    <div class="t-eyebrow">Smart India Hackathon 2026 &nbsp;&middot;&nbsp; National Screening Stage</div>
+    <div class="t-name">DrishtiCare</div>
+    <div class="t-tag">Quality-aware, explainable diabetic-retinopathy screening for rural healthcare workflows &mdash; built in MATLAB and Simulink.</div>
+    <div class="t-rule"></div>
+  </div>
+  <div class="t-meta">
+    <div class="cell">
+      <div class="k">Problem statement</div>
+      <div class="v">SIH 26038</div>
+    </div>
+    <div class="cell">
+      <div class="k">Sponsor</div>
+      <div class="v">MathWorks</div>
+    </div>
+    <div class="cell">
+      <div class="k">Team</div>
+      <div class="v">6 members + mentors</div>
+    </div>
+    <div class="cell">
+      <div class="k">SIH Team ID</div>
+      <div class="v id">________________</div>
+    </div>
+  </div>
+  <div class="t-strip">
+    ENGINEERING PROTOTYPE &mdash; NOT A CLINICAL DEVICE. No clinical validation has been performed. Grades, Grad-CAM overlays, OOD flags and lesion candidate counts are engineering demonstrations and must not be used for diagnosis, treatment or triage decisions.
+  </div>
+</section>
+
+<!-- ============================ SLIDE 2 : PROBLEM ============================ -->
+<section class="slide">
+  <div class="eyebrow">The problem, and what we actually built</div>
+  <h1 class="stitle">Diabetic retinopathy is found late, because screening capacity is the constraint</h1>
+  <div class="rule"></div>
+
+  <div class="cols" style="margin-top:20px">
+    <div class="col" style="flex:0 0 560px">
+      <div class="panel">
+        <div class="panel-h">Where the load actually falls</div>
+        <ul class="clean">
+          <li>At the planning assumption of 100,000 patients a year, our own measured operating point generates <b>153.6 specialist referrals per working day</b> &mdash; 38,406 a year.</li>
+          <li>General ophthalmology is not the binding constraint. For vitreoretinal grading it is retina specialists, at roughly <b>one per 1.26 million</b> population.</li>
+          <li>So the useful question is not "can a CNN grade a retina". It is <b>what does the system do with an image it should not answer?</b></li>
+        </ul>
+      </div>
+      <div class="panel cool" style="margin-top:14px">
+        <div class="panel-h">Our answer</div>
+        <p class="body" style="margin:0">A screening workflow whose <b>quality gate runs before the model</b>. A poor or unfamiliar image is withheld for recapture rather than graded. That refusal behaviour &mdash; not the classifier &mdash; is the product.</p>
+      </div>
+      <p class="tiny" style="margin-top:13px">Referral demand: <span class="mono">data/analysis/simulink_resource_simulation/scenario_results.csv</span>, row D100. Workforce constraint: Vashist et al. 2021, citing WHO 2020. Full citations on the impact slide.</p>
+    </div>
+
+    <div class="col">
+      <div class="cols" style="gap:16px">
+        <div class="col">
+          <figure>
+            <div class="shot"><img src="../results/visual_qa/04_FAIL_fundus.png" alt="Fundus photograph that fails the quality gate"></div>
+            <figcaption><b>Withheld.</b> Quality FAIL. The classifier is never invoked, no grade is produced, and the case is routed to recapture or manual review.</figcaption>
+          </figure>
+        </div>
+        <div class="col">
+          <figure>
+            <div class="shot"><img src="../results/visual_qa/04_PASS_fundus.png" alt="Fundus photograph that passes the quality gate"></div>
+            <figcaption><b>Graded.</b> Quality PASS. The image proceeds to grading, referral routing and evidence.</figcaption>
+          </figure>
+        </div>
+      </div>
+      <p class="tiny" style="margin-top:12px">Both images are real fundus photographs from the locked APTOS validation split, captured by the running application (<span class="mono">results/visual_qa/</span>).</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Not a clinical device. No clinical validation performed. Not for diagnosis or treatment decisions.</div>
+    <div class="pg">2</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 3 : WORKFLOW ============================ -->
+<section class="slide">
+  <div class="eyebrow">The workflow</div>
+  <h1 class="stitle">The quality gate runs <span class="lite">before</span> the AI, not after it</h1>
+  <div class="rule"></div>
+  <p class="lede">This ordering is the whole design. A screening system that grades every image it is handed has no way to say &ldquo;I don&rsquo;t know&rdquo;.</p>
+
+  <div style="margin-top:20px">
+    <div class="flow">
+      <div class="fbox"><div class="fn">IMAGE</div><div class="fs">fundus<br>photograph</div></div>
+      <div class="fsep">&rsaquo;</div>
+      <div class="fbox gate"><div class="fn">QUALITY</div><div class="fs">focus &middot; brightness<br>foreground fraction</div></div>
+      <div class="fsep">&rsaquo;</div>
+      <div class="fbox"><div class="fn">AI</div><div class="fs">5-class grade<br>+ referable score</div></div>
+      <div class="fsep">&rsaquo;</div>
+      <div class="fbox"><div class="fn">REFERRAL</div><div class="fs">referable rule<br>locked at 0.60</div></div>
+      <div class="fsep">&rsaquo;</div>
+      <div class="fbox"><div class="fn">EVIDENCE</div><div class="fs">model attention<br>lesion candidates</div></div>
+      <div class="fsep">&rsaquo;</div>
+      <div class="fbox"><div class="fn">HUMAN</div><div class="fs">specialist<br>review</div></div>
+    </div>
+    <div class="fbranch">
+      <div class="stub"></div>
+      <div class="fbox hold" style="flex:0 0 232px"><div class="fn">WITHHELD</div><div class="fs">AI never executed &middot; grade stays NaN</div></div>
+      <div class="fsep">&rsaquo;</div>
+      <div class="fbox hold2" style="flex:0 0 250px"><div class="fn">RECAPTURE / MANUAL</div><div class="fs">the only safe outcomes for a FAIL image</div></div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:22px">
+    <div class="col" style="flex:0 0 700px">
+      <ul class="clean">
+        <li><b>Quality FAIL is a hard gate, not a display setting.</b> The classifier is never invoked, no Grad-CAM is computed, and the output carries an explicit withheld state rather than a silent blank.</li>
+        <li><b>Referral is a locked rule.</b> Referable is <span class="mono">P(referable) &ge; 0.60</span>. The threshold is provenance-pinned and was not retuned.</li>
+        <li><b>Uncertainty is routed, not averaged away.</b> The cascade router sends borderline cases to REVIEW and the least confident to ABSTAIN.</li>
+      </ul>
+    </div>
+    <div class="col" style="flex:0 0 300px">
+      <figure>
+        <div class="shot" style="padding:3px"><img src="../results/visual_qa/05_report_preview.png" alt="Preview of the branded A4 screening report" style="max-height:236px;width:auto;margin:0 auto;"></div>
+        <figcaption>The branded A4 report is a real artifact written to disk from the same result struct that drives the screen &mdash; seven sections including the non-clinical disclaimer.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Not a clinical device. No clinical validation performed. Not for diagnosis or treatment decisions.</div>
+    <div class="pg">3</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 4 : BUILT vs PLANNED ============================ -->
+<section class="slide">
+  <div class="eyebrow">Feasibility</div>
+  <h1 class="stitle">What is built and measured, and what is not</h1>
+  <div class="rule"></div>
+
+  <div class="bp" style="margin-top:18px">
+    <div class="bpcol">
+      <div class="bphead">
+        <span class="tag built">Built</span>
+        <span class="n">Running, measured, verified</span>
+        <span class="c">Hardening programme P0&ndash;P25: 230/230 checks PASS</span>
+      </div>
+
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Image quality gate</b> &mdash; focus, brightness, foreground fraction. 3,662 images measured: PASS 65.48% / WARNING 26.68% / FAIL 7.84%.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>5-class DR grader</b> &mdash; ResNet-18, EyePACS-pretrained, class-balanced. QWK 0.8914 on the locked 733-image split.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Binary referable classifier</b> &mdash; sensitivity 0.9060 / specificity 0.9471 at the locked 0.60 threshold.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>OOD advisory detector</b> &mdash; Mahalanobis, locked at its p99 of 34.22. Surfaces in the narrative; never alters a route.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Cascade router</b> &mdash; CLEAR 648 / REVIEW 75 / ABSTAIN 10 on the validation split.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Temperature calibration</b> &mdash; T = 2.5382, display-only.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Grad-CAM, lesion evidence, Branch B second opinion</b> &mdash; running, with their measured weaknesses documented.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Dashboard and branded A4 report</b> &mdash; headless dashboard verification 35/35 PASS; report verification PASS.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Simulink district model</b> &mdash; a genuine <span class="mono">.slx</span> reproducing its reference engine exactly over 250 days; 11/11 sanity checks PASS.</div></div>
+      <div class="irow"><div class="bar"></div><div class="txt"><b>Unseen-input rehearsal harness</b> &mdash; ran end to end on 19 foreign-camera images, 4/4 contract checks PASS.</div></div>
+    </div>
+
+    <div class="bpcol warn">
+      <div class="bphead">
+        <span class="tag block">Planned / blocked</span>
+        <span class="n">Named blocker, named owner</span>
+        <span class="c">Not hidden, not silently dropped</span>
+      </div>
+
+      <div class="irow warn"><div class="bar"></div><div class="txt"><b>External validation &mdash; BLOCKED, not performed.</b> Messidor-2 needs an ADCIS registration; Sin-NP DR 2019 needs a data request. Both require a human download we cannot perform.
+        <div class="own">Owner: team, on dataset licensing. The harness is written and passes 6/6; on the locked split it reproduces sensitivity 0.9060 / specificity 0.9471 / ROC-AUC 0.9796 / PR-AUC 0.7821 exactly, so the metric path is faithful.</div></div></div>
+
+      <div class="irow warn"><div class="bar"></div><div class="txt"><b>Minority-recall experiments &mdash; deliberately switched off.</b> Target-boosted weighting and targeted augmentation on Severe and Proliferative are disabled in the training script by operator decision, not overlooked.
+        <div class="own">Owner: mentor approval.</div></div></div>
+
+      <div class="irow warn"><div class="bar"></div><div class="txt"><b>Grad-CAM localisation agreement &mdash; measured, and weak.</b> Saliency-in-lesion 3.1%, pointing game 7.4%, mean IoU 0.035. MACE was not measured.
+        <div class="own">We did not retrain to chase a better number. Documented as a limitation.</div></div></div>
+
+      <div class="irow warn"><div class="bar"></div><div class="txt"><b>Fovea localisation &mdash; failed.</b> 0 of 10 held-out images within 300 px. The pipeline therefore emits no fovea-derived distance.
+        <div class="own">Revisit if fovea-labelled data appears.</div></div></div>
+
+      <div class="irow warn"><div class="bar"></div><div class="txt"><b>Image enhancement &mdash; excluded on evidence.</b> The A/B experiment showed it degraded grading, so the deployed path feeds the model the raw resized image and shows enhancement as a display aid only.
+        <div class="own">Decision recorded, not revisited.</div></div></div>
+
+      <div class="irow warn"><div class="bar"></div><div class="txt"><b>Vessel segmentation in production &mdash; excluded on evidence.</b> Adding vessel features reduced Branch-B AUC from 0.8969 to 0.8810, so the branch ships without them.
+        <div class="own">Negative result kept in the record.</div></div></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Not a clinical device. No clinical validation performed. Not for diagnosis or treatment decisions.</div>
+    <div class="pg">4</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 5 : PERFORMANCE ============================ -->
+<section class="slide">
+  <div class="eyebrow">Measured performance</div>
+  <h1 class="stitle">Locked 733-image validation split, seed 42</h1>
+  <div class="rule"></div>
+  <p class="lede">Every figure below is frozen under a written contract: no retuning of the threshold or the calibration temperature, and no use of the sealed official test set.</p>
+
+  <div class="tiles" style="margin-top:18px">
+    <div class="tile hero"><div class="v">0.8281</div><div class="k">Accuracy</div></div>
+    <div class="tile"><div class="v">0.6805</div><div class="k">Macro F1</div></div>
+    <div class="tile"><div class="v">0.8914</div><div class="k">Quadratic weighted kappa</div></div>
+    <div class="tile"><div class="v">0.9060</div><div class="k">Sensitivity, referable DR</div></div>
+    <div class="tile"><div class="v">0.9471</div><div class="k">Specificity, referable DR</div></div>
+  </div>
+  <div class="tiles" style="margin-top:11px">
+    <div class="tile"><div class="v">0.9796</div><div class="k">ROC-AUC</div></div>
+    <div class="tile"><div class="v">0.7821</div><div class="k">PR-AUC</div></div>
+    <div class="tile warnv"><div class="v">0.60</div><div class="k">Referral threshold &mdash; locked, provenance-pinned</div></div>
+    <div class="tile"><div class="v">2.5382</div><div class="k">Calibration temperature &mdash; display-only</div></div>
+    <div class="tile"><div class="v">733</div><div class="k">Validation images (2,929 train, seed 42)</div></div>
+  </div>
+
+  <div class="cols" style="margin-top:20px">
+    <div class="col" style="flex:0 0 620px">
+      <div class="panel-h" style="margin-bottom:8px">Per-class recall &mdash; where the weakness is</div>
+      <table class="t dense">
+        <tr><td>No DR</td><td class="num">0.9834</td><td></td></tr>
+        <tr><td>Mild NPDR</td><td class="num">0.6081</td><td></td></tr>
+        <tr><td>Moderate NPDR</td><td class="num">0.7850</td><td></td></tr>
+        <tr><td>Severe NPDR</td><td class="num">0.4872</td><td class="flag">weak &mdash; main 5-class weakness</td></tr>
+        <tr><td>Proliferative DR</td><td class="num">0.5254</td><td class="flag">weak &mdash; experiments deliberately off</td></tr>
+      </table>
+    </div>
+
+    <div class="col">
+      <div class="panel-h" style="margin-bottom:8px">Operational behaviour, measured</div>
+      <div class="kv">
+        <div class="cell"><div class="k">Quality gate, n = 3,662</div><div class="v" style="font-size:13.5px">65.48 / 26.68 / 7.84 %</div></div>
+        <div class="cell"><div class="k">CLEAR / REVIEW / ABSTAIN</div><div class="v" style="font-size:13.5px">648 / 75 / 10</div></div>
+        <div class="cell"><div class="k">OOD bound (locked p99)</div><div class="v" style="font-size:13.5px">34.22</div></div>
+        <div class="cell"><div class="k">Model-only inference</div><div class="v" style="font-size:13.5px">0.1028 s/img</div></div>
+        <div class="cell"><div class="k">Full demo path, median</div><div class="v" style="font-size:13.5px">11.03 s/img</div></div>
+        <div class="cell"><div class="k">Verdict on APTOS validation</div><div class="v" style="font-size:13.5px">internal, single-dataset</div></div>
+      </div>
+      <p class="tiny" style="margin-top:11px">The two latency figures are deliberately not conflated: 0.1028 s/img is model screening only, 11.03 s/img is the complete demo path. High-resolution fundus photographs are slower again &mdash; a judge supplying a full-resolution image should expect roughly 30&ndash;45 s.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. APTOS-internal held-out validation only; external validation is not performed. Not a clinical device, not for diagnosis or treatment decisions.</div>
+    <div class="pg">5</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 6 : REFUSAL + REHEARSAL ============================ -->
+<section class="slide">
+  <div class="eyebrow">The differentiator</div>
+  <h1 class="stitle">It refuses. We tested that on images it had never seen.</h1>
+  <div class="rule"></div>
+
+  <p class="lede" style="margin-top:11px;font-size:14.5px">Every automated check in this project had run on the same split the champions were selected on. We then ran the full pipeline end to end on <b>19 unseen fundus images from three foreign cameras</b> &mdash; DRIVE test, the IDRiD B testing set, and real-world web fundus from DRIMDB. Nothing was retrained or tuned, the 0.60 rule was untouched, and the model hashes are unchanged.</p>
+
+  <div class="rehearse">
+    <div class="rcell good"><div class="v">19 / 19</div><div class="k">completed. No crash, no unhandled exception.</div></div>
+    <div class="rcell good"><div class="v">4 / 4</div><div class="k">contract checks PASS: valid route band, quality FAIL never auto-answered, locked 0.60 rule still holds.</div></div>
+    <div class="rcell"><div class="v">8</div><div class="k">quality FAIL images &mdash; every one withheld <i>before</i> any model execution.</div></div>
+    <div class="rcell"><div class="v">42%</div><div class="k">of unseen images were withheld, against 7.84% FAIL on APTOS. The gate over-rejects foreign cameras.</div></div>
+  </div>
+
+  <div class="cols" style="margin-top:13px;gap:20px">
+    <div class="col">
+      <ul class="clean teal" style="font-size:12.5px">
+        <li style="font-size:12.5px;margin-bottom:7px"><b>The safety contract is not an APTOS artefact.</b> Every quality FAIL was withheld before the model ran, and the locked decision rule was reproduced on every image that did reach the classifier.</li>
+        <li style="font-size:12.5px;margin-bottom:7px"><b>The OOD detector genuinely fires out of distribution.</b> It flagged unseen images above its locked 34.22 bound. It remains advisory only and altered no route in this run.</li>
+        <li style="font-size:12.5px;margin-bottom:0"><b>Over-refusal is the safe direction to fail</b> &mdash; a withheld image is never auto-answered. Expect &ldquo;AI grading skipped, please recapture&rdquo;: that is the designed behaviour.</li>
+      </ul>
+    </div>
+    </div>
+
+    <div class="col" style="flex:0 0 508px">
+      <div class="note" style="font-size:11.5px;padding:9px 12px">
+        <b>The honest negative finding.</b> One DRIMDB image the dataset itself labels as ungradable passed the quality gate and came back a confident referable grade, routed CLEAR, with its OOD distance just under the bound. Neither gate caught it. We are not tuning it away &mdash; the threshold and the OOD bound are provenance-pinned. We state it, and we demo accordingly. On out-of-distribution real-world imagery, this system is not perfect.
+      </div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:13px;gap:14px">
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/02_PASS_dashboard.png" alt="Dashboard showing a PASS image with a full result"></div><figcaption><b>PASS</b> &mdash; graded and routed, with confidence and evidence.</figcaption></figure>
+    </div>
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/02_WARNING_dashboard.png" alt="Dashboard showing a WARNING image"></div><figcaption><b>WARNING</b> &mdash; proceeds, but flagged as borderline.</figcaption></figure>
+    </div>
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/02_FAIL_dashboard.png" alt="Dashboard showing a FAIL image with AI grading skipped"></div><figcaption><b>FAIL</b> &mdash; AI grading skipped; the model is never called.</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Not a clinical device. No clinical validation performed. Not for diagnosis or treatment decisions.</div>
+    <div class="pg">6</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 7 : EXPLAINABILITY ============================ -->
+<section class="slide">
+  <div class="eyebrow">Explainability</div>
+  <h1 class="stitle">Grad-CAM shows model attention. It is not lesion localisation.</h1>
+  <div class="rule"></div>
+  <p class="lede">Four views of one real case from the running application. The heat-map is a statement about <i>where the model looked</i>, not about <i>where a lesion is</i> &mdash; and we measured how far apart those two things are.</p>
+
+  <div class="cols" style="gap:14px;margin-top:20px">
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/03_PASS_Original.png" alt="Original fundus view"></div><figcaption><b>Original</b> &mdash; the model input, unchanged.</figcaption></figure>
+    </div>
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/03_PASS_Enhanced.png" alt="Enhanced display view"></div><figcaption><b>Enhanced</b> &mdash; display aid only. Not the model input.</figcaption></figure>
+    </div>
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/03_PASS_Grad-CAM.png" alt="Grad-CAM heat map view"></div><figcaption><b>Grad-CAM</b> &mdash; regions that most influenced the decision.</figcaption></figure>
+    </div>
+    <div class="col">
+      <figure><div class="shot"><img src="../results/visual_qa/03_PASS_Overlay.png" alt="Grad-CAM overlay on the fundus image"></div><figcaption><b>Overlay</b> &mdash; for the reviewer's eye, not a finding.</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:20px">
+    <div class="col" style="flex:0 0 620px">
+      <div class="panel warn">
+        <div class="panel-h">We measured our own explainability against IDRiD lesion masks</div>
+        <div class="tiles" style="margin-top:2px">
+          <div class="tile warnv" style="background:#ffffff"><div class="v">3.1%</div><div class="k">saliency mass inside a lesion mask</div></div>
+          <div class="tile warnv" style="background:#ffffff"><div class="v">7.4%</div><div class="k">pointing-game accuracy</div></div>
+          <div class="tile warnv" style="background:#ffffff"><div class="v">0.035</div><div class="k">mean IoU, top-20% pixels</div></div>
+          <div class="tile warnv" style="background:#ffffff"><div class="v">n/m</div><div class="k">MACE &mdash; not measured</div></div>
+        </div>
+        <p class="tiny" style="margin-top:10px;margin-bottom:0">Against an areal chance baseline of 0.0220, that is about 1.39&times; chance. The alignment is weak, and we did not retrain the model to improve a visualisation metric. We publish the number because a screening prototype that overstates its own evidence is not deployable.</p>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="clean amber">
+        <li><b>Say &ldquo;model attention&rdquo;, not &ldquo;lesion localisation&rdquo;.</b> The second claim is not supported by our own measurement and we do not make it.</li>
+        <li><b>Lesion counts are candidates, not findings.</b> The microaneurysm detector has patch AUC 0.976 but detection recall of only 0.113, and the classical detectors over-fire on unfamiliar images.</li>
+        <li><b>Calibration is presentation-only.</b> T = 2.5382 makes the displayed confidence usable; it is not evidence of external generalisation.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Grad-CAM is model attention, not lesion localisation. Not a clinical device; not for diagnosis or treatment decisions.</div>
+    <div class="pg">7</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 8 : SIMULATION ============================ -->
+<section class="slide">
+  <div class="eyebrow">District-scale simulation</div>
+  <h1 class="stitle">The bottleneck the model exposes is specialist review, not AI processing</h1>
+  <div class="rule"></div>
+
+  <div class="cols" style="margin-top:13px">
+    <div class="col" style="flex:0 0 786px">
+      <figure>
+        <div class="shot" style="padding:4px"><img src="../results/presentation/simulink_district_summary.png" alt="Five-panel district screening simulation summary: patient flow, referral volume, specialist queue growth, specialist utilisation and workload by threshold"></div>
+        <figcaption>Five panels from one simulation: patient flow, referral demand, queue growth over the year, utilisation against the capacity scenarios, and workload by referral threshold.</figcaption>
+      </figure>
+    </div>
+
+    <div class="col">
+      <div class="panel-h" style="margin-bottom:7px">At 100,000 patients per year</div>
+      <div class="kv" style="flex-direction:column;gap:7px">
+        <div class="cell" style="padding:7px 11px"><div class="k">Images reaching AI screening</div><div class="v" style="font-size:15px">96,081</div></div>
+        <div class="cell" style="padding:7px 11px"><div class="k">Referrals generated</div><div class="v" style="font-size:15px">38,406 &nbsp;<span style="font-size:11px;font-weight:400;color:#7C8B9A">39.97% of screened</span></div></div>
+        <div class="cell" style="padding:7px 11px;border-color:#C6D6DE;background:#F1F6F9"><div class="k">Never consume specialist time</div><div class="v" style="font-size:15px;color:#1D4370">60.03%</div></div>
+        <div class="cell" style="padding:7px 11px"><div class="k">Referrals per working day</div><div class="v" style="font-size:15px">153.6</div></div>
+        <div class="cell" style="padding:7px 11px"><div class="k">Specialists implied, 20 exams/reviewer/day</div><div class="v" style="font-size:15px">7.68</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:12px;gap:18px">
+    <div class="col" style="flex:0 0 786px">
+      <div class="note" style="font-size:11.5px;padding:9px 12px">
+        <b>Engineering resource-planning simulation. Not clinical validation and not a staffing prescription.</b> The measured input is our locked-split operating point (sensitivity 0.9060, specificity 0.9471 at threshold 0.60). Patient volume, prevalence, specialist capacity and the recapture rate are labelled assumptions, not measurements. The <span class="mono">.slx</span> reproduces its reference engine exactly over 250 days; 11/11 sanity checks pass.
+      </div>
+    </div>
+    <div class="col">
+      <div class="panel" style="padding:11px 13px">
+        <div class="panel-h" style="margin-bottom:6px">The break point</div>
+        <p class="body" style="margin:0;font-size:12px">At 60 reviews/day the year ends at a 23,406 backlog. At 120/day, still 8,406. Only at <b>~180 reviews per day</b> does the queue clear, at 85.3% utilisation. A second, independent discrete-event simulation reaches the same conclusion.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Simulation outputs are not clinical or operational claims. Not a clinical device; not for diagnosis or treatment decisions.</div>
+    <div class="pg">8</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 9 : IMPACT ============================ -->
+<section class="slide">
+  <div class="eyebrow">Impact</div>
+  <h1 class="stitle">Three national statistics, each carrying its source and its year</h1>
+  <div class="rule"></div>
+  <p class="lede">We verified every figure we quote. Where our own earlier draft did not survive verification, we say so on the slide rather than quietly swapping it.</p>
+
+  <div class="cols" style="margin-top:16px;gap:24px">
+    <div class="col">
+      <div class="stat-block">
+        <div class="big">74.2 million</div>
+        <div class="say">Indian adults aged 20&ndash;79 with diabetes, 2021. India's own ICMR-INDIAB-17 national survey puts the same year nearer <b>101 million</b> &mdash; the two use different methods and are not interchangeable, so we name the body.</div>
+        <div class="cite">IDF Diabetes Atlas, 10th ed. 2021 &mdash; Sun H. et al., <i>Diabetes Res Clin Pract</i> 2021;183:109119, doi:10.1016/j.diabres.2021.109119. ICMR-INDIAB-17 &mdash; Anjana R.M. et al., <i>Lancet Diabetes Endocrinol</i> 2023, doi:10.1016/S2213-8587(23)00119-5.</div>
+        <div class="prov">Superseded: the widely quoted 77 million figure is the IDF 2019 estimate (9th ed.) and has been revised twice since. Do not present it as current.</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="stat-block">
+        <div class="big">16.9% &ndash; 18.1%</div>
+        <div class="say">Roughly <b>1 in 6 to 1 in 5 Indians with diabetes aged 50 and over</b> have diabetic retinopathy. We give the range because two national-survey-grade sources disagree, and the honest reading is a band rather than a decimal.</div>
+        <div class="cite">18.1% (95% CI 14.8&ndash;21.4), age &ge;50 &mdash; Jotheeswaran A.T. et al., <i>Indian J Endocrinol Metab</i> 2016;20(Suppl 1):S51&ndash;S58, doi:10.4103/2230-8210.179774. 16.9% (95% CI 15.9&ndash;17.9) &mdash; MoHFW/NPCB National Survey 2015&ndash;19, Vashist P. et al., <i>Indian J Ophthalmol</i> 2021, doi:10.4103/ijo.IJO_1310_21.</div>
+        <div class="prov">Not defensible for all adults: the same meta-analysis gives 14.9% for age &ge;30, and population prevalence is far smaller again. The authors themselves flag their own denominator as weak.</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="stat-block amber">
+        <div class="big">1 : 65,221</div>
+        <div class="say">Indian ophthalmologists per person, about 15 per million, nationally. The binding constraint for automated <i>vitreoretinal</i> grading is roughly <b>19&times; worse</b>: about one <b>retina specialist per 1.26 million</b> people.</div>
+        <div class="cite">Vashist P. et al., &ldquo;Human resources and infrastructure for ophthalmic services in India&rdquo;, <i>Indian J Ophthalmol</i> 2025;73(11):1679&ndash;1686, doi:10.4103/IJO.IJO_2816_24; data collected 2020&ndash;21, 20,944 ophthalmologists. Retina specialist density: WHO 2020, cited in Vashist et al. 2021.</div>
+        <div class="prov">Verification note: a lower rural scarcity figure in our own earlier draft did not survive checking &mdash; it traces to a Vision 2020 planning target for Asia, not an Indian count. We use the measured national ratio instead.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kv" style="margin-top:20px">
+    <div class="cell"><div class="k">Locked validation measured</div><div class="v" style="font-size:13px">733 held-out images</div></div>
+    <div class="cell"><div class="k">Quality audit measured</div><div class="v" style="font-size:13px">3,662 images</div></div>
+    <div class="cell"><div class="k">Unseen-input rehearsal</div><div class="v" style="font-size:13px">19 images, 3 cameras</div></div>
+    <div class="cell"><div class="k">District simulation</div><div class="v" style="font-size:13px">250-day horizon</div></div>
+    <div class="cell"><div class="k">Hardening programme</div><div class="v" style="font-size:13px">230/230 checks PASS</div></div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Not a clinical device. No clinical validation performed. Not for diagnosis or treatment decisions.</div>
+    <div class="pg">9</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 10 : LIMITATIONS ============================ -->
+<section class="slide">
+  <div class="eyebrow">Limitations</div>
+  <h1 class="stitle">What this system cannot do yet</h1>
+  <div class="rule"></div>
+  <p class="lede">These are on the slide, not in the appendix. A prototype that hides its measured negatives is not safe to hand to a screening programme.</p>
+
+  <table class="t dense" style="margin-top:14px">
+    <tr>
+      <th style="width:210px">Item</th>
+      <th style="width:400px">What we measured</th>
+      <th style="width:150px">Status</th>
+      <th>Blocker or owner</th>
+    </tr>
+    <tr>
+      <td>External validation</td>
+      <td>Not performed. The reported 0.9060 / 0.9471 / 0.9796 / 0.7821 are APTOS-internal, on a single dataset.</td>
+      <td><span class="tag block">Blocked</span></td>
+      <td>Messidor-2 (ADCIS registration) and Sin-NP DR 2019 (data request) both need a human download. Harness written, 6/6 checks pass.</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM vs lesion masks</td>
+      <td>Saliency-in-lesion 3.1%, pointing game 7.4%, mean IoU 0.035, about 1.39&times; areal chance.</td>
+      <td><span class="tag no">Measured weak</span></td>
+      <td>MACE not measured. We did not retrain to improve a visualisation metric.</td>
+    </tr>
+    <tr>
+      <td>Confident grade on an ungradable image</td>
+      <td>One DRIMDB image the dataset labels Bad passed the quality gate and came back referable, routed CLEAR. Neither gate caught it.</td>
+      <td><span class="tag no">Open</span></td>
+      <td>Recorded, not tuned away &mdash; the threshold and OOD bound are provenance-pinned.</td>
+    </tr>
+    <tr>
+      <td>Fovea localisation</td>
+      <td>0 of 10 held-out images within 300 px of ground truth.</td>
+      <td><span class="tag no">Failed</span></td>
+      <td>No fovea-derived distance is emitted; the field stays unavailable with an explicit narrative line.</td>
+    </tr>
+    <tr>
+      <td>Severe / Proliferative recall</td>
+      <td>0.4872 and 0.5254 &mdash; the main 5-class weakness.</td>
+      <td><span class="tag block">Off by decision</span></td>
+      <td>Target-boosted weighting and targeted augmentation are disabled in the training script. Owner: mentor approval.</td>
+    </tr>
+    <tr>
+      <td>Microaneurysm detection</td>
+      <td>Patch AUC 0.976, but detection recall only 0.113 at the evaluated threshold.</td>
+      <td><span class="tag no">Low recall</span></td>
+      <td>Counts are reported as candidates, never as findings.</td>
+    </tr>
+    <tr>
+      <td>Optic-disc generalisation</td>
+      <td>Locates 9/10 within 300 px on IDRiD, but only 10.6% acceptance on APTOS validation.</td>
+      <td><span class="tag no">Limited</span></td>
+      <td>Trained on a different camera set; the honest hardware-threshold refusal works as designed.</td>
+    </tr>
+    <tr>
+      <td>Image enhancement</td>
+      <td>The A/B experiment showed it degraded grading.</td>
+      <td><span class="tag meas">Excluded on evidence</span></td>
+      <td>Excluded from the inference path; retained as a display aid only.</td>
+    </tr>
+    <tr>
+      <td>Vessel segmentation</td>
+      <td>Adding vessel features moved Branch-B AUC from 0.8969 to 0.8810.</td>
+      <td><span class="tag meas">Excluded on evidence</span></td>
+      <td>Measured negative result, kept in the record rather than forced into production.</td>
+    </tr>
+  </table>
+
+  <div class="foot">
+    <div class="disc">Engineering prototype. Not a clinical device. No clinical validation performed. Not for diagnosis or treatment decisions.</div>
+    <div class="pg">10</div>
+  </div>
+</section>
+
+<!-- ============================ SLIDE 11 : TEAM / RESOURCES ============================ -->
+<section class="slide">
+  <div class="eyebrow">Team, resources and references</div>
+  <h1 class="stitle">Everything here is reproducible from a public repository</h1>
+  <div class="rule"></div>
+
+  <div class="cols" style="margin-top:18px;gap:26px">
+    <div class="col" style="flex:0 0 372px">
+      <div class="panel">
+        <div class="panel-h">Entry</div>
+        <ul class="clean" style="margin-bottom:2px">
+          <li><b>Problem statement</b> SIH 26038 &middot; sponsor MathWorks</li>
+          <li><b>Team</b> 6 members + mentors &middot; SIH Team ID <span class="mono">__________</span></li>
+          <li><b>Repository</b> <span class="mono">github.com/Aryan41211/DrishtiCare</span></li>
+          <li><b>Stack</b> MATLAB and Simulink; ResNet-18 transfer learning, EyePACS-pretrained, class-balanced</li>
+          <li><b>Launch</b> <span class="mono">launchRetinaAI.m</span> from the repository root</li>
+          <li><b>Governance</b> frozen model contract with SHA-256 hashes, a decision log, and a per-task evidence record</li>
+        </ul>
+      </div>
+
+      <div class="panel cool" style="margin-top:14px">
+        <div class="panel-h">Datasets, stated plainly</div>
+        <ul class="clean" style="margin-bottom:2px">
+          <li><b>APTOS 2019</b> &mdash; grading data. Used.</li>
+          <li><b>IDRiD</b> &mdash; lesion and optic-disc ground truth. Used for evaluation, not for classifier selection.</li>
+          <li><b>DRIVE</b> &mdash; vessel study. Used.</li>
+          <li><b>DRIMDB</b> &mdash; downloaded and licence-cleared, used <i>only</i> in the unseen-input rehearsal. Not used in any reported result.</li>
+          <li><b>Messidor-2, Sin-NP DR 2019</b> &mdash; <span style="color:#8C6A22;font-weight:600">not obtained</span>. External validation remains blocked.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="panel-h" style="margin-bottom:8px">References</div>
+      <table class="t dense">
+        <tr><td style="width:262px">Vashist P. et al. (2021)</td><td>National survey of DR, 21 districts, n = 5,986 examined. <i>Indian J Ophthalmol</i> 69(11):3087&ndash;3094. doi:10.4103/ijo.IJO_1310_21</td></tr>
+        <tr><td>Jotheeswaran A.T. et al. (2016)</td><td>DR prevalence by age band, systematic review. <i>Indian J Endocrinol Metab</i> 20(Suppl 1):S51&ndash;S58. doi:10.4103/2230-8210.179774</td></tr>
+        <tr><td>Vashist P. et al. (2025)</td><td>Ophthalmic workforce and infrastructure, national survey. <i>Indian J Ophthalmol</i> 73(11):1679&ndash;1686. doi:10.4103/IJO.IJO_2816_24</td></tr>
+        <tr><td>Sun H. et al. (2021)</td><td>IDF Diabetes Atlas 10th edition, India estimate. <i>Diabetes Res Clin Pract</i> 183:109119. doi:10.1016/j.diabres.2021.109119</td></tr>
+        <tr><td>Anjana R.M. et al. (2023)</td><td>ICMR-INDIAB-17 national diabetes survey. <i>Lancet Diabetes Endocrinol</i>. doi:10.1016/S2213-8587(23)00119-5</td></tr>
+        <tr><td>Pradeepa R., Mohan V. (2021)</td><td>Tabulation of the IDF 2019 India estimate. <i>Indian J Ophthalmol</i> 69(11):2932&ndash;2938. doi:10.4103/ijo.IJO_1627_21</td></tr>
+      </table>
+
+      <div class="note" style="margin-top:14px">
+        <b>How to read every number in this deck.</b> Each is traceable to a committed artifact &mdash; the frozen contract, the validation reports, the rehearsal record, the simulation CSV, or a cited publication with a DOI. Where a figure was only provisional, we labelled it provisional rather than dropping the caveat. Where our own earlier draft did not survive verification, we left it visible and marked it unsupported. We would rather show a weaker number we can defend than a stronger one we cannot.
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="disc">DrishtiCare is an engineering prototype for Smart India Hackathon 2026. Not a clinical device. No clinical validation has been performed. Not for diagnosis, treatment or triage decisions.</div>
+    <div class="pg">11</div>
+  </div>
+</section>
+
+</body>
+</html>

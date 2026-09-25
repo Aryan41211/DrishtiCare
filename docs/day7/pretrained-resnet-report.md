@@ -33,26 +33,32 @@ VALIDATION results (733 images). The official test set was never touched.
 - Ensemble w=0.6: 74.08% / 0.5178 / 0.7807 / 85.94% / 86.67%
 - Binary @0.60: sens 90.27% / spec 85.75% / AUC 0.9496
 
-> **⚠️ Flagged inconsistency in the 5-class baseline row (unresolved).** The
-> first bullet is a **hybrid** that matches no single committed source: its
-> accuracy / F1 / QWK (73.67% / 0.5083 / 0.7672) come from
-> `docs/day6-ensemble-binary.md:8`, but its referable sens/spec
-> (83.22% / 90.80%) come from the *different* derivation in
-> `docs/validation/ablation-study.md` row 1. The two committed sources
-> disagree with each other for the same scratch baseline:
+> **✅ RESOLVED 2026-09-26 — the first bullet is correct under the frozen protocol;
+> it needed a citation, not a number change.** The two committed sources did
+> disagree for the same scratch baseline:
 >
-> | Source | Scratch baseline sens / spec |
-> |---|---|
-> | `docs/day6-ensemble-binary.md:8` + `data/analysis/day6/day6_experiment_comparison.mat` | 0.8307 / 0.8667 |
-> | `docs/validation/ablation-study.md` row 1 + `eval_fixed_day5_resnet18_baseline_stage2.mat` | 0.8322 / 0.9080 |
+> | Source | Scratch baseline sens / spec | implied positives (tp+fn) |
+> |---|---|---|
+> | `docs/day6-ensemble-binary.md:8` + `data/analysis/day6/day6_experiment_comparison.mat` | 0.8307 / 0.8667 | 313 |
+> | `docs/validation/ablation-study.md` row 1 + `eval_fixed_day5_resnet18_baseline_stage2.mat` | **0.8322 / 0.9080** | **298** |
 >
-> `audit/final_project_audit/06_referable_metrics.csv:14` records this
-> explicitly: *"two derivations exist; ablation uses its own."* The rows are
-> **not** reconciled here because choosing between them requires re-deriving
-> from the binary `.mat` artifacts, i.e. re-running MATLAB — no number in
-> either row has been invented or silently overwritten. The 86.67% figure in
-> the ensemble bullet is that same day6 derivation and is internally consistent
-> with `day6-ensemble-binary.md:10`. **This does not affect §15 or any
+> Both `.mat` artifacts were read directly (see
+> `docs/validation/2026-09-26-metric-provenance-resolution.md`). Decisive findings:
+>
+> - `YTrue` and `YPred` are **bit-identical** between the two, which is why
+>   accuracy / F1 / QWK agree exactly (73.6698% / 0.508335 / 0.767181) and only
+>   the binary operating point differs.
+> - `sum(YTrue>=3)` = **298**, exactly the `eval_fixed` positive count — i.e.
+>   `eval_fixed` uses the **frozen referable definition** (`label>=3`, Phase 7).
+> - `sum(YTrue>=2)` = 372, **not** 313, so the older figure is not a different
+>   label definition; it is a different operating threshold on the referable
+>   probability, applied before `0.60` was provenance-pinned in Phase 6.
+>
+> **Resolution:** `0.8322 / 0.9080` is authoritative (frozen protocol).
+> `0.8307 / 0.8667` is a **pre-freeze** derivation retained for historical
+> traceability only. The 86.67% figure in the ensemble bullet is that same
+> pre-freeze derivation and stays internally consistent with
+> `day6-ensemble-binary.md:10`. This does not affect §15 or any
 > conclusion:** the champion values (0.8281 / 0.6805 / 0.8914 / 0.9060 /
 > 0.9471) come from the frozen Phase 7 recompute and are unaffected.
 

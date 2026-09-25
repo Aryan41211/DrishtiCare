@@ -9,15 +9,19 @@ the repo root.
 ### Slide 1: Problem (1 min)
 - Diabetic retinopathy in India is found late because screening capacity is
   not there.
-- **UNVERIFIED ESTIMATES — TO BE SOURCED BEFORE THE FINAL ROUND.** The three
-  figures below are carried over from our internal narrative and currently have
-  **no citation anywhere in this repo**. We are labelling them on the slide
-  rather than inventing a reference. `docs/background/literature-verification.md`
-  verifies the *benchmark* papers (Gulshan 2016, Abràmoff 2016, Ting 2017) but
-  not these three national figures.
-  - 77 million diabetic adults in India
-  - 18% DR prevalence
-  - 1 ophthalmologist per 100,000 rural population
+- **SOURCED 2026-09-26** — citations, years and DOIs in
+  `docs/background/clinical-statistics-sources.md`; wording in
+  `docs/background/clinical-background.md`. The three figures below are now
+  citable, with these honesty constraints:
+  - **77 million** diabetic adults in India — IDF Diabetes Atlas 9th ed. (2019).
+    **Superseded**: 74.2M (2021); ~90M (2024, provisional). Present as a dated
+    figure or a range, never as current.
+  - **18%** DR prevalence — needs age framing: 18.1% (age ≥50), 14.9% (age
+    ≥30). The national survey reports **16.9%** for the same age band. Do not
+    print a bare "18%".
+  - ~~1 ophthalmologist per 100,000 rural population~~ — **NOT SUPPORTED,
+    removed.** The defensible figure is ~**1 : 65,221** ophthalmologists
+    (IJO 2025); the binding constraint is retina specialists at ~1 per 1.26M.
 - **The defensible demand-side number (measured by us):** 153.6 specialist
   referrals per working day generated per 100,000 patients/year.
   Source: `data/analysis/simulink_resource_simulation/scenario_results.csv`,
@@ -68,7 +72,9 @@ bar instead — do not shade a map with an unsourced figure.
   - Accuracy 82.81% | Macro F1 0.6805 | QWK 0.8914
   - Referable-DR sensitivity 90.60% / specificity 94.71% @ threshold 0.60
   - ROC-AUC 0.9796 | PR-AUC 0.7821
-  - Calibration: ECE 0.045 → 0.030
+  - Calibration: ECE 0.0319 → 0.0087 (3.66x) at T = 2.5382, from
+    `data/analysis/day8/calibration/firewalled/firewalled_calibration.mat`
+    (n = 2429); 18/2429 decisions flipped (0.74%)
   - Ablation: pretraining +0.203 QWK; balancing alone −0.079 QWK;
     enhancement −0.2445 QWK
 - Honest framing: "Here's what we achieved, here's what we have not done."
@@ -159,7 +165,8 @@ as blocked rather than as pending work.
 
 1. **Problem is real** — the demand side is measured by us: 153.6 referrals per
    working day per 100k patients. (The national prevalence/workforce figures on
-   slide 1 are flagged unverified.)
+   slide 1 are now cited with organisation, year and DOI; the unsupported
+   "1 ophthalmologist per 100,000" claim was removed.)
 2. **We built something** — working pipeline, real `.slx` district model, real
    A4 PDF, not just slides.
 3. **The system says "I don't know"** — 6 of 6 FAIL images reached zero AI

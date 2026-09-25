@@ -84,32 +84,40 @@ the two manual segmentations inside the DRIVE FOV mask.
 `data/analysis/day8/task8/drive_test_dice.mat` (n=20). They are internally
 consistent with §5 and the Conclusion, which both cite Dice ~0.26.
 
-> **Unverified discrepancy — deliberately NOT corrected here.** A later
-> ad-hoc audit (`audit/final_project_audit/19_verification_checks.csv`,
-> `20_final_truth_table.csv`, `10_vessel_metrics.csv`) claims
+> **RESOLVED 2026-09-26 — the §3 table above is CORRECT; the competing values are
+> refuted, not adopted.** An ad-hoc audit
+> (`audit/final_project_audit/19_verification_checks.csv`,
+> `20_final_truth_table.csv`, `10_vessel_metrics.csv`) claimed
 > `drive_test_dice.mat` holds mean Dice **0.2541** and human inter-observer
-> Dice **0.7902**, i.e. that the 0.2576 / 0.7881 above are wrong by +0.0035 /
-> −0.0021. That claim is **not adopted here** because:
-> 1. its only cited source is a binary `.mat` that cannot be re-read without
->    re-running MATLAB, and
-> 2. the audit is **self-inconsistent** about the human figure —
->    `10_vessel_metrics.csv` records the day8 artifact's `humanDice` as
->    **0.7884** (within 0.0003 of the 0.7881 reported here), while
->    `19_verification_checks.csv` attributes **0.79024** to
->    `drive_vessel_metrics.mat`.
+> Dice **0.7902**, i.e. that the 0.2576 / 0.7881 above are wrong. The artifact has
+> since been read directly (see
+> `docs/validation/2026-09-26-metric-provenance-resolution.md`,
+> scripts `src/verify/verify_metric_provenance.m` and
+> `src/verify/confirm_provenance_resolutions.m`):
 >
-> The ~0.790 inter-observer figure demonstrably belongs to the **classical**
-> vessel pipeline, not this CNN: `data/analysis/vessel/phase3/metrics.txt:47`
-> records `2nd-manual Dice: locked 0.7278 champion 0.7573 (human
-> inter-observer ~0.790)` — and that run scores inside a **FOV eroded by 5 px**
-> (`phase3/metrics.txt:6`), a different masking convention from the un-eroded
-> `mask` used by `eval_segmenter_drive.m`. Adopting 0.7902 here would mix a
-> different pipeline's FOV convention into this report.
+> 1. `drive_test_dice.mat` holds six 20-element vectors. Recomputed means:
+>    `dice1` **0.257599**, `dice2` **0.253191**, `iou1` 0.148093,
+>    `iou2` 0.145242, `humanDice` **0.788123**, `pixelAuc` 0.610989.
+>    Every cell of the §3 table reproduces exactly.
+> 2. **`0.2541` is not reproducible from this artifact at all** — it is not the
+>    mean of any vector (the two genuine means are 0.2576 and 0.2532) nor any
+>    single element (nearest, `dice1(19)` = 0.253743).
+> 3. **`0.7902` is real but belongs to a different pipeline.** It is
+>    `results.meanHumanDice` in `data/analysis/vessel/drive_vessel_metrics.mat`
+>    (0.790240), produced by the classical vessel module, which scores inside a
+>    **FOV eroded by 5 px** (`data/analysis/vessel/phase3/metrics.txt:6`; line 47
+>    of that file records "human inter-observer ~0.790"). The 0.7881 here comes
+>    from the **un-eroded** `mask` FOV used by `eval_segmenter_drive.m`. Two
+>    masking conventions over the same 20 images are expected to differ slightly,
+>    so neither value is wrong — the earlier fault was presenting them as one
+>    disputed quantity.
 >
-> Neither value changes any conclusion: the segmenter is far below DRIVE
-> deep-learning SOTA and the feature block is excluded from production either
-> way. Resolving the ~0.0035 offset requires re-running
-> `src/eval_segmenter_drive.m` and re-reading `drive_test_dice.mat`.
+> **Standing rule:** cite `0.2576` / `0.7881` for this CNN segmenter on the
+> un-eroded FOV. Any `~0.790` inter-observer figure must be labelled as the
+> classical/eroded-FOV pipeline. Never mix the two.
+>
+> No conclusion changes: the segmenter is far below DRIVE deep-learning SOTA and
+> the feature block stays excluded from production either way.
 
 **Honest note:** Dice 0.258 / IoU 0.148 is **well below** DRIVE deep-learning
 SOTA (~0.80 Dice). This is a small, CPU-only, patch-center CNN (not a dense

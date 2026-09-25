@@ -11,22 +11,27 @@ say the number.
 
 ### Act 1: Problem (1 minute)
 "Diabetic retinopathy in India is found late, because the screening capacity
-isn't there. Three national figures usually get quoted — 77 million diabetic
-adults, 18% DR prevalence, one ophthalmologist per 100,000 rural population.
-**Those three are unverified estimates in our deck right now.** We haven't
-sourced them, and we won't invent a citation to fill the gap — they're flagged
-on the slide and we will source them before the final round.
+isn't there. Three national figures usually get quoted, and we checked all three
+rather than repeating them. IDF's 2019 estimate was 77 million diabetic adults —
+but that number has since been revised twice, to 74.2 million in 2021 and about
+90 million by 2024, so treat any single figure as a snapshot. Prevalence is
+age-dependent: roughly 18% of Indians aged fifty and over have DR, 16.9% in the
+national survey. And the number usually quoted about doctors — one ophthalmologist
+per hundred thousand — turns out to be wrong; India actually has closer to one per
+65,000, and the real bottleneck is retina specialists, about one per 1.26 million.
+We removed that claim from our deck.
 
 What we *have* measured is the demand side, from our own simulation: at
 100,000 patients a year our pipeline generates 153.6 specialist referrals per
 working day. That's the number I can defend today."
 
-- Note: the clinical figures are labelled unverified on the slide. Say so out
-  loud; it costs nothing and it is the honest move.
+- Note: say out loud that you checked the three figures and dropped one. It
+  costs nothing and it is the honest move — it also pre-empts a judge who knows
+  the literature.
 - Artifact: `data/analysis/simulink_resource_simulation/scenario_results.csv`
-  (row D100, `referralsPerDay` 153.63). Clinical figures: carried over from
-  `docs/background/clinical-background.md` §"Global Disease Burden", which
-  carries no citation — hence the label.
+  (row D100, `referralsPerDay` 153.63). Clinical figures: cited with
+  organisation, year and DOI in `docs/background/clinical-statistics-sources.md`.
+  The IDF 2019 figure must always be spoken as dated.
 
 ### Act 2: Architecture (1 minute)
 "Our system takes a raw fundus image and runs it through 6 stages: quality
@@ -96,7 +101,7 @@ know' is not safe to deploy, and this one does say it."
   `src/demo/tests/test_failure_aware_demo.m` (TEST 1-11, all pass).
 
 ### Act 4: Results (1 minute)
-"Our champion 5-class grader (ResNet-18, EyePACS-pretrained, class-balanced) on 733 held-out validation images: 82.81% accuracy, macro F1 0.6805, QWK 0.8914, and for referable DR (Moderate or worse) sensitivity 90.60% with specificity 94.71% at the locked 0.60 threshold, ROC-AUC 0.9796 and PR-AUC 0.7821. Temperature calibration cuts calibration error by ~2x (ECE 0.045 to 0.030). This is honest — we're not claiming to beat the clinical standard yet, but the numbers are measured on a locked split."
+"Our champion 5-class grader (ResNet-18, EyePACS-pretrained, class-balanced) on 733 held-out validation images: 82.81% accuracy, macro F1 0.6805, QWK 0.8914, and for referable DR (Moderate or worse) sensitivity 90.60% with specificity 94.71% at the locked 0.60 threshold, ROC-AUC 0.9796 and PR-AUC 0.7821. Temperature scaling at T = 2.5382 cuts calibration error 3.7-fold, from ECE 0.0319 to 0.0087, and flipped only 18 of 2429 decisions. This is honest — we're not claiming to beat the clinical standard yet, but the numbers are measured on a locked split."
 
 - Artifacts: `docs/task-tracker.md` T13 / P4 / P7 rows; metric definitions
   frozen verbatim in

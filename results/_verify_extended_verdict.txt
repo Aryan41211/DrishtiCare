@@ -1,11 +1,10 @@
 VERDICT: PASS
-DATE: 2026-09-25
-PDF_PATH: C:\projects\DrishtiCare\results\DrishtiScreeningReport_005b95c28852_20260925_234158.pdf
-PDF_BYTES: 3118177
+PDF_PATH: C:\projects\DrishtiCare\results\DrishtiScreeningReport_005b95c28852_20260926_010729.pdf
+PDF_BYTES: 3119264
 PDF_HEADER: %PDF-1.4
 PDF_ENGINE: edge
 DECISION: NON-REFERABLE
-STATUS_LABEL: PDF saved (edge): DrishtiScreeningReport_005b95c28852_20260925_234158.pdf
+STATUS_LABEL: PDF saved (edge): DrishtiScreeningReport_005b95c28852_20260926_010729.pdf
 ENGINE_LABEL: PDF: edge · report saved
 SAMPLE: class_0/005b95c28852.png (NoDR)
 CALLBACKS_DRIVEN: analyzeCallback (ANALYZE ButtonPushedFcn) | displayReport (inside analyzeCallback -> displayResults) | savePdfReportCallback (Save PDF Report ButtonPushedFcn)

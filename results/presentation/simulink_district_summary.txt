@@ -1,0 +1,12 @@
+DrishtiCare district-screening simulation - five committed figures.
+ENGINEERING SIMULATION, not a staffing prescription.
+
+Panel 1: Patient funnel: screened -> referred -> reviewed  (source: patient_flow.png)
+Panel 2: Referral volume vs screening volume  (source: referral_volume.png)
+Panel 3: Specialist queue and backlog  (source: specialist_queue.png)
+Panel 4: Specialist utilisation  (source: specialist_utilization.png)
+Panel 5: Referral workload vs decision threshold  (source: threshold_workload.png)
+
+Measured scenario: 96,081 screened; 38,406 referrals (39.97%);
+60.03% never reach a specialist; 153.6 referrals/working day;
+7.68 specialists implied; break point ~180 reviews/day.

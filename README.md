@@ -97,6 +97,12 @@ DrishtiCare/
 >
 > **Launch the app:** run `launchRetinaAI.m` from the repo root (it adds the root
 > plus `src/` recursively to the path and instantiates `RetinaAIApp`).
+>
+> **Governance and evidence:** [docs/project-management/](docs/project-management/)
+> holds the roadmap, frozen contract, decision log, execution checklist, demo and
+> submission plan, plus the annotated [file map](docs/project-management/CURRENT_STATUS.md).
+> [`docs/task-tracker.md`](docs/task-tracker.md) is the evidence record behind
+> every status claim made in those documents.
 
 ## Key Files
 

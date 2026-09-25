@@ -1,49 +1,39 @@
-# Future Roadmap (Beyond Internal Round)
+# Future Roadmap — SUPERSEDED
 
-## What We Are NOT Attempting in 10 Days
+> **This file is superseded. Do not use it as a plan.**
+>
+> It described the 10-day internal round (target 12 Sep 2026), which is **done**.
+> Its "Phase 2 future work" list and its "Internal Round vs Full System" table are
+> both wrong about the present: they list components as missing that shipped
+> before the internal round, and claim `None` for calibration, OOD and cascade.
+>
+> **Canonical roadmap:** [`docs/project-management/ROADMAP.md`](../docs/project-management/ROADMAP.md)
+> (snapshot 2026-09-26). Companion files: `FROZEN_CONTRACT.md` (do-not-change
+> list), `DECISION_LOG.md`, `CURRENT_STATUS.md`, `EXECUTION_CHECKLIST.md`, and the
+> evidence record [`docs/task-tracker.md`](../docs/task-tracker.md).
 
-| Item | Why Not | When |
-|------|---------|------|
-| Full segmentation (MA, HE, EX, SE, NV) | Too complex, needs specialized models | Phase 2 (Weeks 3-4) |
-| >90% sensitivity / >85% specificity | Needs more data + tuning | Phase 3 (Weeks 5-6) |
-| Real-world deployment | Needs regulatory approval | Phase 5+ |
-| Multi-dataset validation | Needs Messidor-2 license | Phase 4 (Weeks 7-8) |
-| Clinical trials | Needs IRB approval | Post-hackathon |
+## What the old "future work" actually is now
 
-## Evolution Path
+| Old "planned" item | Reality | Status |
+|---|---|---|
+| Lesion-level segmentation | Classical MA/HE/EX candidates + trained MA detector and optic-disc locator, 10 features into Branch B. **Not** deep lesion segmentation; fovea localization failed (0/10 within 300 px) | **BUILT (as lesion evidence)** — true segmentation still PLANNED |
+| Dual-evidence path (Branch A + Branch B) | Independent lesion-feature referable classifier + `fuseEvidence`; A/B conflict forces REVIEW | **BUILT (pilot)** |
+| Cascade router | `CLEAR` 648 / `REVIEW` 75 / `ABSTAIN` 10 on the locked 733-image validation split | **BUILT** |
+| OOD detection | Mahalanobis on `pool5`, threshold p99 = 34.22 — **advisory only**, never alters grade or referral | **BUILT** |
+| Calibration ("None" in old table) | Constrained single temperature, **T = 2.5382**; display-only, screening decision stays on raw `pRef` at the locked threshold 0.60 | **BUILT** |
+| ">90% sensitivity / >85% specificity" | Binary sensitivity **0.9060**, specificity **0.9471** at 0.60 on the validation split (not external) | **ACHIEVED (in-distribution)** |
+| "Simple Simulink model" | Real `.slx`, model-vs-reference parity `matchesReference = 1`, 11/11 internal sanity checks | **BUILT** |
+| Multi-dataset validation (Messidor-2 licence) | Harness ready and passing; the labelled external data needs a human registration/download | **BLOCKED (P14 / P16)** |
+| Clinical trials, CDSCO approval, real-world deployment, edge/camera integration | Out of scope for a hackathon prototype | **PLANNED / post-hackathon** |
 
-### Phase 1: Internal Round (Current)
-- Basic pipeline: quality → classification → Grad-CAM → report
-- Simple Simulink model
-- Honest numbers on APTOS
+## Still genuinely open
 
-### Phase 2: Grand Finale
-- Add lesion-level segmentation
-- Dual-evidence path (Branch A + Branch B)
-- Cascade router
-- OOD detection
+Packaging and evidence, not modelling: the submission deck and demo video, one
+curated Simulink presentation figure, sourced impact statistics, three metric
+provenance discrepancies, and external validation once data access exists.
 
-### Phase 3: Post-Hackathon
-- Train on larger dataset (EyePACS)
-- External validation (Messidor-2)
-- Clinical validation with ophthalmologists
-
-### Phase 4: Deployment
-- CDSCO regulatory approval
-- Edge deployment (Jetson)
-- Integration with fundus cameras
-
-## Key Differences (Internal Round vs Full System)
-
-| Feature | Internal Round | Full System |
-|---------|---------------|-------------|
-| Segmentation | OD only | Full lesion detection |
-| Grading | Single CNN | Dual-branch fusion |
-| Explainability | Grad-CAM only | Grad-CAM + lesion evidence |
-| Calibration | None | Constrained temperature |
-| OOD Detection | None | Mahalanobis distance |
-| Cascade | None | 3 confidence bands |
-
-## References
-- Section 7 of 10-day roadmap
-- Full architecture in architecture.md
+The ML contract is frozen — accuracy 0.8281, macro F1 0.6805, QWK 0.8914,
+ROC-AUC 0.9796, PR-AUC 0.7821. Documented negative results (weak Grad-CAM
+localization, failed fovea localization, low MA recall, excluded vessel
+segmentation, enhancement hurting accuracy) stand as recorded. See
+`ROADMAP.md` §4 and §6 for the full list and the do-not-do list.
