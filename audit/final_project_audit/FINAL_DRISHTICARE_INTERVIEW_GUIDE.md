@@ -2,13 +2,52 @@
 
 *Q&A for defending the project. Every number is verified from committed artifacts (re-audited 09-Sep-2026; 63/63 checks PASS). Do NOT invent better numbers than these — the interview is won by honesty + exact recall, not by inflating.*
 
+> **Correction — 2026-09-25 (the Simulink answers are out of date).**
+>
+> The Simulink answers below (Q0 "What is NOT done?", and §11 Q93–Q98, plus the
+> cheat-sheet line 120) were written on 09-Sep-2026 and were **accurate then**:
+> the `.slx` really was a 56-byte text placeholder. They are **not** being
+> rewritten to look better — the original wording is preserved below with a
+> pointer to this note, so you can see what changed and when.
+>
+> **What shipped on 2026-09-21 (commit `3875bf7`):** a real Simulink model,
+> `src/simulink/DrishtiCare_DistrictScreening.slx` — 66,405 bytes, a genuine
+> Simulink file (not text). It simulates 250 working days of district screening
+> at 100,000 patients/yr: arrivals → quality gate → AI referral → specialist
+> review queue, and reports referral volume, queue depth, utilisation and
+> specialists required. Headline measured result at the locked 0.60 threshold:
+> ~38,406 referrals/yr (~153.6/working day) against an **assumed** 60 cases/day
+> review capacity → **capacity exceeded, year-end backlog 23,406, 7.68
+> specialists required**; the 180 cases/day scenario is the first that clears
+> the queue. The model matches its reference engine exactly
+> (`matchesReference = 1`, max abs diff 0.00e+00), passes 11/11 internal sanity
+> checks, and its results + 5 figures + method README are committed under
+> `data/analysis/simulink_resource_simulation/`. Sens/spec inputs (0.9060 /
+> 0.9471 @ 0.60, n=733) are the **already-measured** locked-validation numbers
+> from this guide.
+>
+> **How to answer now:** SIH requirement #5 is **met**. Lead with the model and
+> the numbers above — but state plainly that volume, prevalence and specialist
+> capacity are **assumptions**, and that this is **resource planning, not
+> clinical validation and not a staffing requirement**. Never claim an
+> "80 % automation" figure: the simulation does not produce one.
+>
+> **Still true, still volunteer it:** external validation is **blocked**
+> (Messidor-2 licensing), minority-class recall is **weak** (Severe 48.72 %,
+> Proliferative 52.54 %), and explainability is **weak in practice** (Grad-CAM
+> mass 3.1 %, pointing 7.4 %, Dice 0.051). The 2026-09-23 UI work changed how
+> Grad-CAM is *rendered*, not where it *points*.
+>
+> Same dated correction in `FINAL_DRISHTICARE_TECHNICAL_AUDIT.md` and
+> `FINAL_DRISHTICARE_SIMPLE_EXPLANATION.md`.
+
 ## 0. THE ONE QUESTION YOU MUST ANSWER PERFECTLY
 
 **Q: What exactly did you build?**
 A: A MATLAB pipeline that (1) checks image quality (5 metrics → PASS/WARNING/FAIL), (2) grades diabetic retinopathy into 5 classes with a ResNet-18 CNN, (3) runs a second 10-feature statistical model (Branch B) that must agree — disagreements go to REVIEW, (4) temperature-calibrates the probabilities, (5) attaches a Grad-CAM heatmap and a written explanation, and (6) fully separates train (2,929) / validation (733) / blind test (1,928). The test set (no labels) was never used for tuning.
 
 **Q: What is NOT done?** (volunteer this — it pre-empts the trap)
-A: The Simulink workflow-simulation module — the `.slx` is a text placeholder, so the "100k patients/yr queueing analysis" does not exist computationally yet. External validation on Messidor-2 was blocked by licensing. Those are the two gaps; everything else is measured and reproducible.
+A: The Simulink workflow-simulation module — the `.slx` is a text placeholder, so the "100k patients/yr queueing analysis" does not exist computationally yet. External validation on Messidor-2 was blocked by licensing. Those are the two gaps; everything else is measured and reproducible. — **[superseded 2026-09-25 — see correction note]: the Simulink module now EXISTS (real `.slx`, commit `3875bf7`), so it is no longer a gap. External validation on Messidor-2 remains blocked by licensing and is now the top open gap.**
 
 ---
 
@@ -131,17 +170,17 @@ A: The Simulink workflow-simulation module — the `.slx` is a text placeholder,
 88. Q: Dashboard? A: 5-tab MATLAB App (Overview / Quality / Champion / Workload / Inspector), all numbers loaded from committed artifacts; Inspector runs live inference.
 89. Q: Dashboard numbers? A: acc 0.8281, mF1 0.6805, QWK 0.8914, sens 0.9060, spec 0.9471, 9.73 img/s, quality 65.48/26.68/7.84.
 90. Q: Deployment story? A: A prototype; modelling-code separable from app via load_dashboard_data; designed to be ONNX-transferable (documented).
-91. Q: Cost/roll-out numbers? A: None computed — see Simulink gap.
-92. Q: What would you change for production? A: Retrain with more (and external) data, add hard-example augmentation, strengthen Severe/Prolif, swap Grad-CAM for a model with better localization, integrate a real queueing model.
+91. Q: Cost/roll-out numbers? A: None computed — see Simulink gap. — *[superseded 2026-09-25 — see correction note]: the shipped simulation now computes referral volume, queue depth, utilisation and specialists-required for 100k/yr. Per-cost money figures are still not computed, and capacity inputs are assumptions.*
+92. Q: What would you change for production? A: Retrain with more (and external) data, add hard-example augmentation, strengthen Severe/Prolif, swap Grad-CAM for a model with better localization, integrate a real queueing model. — *[superseded 2026-09-25 — see correction note]: the queueing model is integrated; the first four items all stand, and external data is still the binding constraint.*
 
-## 11. SIMULINK — THE LIKELY TRAP (6 Q&A)
+## 11. SIMULINK — THE LIKELY TRAP (6 Q&A) — *section superseded 2026-09-25, see correction note*
 
-93. Q: Where is the Simulink model? A: src/simulink/simulink_model.slx is a 56-byte text placeholder — a real model was NOT built.
-94. Q: Did the demo claim Simulink insight? A: Yes — pitch demo Act 5 claims a bottleneck at 100k patients/yr and "automate 80%" — that is currently NOT backed by a simulation; we flagged it in the audit as the #1 gap.
-95. Q: Correct response when asked "show the Simulink model"? A: State plainly it's the outstanding PS requirement; show the measured inputs (0.10 s/img, 60 reviews/h reviewer, 40/60 referable split) that a queueing model would use; offer the roadmapped scripted-throughput alternative.
+93. Q: Where is the Simulink model? A: src/simulink/simulink_model.slx is a 56-byte text placeholder — a real model was NOT built. — **[superseded 2026-09-25 — see correction note]: the model is `src/simulink/DrishtiCare_DistrictScreening.slx` (66,405 bytes, real Simulink file, built by `build_DrishtiCare_DistrictScreening.m`); the placeholder was deleted. Give this path, not the old one.**
+94. Q: Did the demo claim Simulink insight? A: Yes — pitch demo Act 5 claims a bottleneck at 100k patients/yr and "automate 80%" — that is currently NOT backed by a simulation; we flagged it in the audit as the #1 gap. — **[superseded 2026-09-25 — see correction note]: the bottleneck claim IS now backed by a simulation (referral volume, queue depth, specialists required at 100k/yr). The "automate 80%" claim is STILL not backed by anything — the model produces no automation percentage. Do not defend that one.**
+95. Q: Correct response when asked "show the Simulink model"? A: State plainly it's the outstanding PS requirement; show the measured inputs (0.10 s/img, 60 reviews/h reviewer, 40/60 referable split) that a queueing model would use; offer the roadmapped scripted-throughput alternative. — **[superseded 2026-09-25 — see correction note]: don't say "outstanding requirement" any more — show the model and its committed results. Two corrections to the input list above: the model uses the **measured** sens/spec (90.60 % / 94.71 % @ 0.60, n=733) and the **assumed** 60 cases/day capacity (3 specialists × 20/day), not 60 reviews/h; and 0.10 s/img is reported but the model's AI capacity is the **assumed** 480 images/day.**
 96. Q: Did the schedule plan it? A: Yes — but the day-08 checkboxes are all unchecked, i.e., the plan was honest.
-97. Q: Is throughput measured at all? A: Inference 0.1028 s/img (9.73 img/s, single-stream CPU) — the number a workflow model would consume.
-98. Q: What is the honest pitch fix? A: Either deliver the Simulink/scripted throughput model, or remove Simulink from PS/deck and present the measured throughput + reviewer-capacity math as back-of-envelope (labeled as such).
+97. Q: Is throughput measured at all? A: Inference 0.1028 s/img (9.73 img/s, single-stream CPU) — the number a workflow model would consume. — *[superseded 2026-09-25 — see correction note]: still true, and the workflow model that consumes it now exists.*
+98. Q: What is the honest pitch fix? A: Either deliver the Simulink/scripted throughput model, or remove Simulink from PS/deck and present the measured throughput + reviewer-capacity math as back-of-envelope (labeled as such). — **[superseded 2026-09-25 — see correction note]: delivered. The remaining fix is to strike the "automate 80%" line from Act 5 / Slide 5, which the model does not support.**
 
 ## 12. ETHICS, LIMITS, PROCESS (10 Q&A)
 
@@ -153,7 +192,7 @@ A: The Simulink workflow-simulation module — the `.slx` is a text placeholder,
 104. Q: How is honesty enforced in this repo? A: Every task has status VERIFIED/UNVERIFIED/BLOCKED/negative-result records; fabricated metrics are absent (audit confirmed); "no evidence found" is used when needed.
 105. Q: What was the single best decision? A: The invariance discipline (locked threshold, read-only champions, closed test set) — it makes every later number trustworthy.
 106. Q: Second best? A: The independent Branch B cross-check — it turns a single black-box into an auditable two-opinion system and forces REVIEW on conflict.
-107. Q: What would you do with 2 more weeks? A: External validation (Messidor-2/EYE-PACS), minority-class data engine, a real Simulink capacity model, and lesion localization retraining.
+107. Q: What would you do with 2 more weeks? A: External validation (Messidor-2/EYE-PACS), minority-class data engine, a real Simulink capacity model, and lesion localization retraining. — *[superseded 2026-09-25 — see correction note]: the Simulink capacity model is built; the other three stand, with external validation first.*
 108. Q: What did you learn hardest? A: Mean-vs-mode of small deltas (0.001–0.003) in metrics are noise; we measured CIs before ever "improving" anything; and that negative results (enhancement, vessel, fovea) are the ones that protected the pipeline from degrading.
 
 ## 13. NUMBER RECALL CHEAT-SHEET (fast-fire)
@@ -169,7 +208,7 @@ A: The Simulink workflow-simulation module — the `.slx` is a text placeholder,
 117. Grad-CAM: mass 0.031 (1.4× areal) · pointing 0.074 (0.37× uniform) · Dice 0.051
 118. OD: 78/733 CNN-located (10.6%) · IDRiD 10/10, 9 within 300 px
 119. fovea AUROC 0.7487 · MA patch 0.9755 · OD patch 0.9955 · OOD p99 34.2155
-120. Simulink: NOT BUILT (placeholder) — say it first, own it, show the plan.
+120. Simulink: NOT BUILT (placeholder) — say it first, own it, show the plan. — **[superseded 2026-09-25 — see correction note]: BUILT.** Say instead: real model, `DrishtiCare_DistrictScreening.slx`, 100k/yr → ~38,406 referrals/yr (~153.6/day) vs assumed 60 cases/day capacity → capacity exceeded, 7.68 specialists required; **assumptions labelled, not clinical validation**. The honest "say it first, own it" line is now **external validation blocked (Messidor-2)**.
 
 ---
 *Prepared 09-Sep-2026 · all figures cross-referenced in `FINAL_DRISHTICARE_TECHNICAL_AUDIT.md` and the 20 audit CSVs.*

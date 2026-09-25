@@ -134,3 +134,51 @@ src/simulink/simulink_model.slx = 56-byte placeholder. SimEvents/Stateflow NOT
 installed. Phase 15 will implement a MATLAB-script system-level discrete-event
 simulation as a documented substitute (file-based), clearly labeled as
 system-level simulation, not clinical operations.
+
+---
+
+## POST-BASELINE CORRECTIONS (appended 2026-09-25 — do not fold into the snapshot above)
+
+This manifest is a point-in-time safety snapshot taken at HEAD `9c553ad`
+(2026-09-09). The sections above are therefore **left byte-for-byte unmodified**
+so the snapshot stays a faithful record of what the hardening program started
+from. Corrections discovered afterwards are recorded here instead. The
+authoritative statements live in the dated correction notes in
+`audit/final_project_audit/FINAL_DRISHTICARE_TECHNICAL_AUDIT.md`.
+
+**Integrity anchors re-verified 2026-09-25 — UNCHANGED:**
+
+| Role | SHA-256 | Status |
+|------|---------|--------|
+| 5-class champion (stage2) | `DD152C917689146F6DEC4687B263EC5E5F237ECF60EC719A59F9FCEEFF737C1B` | matches baseline |
+| Binary champion (stage2) | `43E8DF33B429231EE5BD60A775FDB3629AD81F287617AFAA9308EA87D311F9A0` | matches baseline |
+
+No headline metric, threshold (0.60 locked) or calibration temperature
+(T=2.5382) was changed by any of the work below.
+
+Corrections to the COMPONENT → FILE MAP above:
+
+1. **Quality gate row — `src/quality/quality_gate.m` was deleted on 2026-09-25.**
+   The file contained a single comment line and no function; it was never called.
+   The real gate is `src/quality/assessImageQuality.m` (integrated at
+   `predictSingleFundus.m`). It had also been listed as an eval-critical
+   function in the P18/P22 probe lists purely because the stub made the name
+   resolve; those lists are now 12/12.
+2. **Cascade / confidence router row — path corrected.** The file is
+   `src/inference/cascade_router.m`, not `src/cascade_router/cascade_router.m`;
+   the latter path has never existed.
+3. **Simulink row — superseded.** `src/simulink/simulink_model.slx` (the
+   56-byte placeholder) was deleted in commit `3875bf7`. It is replaced by
+   `src/simulink/DrishtiCare_DistrictScreening.slx` (66,405 bytes, a real OPC
+   container), built by `src/simulink/build_DrishtiCare_DistrictScreening.m`
+   with reference engine `src/simulink/run_district_screening.m`. Model-vs-
+   reference parity was measured: `matchesReference = 1`, max abs diff
+   `0.00e+00`. Evidence in `data/analysis/simulink_resource_simulation/`.
+4. **Components added after the snapshot** (not in the map above):
+   `src/ui/` (shared theme + Grad-CAM presentation layer), `src/demo/`
+   (failure-aware screening demo + tests), `src/analysis/gradcam_alignment/`,
+   `src/reporting/` (branded A4 report), and the root-level `RetinaAIApp.m`
+   user-facing app class.
+5. **`day8_5class_v2a_stage1.mat`** was never committed (only `_stage2` exists);
+   it was therefore never a locked or immutability-relevant artifact. Recorded
+   in the component list above at the P25 disposition.

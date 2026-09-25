@@ -8,6 +8,125 @@
 
 ---
 
+> ## Correction — 2026-09-25 (Simulink finding superseded)
+>
+> **Scope: this addendum corrects exactly ONE finding — the Simulink module
+> (Parts 1, 36, 37 and 47, and the scorecard rows at lines 34 and 36). Every
+> other finding in this audit is unchanged and still stands.**
+>
+> **The finding as written was accurate.** On the audit date (09 Sep 2026)
+> `src/simulink/simulink_model.slx` really was a 56-byte single-comment text
+> file and `load_system` really did fail on it. This audit is not being
+> rewritten to look better than it was; the original verdict text is preserved
+> inline below with a pointer to this note.
+>
+> **What changed.** A real, programmatically-built Simulink model now exists:
+>
+> - `src/simulink/DrishtiCare_DistrictScreening.slx` — **66,405 bytes**, a
+>   genuine OPC/zip container (verified: `50 4B 03 04` magic, **25 entries**
+>   including `simulink/blockdiagram.xml`, `simulink/ScheduleCore.xml` and six
+>   `simulink/systems/system_*.xml` subsystem parts). Not a text placeholder.
+> - Built by `src/simulink/build_DrishtiCare_DistrictScreening.m`; reference
+>   engine + driver `src/simulink/run_district_screening.m`; config
+>   `src/simulink/create_simulation_config.m` → `drishti_sim_default_params.m`.
+> - **Model-vs-reference parity verified: `matchesReference = 1`, max abs diff
+>   `0.00e+00`** — the `.slx` reproduces the reference engine exactly.
+> - The old placeholder `src/simulink/simulink_model.slx` was **deleted** in the
+>   same commit, so no placeholder file remains in the tree. Any reader who
+>   follows the old path will find nothing there — that is intentional.
+> - Results and evidence in `data/analysis/simulink_resource_simulation/`
+>   (`simulation_config.mat`, `baseline_results.mat`, `scenario_results.csv`, a
+>   181-line `README.md`, `reports/baseline_report.md`,
+>   `reports/scenario_report.md`) plus **5 committed figures**
+>   (`specialist_queue.png`, `referral_volume.png`,
+>   `specialist_utilization.png`, `threshold_workload.png`, `patient_flow.png`).
+>   **11/11 internal sanity checks PASS** (TP+FN=referable, TN+FP=non-referable,
+>   referrals=TP+FP, zero-volume→all-zero, infinite-capacity→no-backlog, …).
+> - Measured inputs are the locked validation operating points already audited
+>   here (sens 0.9060 / spec 0.9471 @ 0.60, n=733, quality 65.48/26.68/7.84 %).
+>   Volume, prevalence, specialist capacity and recapture rate are **explicitly
+>   labelled assumptions, not measurements**, and the README states the
+>   simulation is a resource-planning exercise, **not** clinical validation and
+>   **not** a staffing requirement.
+> - Commits `a14dcd4` (config MAT) and `3875bf7` (model + results).
+>
+> **What this correction does NOT do.** It does not soften, reopen or dispute
+> any other finding. In particular the following remain **TRUE and
+> unaddressed**:
+>
+> - **External validation is still BLOCKED** (Parts 40; Messidor-2 licensing).
+>   A resource-planning simulation over already-measured sens/spec is **not**
+>   external validation.
+> - **Minority-class recall is still weak** (Severe 48.72 %, Proliferative
+>   52.54 % — Part 5 / frozen metric table).
+> - **Explainability is still weak in practice** (Part 28: strong confound, weak
+>   localization; mass 3.1 %, pointing 7.4 %, Dice 0.051). The 2026-09-23 UI work
+>   centralized *how* Grad-CAM is coloured and blended (`src/ui/`); it did not
+>   improve *where* it points.
+> - The **Part 37 overclaim finding on the pitch's "automate 80 %" line stood as
+>   written at the time of this note**: the shipped simulation measures referral
+>   volume and queue depth; it does not produce an "80 % automation" figure, and
+>   the audit's judgement that the demo/deck claim had no computational artifact
+>   behind it was **not** withdrawn.
+>   **[Update 2026-09-25 — see correction note 2 below: the overclaim line has
+>   since been deleted from `pitch/demo-script.md` and `pitch/deck-structure.md`
+>   and replaced with the measured simulation split, so the finding is now closed
+>   in the artifacts while its original text is preserved here.]**
+> - The 5 doc-fix items in Part 45 and the 6 stale/contradicted doc tables in
+>   the scorecard were unaffected by the Simulink work.
+>   **[Update 2026-09-25 — see correction note 2 below: 3 of the 5 doc-fix items
+>   are now closed; 2 remain open and are documented as open.]**
+>
+> Verification commands for this addendum: `git show --stat 3875bf7`,
+> `git show --stat a14dcd4`, `git ls-files src/simulink`,
+> `data/analysis/simulink_resource_simulation/README.md` (§2, §11, §14).
+
+---
+
+> ## Correction note 2 — 2026-09-25 (documentation findings closed)
+>
+> **Scope: this addendum records the disposition of the audit's *documentation*
+> findings only (Parts 13, 37, 39, 43, 45). It closes nothing about model
+> quality. Every measurement, negative result and BLOCKED verdict in this audit
+> is unchanged and still stands — in particular external validation (Part 40)
+> remains NOT PERFORMED, and the explainability weaknesses (Part 28) are real.**
+>
+> Closed since the audit date:
+>
+> | Finding | Disposition |
+> |---|---|
+> | Part 13 / 45(c) — `docs/day3-quality-assessment.md` threshold tables STALE | **CLOSED.** Rebuilt from the live `src/quality/defaultQualityConfig.m`: all 20 operative bounds for 5 metrics, with test direction. The gate is a two-sided band-pass (`value < lowerFail \|\| value > upperFail` → FAIL), not a one-sided minimum. |
+> | Part 43 / 45(f) — `metrics.md` stale/overclaimed targets | **CLOSED.** `docs/validation/metrics.md` now separates TARGET from MEASURED per row with source + n. The explainability targets are shown as missed by 9–19× (saliency-in-lesion 3.1 % vs >60 %; pointing game 7.4 % vs >70 %; IoU 0.035 vs >0.3); MACE is stated as **not measured**. |
+> | Part 45(d) — `day6-training-results.md` superseded metrics | **CLOSED** by a dated supersession banner pointing at the frozen champion metrics. |
+> | Part 37 — pitch/deck "automate 80 %" + "needed ophthalmologists X" overclaims | **CLOSED.** Both lines deleted from `pitch/demo-script.md` and `pitch/deck-structure.md`, replaced with the measured simulation split (96,081 screened / 38,406 referrals / 60.03 % never reach a specialist / break point ~180 reviews per day) sourced from `data/analysis/simulink_resource_simulation/scenario_results.csv`, explicitly labelled an engineering simulation rather than a staffing prescription. The three clinical statistics (77 M diabetics, 18 % prevalence, 1 ophthalmologist per 100,000) are now **labelled unverified estimates to be sourced** — no citation was invented. |
+> | Part 39 — `src/quality/quality_gate.m` dead 1-line placeholder | **CLOSED.** File deleted 2026-09-25 (it contained no function and was never called). The real gate is `src/quality/assessImageQuality.m`. It was also a false positive in the P18/P22 eval-critical probe lists, which are now 12/12 with an explicit count assertion. See correction notes in `2026-09-10-hardening-phase18-environment.md` and `...-phase22-determinism.md`. |
+>
+> **Still open (deliberately not closed):**
+>
+> - Part 45(a) — task8 DRIVE Dice: doc `0.2576` vs artifact `0.2541`.
+> - Part 45(b) — task8 human inter-observer Dice: doc `0.7881` vs artifact `0.7902`.
+>   Both are recorded as an **open discrepancy** in
+>   `docs/validation/2026-09-08-task8-vessel-segmentation.md`: the only sources
+>   are binary `.mat` files, and a value found in
+>   `data/analysis/vessel/phase3/metrics.txt` (~0.790) belongs to the *classical*
+>   pipeline under a different FOV erosion, so adopting it would have been wrong.
+>   Re-deriving them needs a MATLAB run that was not performed. **The
+>   negative-result conclusion does not depend on these two numbers.**
+> - Part 45(e) — the `day7/pretrained-resnet-report.md` §2 scratch-baseline row
+>   is a hybrid of two committed derivations that genuinely disagree
+>   (0.8307/0.8667 vs 0.8322/0.9080). Flagged in place with a note; reconciling
+>   it needs MATLAB. Not silently reconciled.
+> - Part 40 — external validation. **BLOCKED, unchanged.**
+>
+> **Note on the CSV inventory files in this folder:** `01_repository_inventory.csv`,
+> `03_code_inventory.csv`, `19_verification_checks.csv` and `20_final_truth_table.csv`
+> still repeat the pre-correction "56-byte text placeholder" Simulink claim and the
+> pre-correction `quality_gate.m` inventory row. They are **point-in-time audit
+> records from 2026-09-09 and are intentionally left unmodified**; the two
+> correction notes above are the authoritative statement of current state.
+
+---
+
 ## EXECUTIVE SUMMARY
 
 The DrishtiCare repo (132 commits, single `main`, HEAD `9c553ad`, clean, fully pushed) is an unusually rigorous student build: **every headline number reproduces exactly** from committed artifacts (T13 = 63/63 PASS), leakage is provably zero, champions are never overwritten, and negative results (lesion detection, fovea, Grad-CAM, enhancement, vessel-in-branch-B) are measured and documented honestly.
@@ -31,16 +150,16 @@ The DrishtiCare repo (132 commits, single `main`, HEAD `9c553ad`, clean, fully p
 | Dashboard | PASS (all numbers verified) | High |
 | Test-set evaluation | Prediction-only (no labels) — correctly reported as such | High |
 | External validation (Messidor-2) | NOT PERFORMED (BLOCKED, license) | High |
-| **Simulink workflow module** | **NOT IMPLEMENTED — `.slx` is a 56-byte text placeholder** | High |
+| **Simulink workflow module** | **NOT IMPLEMENTED — `.slx` is a 56-byte text placeholder** — *as found 2026-09-09; [superseded 2026-09-25 — see correction note]: a real 66,405-byte model now ships* | High |
 | Doc-vs-impl consistency | Mostly PASS; 6 stale/contradicted doc tables + 2 minor numeric deltas found | High |
-| Problem-statement compliance | **4/5 capabilities delivered; Simulink (PS #5) missing** | High |
+| Problem-statement compliance | **4/5 capabilities delivered; Simulink (PS #5) missing** — *as found 2026-09-09; [superseded 2026-09-25 — see correction note]: PS #5 is now delivered* | High |
 
 ---
 
 ## PART-BY-PART AUDIT (47 parts)
 
 ### 1. Repository inventory
-132 commits, 1 branch (`main` from git), remote `origin=https://github.com/Aryan41211/DrishtiCare.git`, working tree clean, 0 unpushed. 19,381 files; 134 `.m`, 153 `.mat`, 18 `.csv`, 74 `.md`, 1 `.slx` (placeholder), 16,674 PNG images. `data/analysis/` (evidence tree) is tracked; raw datasets and all raw images gitignored with `!data/analysis/**` allow-list. **PASS.**
+132 commits, 1 branch (`main` from git), remote `origin=https://github.com/Aryan41211/DrishtiCare.git`, working tree clean, 0 unpushed. 19,381 files; 134 `.m`, 153 `.mat`, 18 `.csv`, 74 `.md`, 1 `.slx` (placeholder — *the `.slx` counted here was the 56-byte placeholder, since replaced; [superseded 2026-09-25 — see correction note]*), 16,674 PNG images. `data/analysis/` (evidence tree) is tracked; raw datasets and all raw images gitignored with `!data/analysis/**` allow-list. **PASS.**
 
 ### 2. Git history & commit map
 Headlines verified per commit: RF-1..RF-7 (5c574f3, 6b50c62, b7298a4, 87f746d, 20ff5b6, c6a2d74, 7f9bb71), stage5 quality-gate+fovea (473be21), T9B models, T12 dashboard (2c62dbb/9f705f0), vessel Phase-3 (b8776b4), T13 re-audit (b8f751a, 9c553ad). Every tracked claim has an artifact commit. **PASS.**
@@ -144,11 +263,11 @@ Verified order: quality gate (line 71) → OD locate (136-140) → lesion extrac
 ### 35. Dashboard (T12)
 5-tab app; all numbers source ONLY from committed artifacts (quality split 65.48/26.68/7.84; champion acc/mF1/qwk 0.8281/0.6805/0.8914; sens/spec 0.9060/0.9471; 0.1028 s/img→9.73 img/s; branchB pilot 0.858; referable 0.4065); Inspector tab does live inference. MLAPP packaged; headless verify PASS. **PASS.**
 
-### 36. Simulink module — **CRITICAL**
-`src/simulink/simulink_model.slx` is **56 bytes = a single MATLAB comment line**; `load_system` fails («not a valid Simulink model file»). No queueing model, no throughput graph, no 100k-patient analysis exists anywhere. PS requirement #5 **NOT MET**. But: `schedule/day-08-simulink.md` honestly leaves all checkboxes `[ ]`; `modules/simulink-workflow.md` labels its numbers "assumed"; risk-checklist anticipates the fallback. **DOCUMENTED-BUT-NOT-IMPLEMENTED.**
+### 36. Simulink module — **CRITICAL** — *finding superseded 2026-09-25, see correction note above*
+`src/simulink/simulink_model.slx` is **56 bytes = a single MATLAB comment line**; `load_system` fails («not a valid Simulink model file»). No queueing model, no throughput graph, no 100k-patient analysis exists anywhere. PS requirement #5 **NOT MET**. But: `schedule/day-08-simulink.md` honestly leaves all checkboxes `[ ]`; `modules/simulink-workflow.md` labels its numbers "assumed"; risk-checklist anticipates the fallback. **DOCUMENTED-BUT-NOT-IMPLEMENTED.** — **[superseded 2026-09-25 — see correction note]**: this was true on 2026-09-09 and is preserved verbatim as the historical finding. As of 2026-09-25 the `.slx` is a real 66,405-byte Simulink model (`src/simulink/DrishtiCare_DistrictScreening.slx`, genuine OPC container, `matchesReference = 1`, max abs diff 0.00e+00), the placeholder file has been deleted, and a 250-day / 100k-per-year district screening + resource-allocation simulation with committed results, 11/11 sanity checks and 5 committed figures ships in `data/analysis/simulink_resource_simulation/`. **PS #5 is now delivered — as a resource-planning simulation with explicitly labelled assumptions, not as clinical validation or a staffing requirement.**
 
 ### 37. Demo script & pitch deck
-Verified: Act 4 numbers (acc 82.81%, QWK 0.8914, sens 90.60%, spec 94.71%, ECE 0.045→0.030, ablations) — all correct. **Overclaims: Act 5 "our Simulink model shows bottleneck… automate 80%… only send borderline" and deck Slide-5 "throughput bottleneck graph/queue graph/needed ophthalmologists X" have NO computational artifact.** Clinical stats (77M diabetics, 18% DR prevalence, 1-ophth/100k) unsourced in repo. **Mixed.**
+Verified: Act 4 numbers (acc 82.81%, QWK 0.8914, sens 90.60%, spec 94.71%, ECE 0.045→0.030, ablations) — all correct. **Overclaims: Act 5 "our Simulink model shows bottleneck… automate 80%… only send borderline" and deck Slide-5 "throughput bottleneck graph/queue graph/needed ophthalmologists X" have NO computational artifact.** — *the later Simulink work [see correction note] supplies a queue/throughput model, but it still produces no "automate 80 %" figure, so this overclaim finding **stands as written**.* Clinical stats (77M diabetics, 18% DR prevalence, 1-ophth/100k) unsourced in repo. **Mixed.**
 
 ### 38. Task tracker & RF tracking
 Tasks 0–13 and RF-1..7 all marked complete; each maps to a real script+artifact (verified row-by-row). RF negative results (3,4,5,6, fovea, T9B) properly recorded. **PASS.**
@@ -178,7 +297,7 @@ See CSV 19. All resolved except: (a) task8 DRIVE-dice doc 0.2576 vs artifact 0.2
 Summarized in Executive Summary above. 47/47 parts completed.
 
 ### 47. Truth table + SIH verdict + priority roadmap
-See CSV 20 for full truth table. **SIH verdict: 4 of 5 PS capabilities delivered and reproduced; Simulink (#5) is a placeholder — the single SIH-blocking gap. Everything else is at "defensible student-build" level.** Priority roadmap below.
+See CSV 20 for full truth table. **SIH verdict: 4 of 5 PS capabilities delivered and reproduced; Simulink (#5) is a placeholder — the single SIH-blocking gap. Everything else is at "defensible student-build" level.** — **[superseded 2026-09-25 — see correction note]: PS #5 is now delivered, so the SIH-blocking gap is closed; the "defensible student-build" level of the other four capabilities is unchanged.** Priority roadmap below.
 
 ---
 
@@ -187,6 +306,7 @@ See CSV 20 for full truth table. **SIH verdict: 4 of 5 PS capabilities delivered
 | # | Action | Why | Effort |
 |---|---|---|---|
 | P0 | Build a real Simulink (or scripted) queueing/throughput model for 100k/yr with the measured 0.1028 s/img + 60-reviews/h reviewer rate; then either fix the `.slx` or explicitly remove the Simulink claim from PS/demo/deck and replace with the honest "scripted throughput analysis" | SIH PS #5 gap; currently an overclaim in demo Act 5 | 1 day |
+| P0 ✅ | *(DONE 2026-09-21, commit `3875bf7` — see correction note.)* Real `.slx` shipped, so the "either/or" resolved in favour of fixing the model. Two honest deltas from the wording above: the delivered model is a **daily aggregate (mean-field) 250-day** model, not a per-patient discrete-event one, and its specialist capacity is an **assumed 60 cases/day (3 specialists × 20/day)**, *not* the 60 reviews/h named here — the shipped model therefore still does not clear the demo Act 5 "automate 80 %" overclaim flagged in Part 37. | — | — |
 | P0 | Update `docs/day3-quality-assessment.md` threshold tables to the live config v2.0.0 values | Stale docs contradict live gate | 15 min |
 | P1 | Re-point `src/viewVessels.m` to `src/vessel/extractVessels.m` (or delete legacy), else anyone running it uses Dice-0.312 code | Latent trap | 10 min |
 | P1 | Refresh `metrics.md` explainability targets (3.07% mass vs 2.2% areal; pointing 7.4%; Dice 0.051) or mark "aspirational" | Targets fail by 10–20× and mislead | 15 min |

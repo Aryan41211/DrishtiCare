@@ -2,6 +2,39 @@
 
 *A plain-English walkthrough of what DrishtiCare is, what it actually does, what it measured, and what it still needs.*
 
+> **Correction — 2026-09-25 (item 1 of §6 is out of date).**
+>
+> When this document was written (audit dated 09 Sep 2026) the Simulink module
+> genuinely did not exist: the `.slx` was a 56-byte text placeholder and
+> `load_system` failed on it. **That was an honest finding, and it is not being
+> rewritten away.**
+>
+> **What shipped since (commit `3875bf7`, 2026-09-21):** a real Simulink model,
+> `src/simulink/DrishtiCare_DistrictScreening.slx` (66,405 bytes, a genuine
+> Simulink file, not text), which simulates a year of district screening —
+> arrivals → quality gate → AI referral → specialist review queue — and reports
+> referral volume, queue depth and how many specialists would be needed. Its
+> output matches the reference engine exactly (`matchesReference = 1`), it
+> passes 11/11 internal sanity checks, and its results, five figures and a
+> 181-line method README are committed under
+> `data/analysis/simulink_resource_simulation/`.
+>
+> **So SIH problem-statement requirement #5 is now met.** The old placeholder
+> file was deleted, and the "fix order" in §7 no longer starts with Simulink.
+>
+> **What this does NOT change — the rest of §6 is still true:**
+> external validation is still blocked (item 2), minority classes are still weak
+> (item 3), small-lesion and fovea detection is still unreliable (item 4),
+> explainability is still weak in practice (item 5), and stale documents are
+> still worth a pass (item 6). Also note the simulation is explicitly a
+> **resource-planning exercise with labelled assumptions** (volume, prevalence
+> and specialist capacity are assumed, not measured) — **not** clinical
+> validation, and **not** proof of any real staffing requirement.
+>
+> The other two companion documents carry the same dated correction:
+> `FINAL_DRISHTICARE_TECHNICAL_AUDIT.md` (correction note near the top) and
+> `FINAL_DRISHTICARE_INTERVIEW_GUIDE.md` (correction note near the top).
+
 ---
 
 ## 1. What is DrishtiCare?
@@ -48,7 +81,7 @@ It was built as a 10-day team project for a hackathon (SIH-style problem stateme
 
 ## 6. What is weak / not done (the honest list)
 
-1. **Simulink module: NOT built.** The project's problem statement asks for a Simulink "workflow simulation" (queueing/bottleneck for 100k patients/yr). The `.slx` file is a 2-line text placeholder. The pitch's "automate 80% of screening" line has **no simulation behind it**.
+1. **Simulink module: NOT built.** The project's problem statement asks for a Simulink "workflow simulation" (queueing/bottleneck for 100k patients/yr). The `.slx` file is a 2-line text placeholder. The pitch's "automate 80% of screening" line has **no simulation behind it**. — **[superseded 2026-09-25 — see correction note at the top of this file]: the module is now built** (a real 66,405-byte Simulink district-screening model, commit `3875bf7`, with committed results and figures). The "automate 80%" sub-claim is **still** unsupported — the simulation measures referral volume and queue depth, not an automation percentage.
 2. **Real-world (external) validation: not done.** No Messidor-2 or similar independent dataset has been run (licensing). We only validated on APTOS/IDRiD.
 3. **Minority classes are hard.** Severe and Proliferative recall are ~0.49/0.53 — a real screening system needs much better here.
 4. **Small lesions/fovea: unreliable.** MA detection recall is very low; fovea CNN no better than chance-level (we moved to a "clinician supplies the fovea" hook).
@@ -58,8 +91,8 @@ It was built as a 10-day team project for a hackathon (SIH-style problem stateme
 ## 7. Bottom line
 
 - **What it is:** a well-engineered, honestly-benchmarked **CNN + statistical cross-check** DR screener prototype with quality gating, calibration, and explainability — all reproducible in MATLAB.
-- **What it is not:** a validated clinical device, and it is **missing the Simulink deliverable** that the statement explicitly required.
-- **Fix order:** build/patch the Simulink (or explicitly scripted) throughput analysis first; then docs hygiene (5 small items); then, if time, strengthen minority recall and add external validation.
+- **What it is not:** a validated clinical device, and it is **missing the Simulink deliverable** that the statement explicitly required. — **[superseded 2026-09-25 — see correction note]: the Simulink deliverable is no longer missing.** It still is **not** a validated clinical device, and the resource simulation behind it is not clinical validation.
+- **Fix order:** build/patch the Simulink (or explicitly scripted) throughput analysis first; then docs hygiene (5 small items); then, if time, strengthen minority recall and add external validation. — **[superseded 2026-09-25 — see correction note]: the Simulink step is done, so the fix order now starts with docs hygiene (5 small items), then minority recall and external validation** — and the first two of those (Simulink, docs) were the ones this document originally ranked highest.
 
 ---
 
