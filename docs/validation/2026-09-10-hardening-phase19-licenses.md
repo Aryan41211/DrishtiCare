@@ -40,3 +40,5 @@ pinned software dependency list.
 - `docs/licenses/license-inventory.md`
 - `src/phase19_license_audit.m`
 - `data/analysis/day10/phase19/phase19_license_audit.mat`
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.

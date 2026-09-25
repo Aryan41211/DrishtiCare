@@ -1,5 +1,36 @@
 # DrishtiCare Day 6 — Performance Improvement Report
 
+> ## ⚠️ SUPERSEDED — HISTORICAL RECORD, NOT A CURRENT RESULT
+>
+> **Banner added 2026-09-25.** This report documents the **Day 6 scratch +
+> class-balanced ResNet-18** experiment (selected model
+> `day6_resnet18_balanced_stage2`). It was **superseded** and is **not** the
+> deployed model. Every number below is kept verbatim as the historical record
+> of that run; none of it describes the current system.
+>
+> **Current champion (sources of truth):**
+> - `docs/task-tracker.md` — per-task status and champion selection
+> - `docs/validation/2026-09-10-hardening-phase7-metric-freeze.md` — the
+>   **contract-frozen** metric values and their definitions
+>
+> **Champion:** `day7_pretrained_resnet18_5class_stage2` (ImageNet-pretrained
+> ResNet-18, 5-class) and `day7_pretrained_resnet18_binary_stage2` (binary
+> screener @ locked threshold 0.60), both on the 733-image validation split:
+>
+> | Metric | Day 6 (this report, superseded) | Current champion |
+> |---|---|---|
+> | 5-class accuracy | 73.26% | **0.8281** |
+> | 5-class QWK | 0.7489 | **0.8914** |
+> | 5-class macro F1 | 0.5016 | **0.6805** |
+> | Referable sensitivity | 0.8371 | **0.9060** |
+> | Referable specificity | 0.8667 | **0.9471** |
+>
+> The Day 6 "Original Baseline Metrics" in §6 (49.25% accuracy) describe a
+> **bug** — a label-mismatch defect since fixed — and are not a performance
+> result for any shipped model. Note also that §8 names
+> `day5_resnet18_baseline_stage2.mat` as the selected model; that filename
+> reference is a historical inconsistency in this document and is left as-is.
+
 ## 1. Root Causes of Original Poor Performance
 
 ### Bug 1: Label Mismatch (Critical)

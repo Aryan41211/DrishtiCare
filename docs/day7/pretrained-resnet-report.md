@@ -1,5 +1,28 @@
 # Day 7 — Final Model Improvement Report
 
+> ## ✅ CURRENT CHAMPION REPORT — but see the scope note
+>
+> **Banner added 2026-09-25.** This report introduces the models that **are**
+> the current deployed champions: `day7_pretrained_resnet18_5class_stage2`
+> (5-class grading) and `day7_pretrained_resnet18_binary_stage2` (binary
+> screener, decision threshold **0.60**, locked). Its headline numbers are the
+> contract-frozen values.
+>
+> **Sources of truth for those values:**
+> - `docs/validation/2026-09-10-hardening-phase7-metric-freeze.md` — the
+>   frozen metric **definitions** and the recomputed headline values
+> - `docs/task-tracker.md` — per-task status and champion selection
+> - `docs/validation/metrics.md` — target-vs-measured metric table
+>
+> **Scope note (read before quoting):** this report covers the Day 7 champion
+> work only. Later phases added components and honest negatives that it does not
+> mention — vessel features (excluded, hurt AUC), the enhancement A/B (hurts
+> grading), the fovea localizer (honest negative, 0/10), and the Grad-CAM
+> lesion-alignment measurement, which shows the model's saliency lands in a
+> lesion only ~3.1% of the time. §2 below also carries a flagged
+> internal inconsistency (see the note there). For current, complete numbers
+> use `docs/validation/metrics.md`, not this file alone.
+
 ## 1. Executive Summary
 ImageNet-pretrained ResNet-18 beats every scratch model on every metric
 and becomes both the grading and screening champion. All results are
@@ -9,6 +32,29 @@ VALIDATION results (733 images). The official test set was never touched.
 - 5-class baseline: 73.67% / F1 0.5083 / QWK 0.7672 / sens 83.22% / spec 90.80%
 - Ensemble w=0.6: 74.08% / 0.5178 / 0.7807 / 85.94% / 86.67%
 - Binary @0.60: sens 90.27% / spec 85.75% / AUC 0.9496
+
+> **⚠️ Flagged inconsistency in the 5-class baseline row (unresolved).** The
+> first bullet is a **hybrid** that matches no single committed source: its
+> accuracy / F1 / QWK (73.67% / 0.5083 / 0.7672) come from
+> `docs/day6-ensemble-binary.md:8`, but its referable sens/spec
+> (83.22% / 90.80%) come from the *different* derivation in
+> `docs/validation/ablation-study.md` row 1. The two committed sources
+> disagree with each other for the same scratch baseline:
+>
+> | Source | Scratch baseline sens / spec |
+> |---|---|
+> | `docs/day6-ensemble-binary.md:8` + `data/analysis/day6/day6_experiment_comparison.mat` | 0.8307 / 0.8667 |
+> | `docs/validation/ablation-study.md` row 1 + `eval_fixed_day5_resnet18_baseline_stage2.mat` | 0.8322 / 0.9080 |
+>
+> `audit/final_project_audit/06_referable_metrics.csv:14` records this
+> explicitly: *"two derivations exist; ablation uses its own."* The rows are
+> **not** reconciled here because choosing between them requires re-deriving
+> from the binary `.mat` artifacts, i.e. re-running MATLAB — no number in
+> either row has been invented or silently overwritten. The 86.67% figure in
+> the ensemble bullet is that same day6 derivation and is internally consistent
+> with `day6-ensemble-binary.md:10`. **This does not affect §15 or any
+> conclusion:** the champion values (0.8281 / 0.6805 / 0.8914 / 0.9060 /
+> 0.9471) come from the frozen Phase 7 recompute and are unaffected.
 
 ## 3. Training Pipeline Audit
 Full audit in `docs/day7/pretrained_pipeline_audit.md`. Key findings:

@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-Day 3 implements the **Engineering Quality Gate** — an automated image quality assessment system for fundus images. This module evaluates images against prototype thresholds derived from Day 2 statistical analysis and provides PASS/WARNING/FAIL decisions with human-readable feedback.
+Day 3 implements the **Engineering Quality Gate** — an automated image quality assessment system for fundus images. This module evaluates images against prototype thresholds derived from the Day 3 full-dataset statistical analysis (3,662 images, per `config.derivedFrom` in `src/quality/defaultQualityConfig.m`) and provides PASS/WARNING/FAIL decisions with human-readable feedback.
 
 **IMPORTANT: This is an ENGINEERING quality gate, NOT a clinical diagnostic system. Thresholds are prototype values only and require ophthalmologist validation before clinical use.**
 
@@ -50,70 +50,115 @@ Day 3 implements the **Engineering Quality Gate** — an automated image quality
 
 ## 5. Prototype Thresholds
 
-### Threshold Documentation
+### Source of truth
 
-Every threshold is documented with:
-- Metric name and description
-- Threshold value
-- Whether lower or higher is considered poor
-- How the threshold was derived from Day 2 statistics
+Every value in this section is transcribed from the operative
+`config.thresholds` struct in **`src/quality/defaultQualityConfig.m`**
+(config version `2.0.0`, `config.derivedFrom = 'Day 3 full dataset analysis
+(3,662 images)'`, `config.validationStatus = 'Prototype - NOT clinically
+validated'`). These are the values the runtime gate actually reads — they are
+passed straight into `evaluateRangeCheck()` by
+`src/quality/assessImageQuality.m:216-256`, which is the only place a
+PASS/WARNING/FAIL decision is made. If this table and the config ever
+disagree, **the config is authoritative and this table is wrong.**
+
+### Direction of every test (two-sided, not one-sided)
+
+The gate is a **band-pass on all five range metrics** — a metric can fail by
+being too *low* **or** too *high*. `evaluateRangeCheck()` implements:
+
+```matlab
+if value < lowerFail || value > upperFail   -> FAIL
+elseif value < lowerWarn || value > upperWarn -> WARNING
+else                                        -> PASS
+```
+
+So the four bounds are ordered `lowerFail < lowerWarn < upperWarn < upperFail`,
+and the PASS band is the **interval** `[lowerWarn, upperWarn]` — not "above a
+minimum". Severity is per-metric in `config.severity`: `FAIL` for brightness,
+contrast, focus, foreground and `maskValid`; **`WARNING` (non-fatal) for
+illumination**, so illumination alone can never fail an image. A NaN metric
+(`isnan(value)`) is also forced to FAIL. The sixth enabled check,
+`maskValid`, is a boolean, not a range: false → `FAIL`.
+
+Units come from `config.thresholdDocumentation.*.unit`.
 
 ### Brightness Thresholds
 
+Mean foreground intensity, unit **[0, 1] scale**, lower = darker / higher = brighter.
+
 | Threshold | Value | Direction | Derivation |
 |-----------|-------|-----------|------------|
-| FAIL lower | 0.15 | Lower is darker (poor) | Set 10-15% below Day 2 P5 (0.294) to catch extreme dark images |
-| WARNING lower | 0.20 | Lower is darker (marginal) | Set between FAIL and normal range |
-| WARNING upper | 0.50 | Higher is brighter (marginal) | Set above Day 2 P95 (0.451) |
-| FAIL upper | 0.55 | Higher is brighter (poor) | Set 10-15% above Day 2 P95 to catch extreme bright images |
+| FAIL lower | 0.1901 | value < 0.1901 → FAIL (too dark) | Day 3 percentile analysis, 3,662 images |
+| WARNING lower | 0.2145 | value < 0.2145 → WARNING (too dark) | Between FAIL bound and normal range |
+| WARNING upper | 0.4586 | value > 0.4586 → WARNING (too bright) | Between normal range and FAIL bound |
+| FAIL upper | 0.5154 | value > 0.5154 → FAIL (too bright) | Day 3 percentile analysis, 3,662 images |
 
-**Day 2 Statistics:** min=0.2165, P5=0.294, P50=0.402, P95=0.451, max=0.4644
+**PASS band:** 0.2145 ≤ brightness ≤ 0.4586
+**Day 3 observed distribution:** min=0.2165, P5=0.294, P25=0.361, P50=0.402, P75=0.428, P95=0.451, max=0.4644
 
 ### Contrast Thresholds
 
+Std dev of foreground intensities, unit **[0, 1] scale**, lower = flatter / higher = more dynamic range.
+
 | Threshold | Value | Direction | Derivation |
 |-----------|-------|-----------|------------|
-| FAIL lower | 0.02 | Lower is flatter (poor) | Set below Day 2 P5 (0.044) to catch severely degraded images |
-| WARNING lower | 0.03 | Lower is flatter (marginal) | Set between FAIL and normal range |
-| WARNING upper | 0.20 | Higher has more range (marginal) | Set above Day 2 P95 (0.129) |
-| FAIL upper | 0.25 | Higher has more range (poor) | Set to catch unusually high contrast |
+| FAIL lower | 0.0315 | value < 0.0315 → FAIL (washed-out) | FAIL lower bound set below P5 to catch severely degraded images |
+| WARNING lower | 0.0387 | value < 0.0387 → WARNING (flat) | Between FAIL bound and normal range |
+| WARNING upper | 0.1065 | value > 0.1065 → WARNING (high range) | Between normal range and FAIL bound |
+| FAIL upper | 0.1375 | value > 0.1375 → FAIL (unusually high) | Upper bound for unusually high contrast |
 
-**Day 2 Statistics:** min=0.0342, P5=0.044, P50=0.063, P95=0.129, max=0.1556
+**PASS band:** 0.0387 ≤ contrast ≤ 0.1065
+**Day 3 observed distribution:** min=0.0342, P5=0.044, P25=0.055, P50=0.063, P75=0.078, P95=0.129, max=0.1556
 
 ### Focus Score Thresholds
 
+Variance of the Laplacian on a 512×512 resized image, unit **scientific notation**, lower = blurrier / higher = sharper.
+
 | Threshold | Value | Direction | Derivation |
 |-----------|-------|-----------|------------|
-| FAIL lower | 1.5e-4 | Lower is blurrier (poor) | Set below Day 2 P5 (3.5e-4) to catch severely blurred images |
-| WARNING lower | 2.0e-4 | Lower is blurrier (marginal) | Set between FAIL and normal range |
-| WARNING upper | 2.0e-3 | Higher is sharper (marginal) | Set above Day 2 P95 (1.34e-3) |
-| FAIL upper | 2.5e-3 | Higher is sharper (poor) | Set to catch unusually sharp images (may be noise) |
+| FAIL lower | 1.42e-04 | value < 1.42e-04 → FAIL (significant blur) | FAIL lower bound set below P5 to catch severely blurred images |
+| WARNING lower | 2.37e-04 | value < 2.37e-04 → WARNING (blurry) | Between FAIL bound and normal range |
+| WARNING upper | 1.34e-03 | value > 1.34e-03 → WARNING (unusually sharp) | Between normal range and FAIL bound |
+| FAIL upper | 1.75e-03 | value > 1.75e-03 → FAIL (noise/artifacts) | Upper bound for unusually sharp images |
 
-**Day 2 Statistics:** min=2.16e-4, P5=3.5e-4, P50=7.6e-4, P95=1.34e-3, max=2.64e-3
+**PASS band:** 2.37e-04 ≤ focusScore ≤ 1.34e-03
+**Day 3 observed distribution:** min=2.16e-4, P5=3.50e-4, P25=5.52e-4, P50=7.60e-4, P75=9.90e-4, P95=1.34e-3, max=2.64e-3
 
 ### Foreground Fraction Thresholds
 
+Proportion of image that is retinal tissue, unit **[0, 1] scale**, lower = more black border / higher = more retina visible.
+
 | Threshold | Value | Direction | Derivation |
 |-----------|-------|-----------|------------|
-| FAIL lower | 0.25 | Lower means more border (poor) | Set conservatively to catch images with insufficient retinal area |
-| WARNING lower | 0.35 | Lower means more border (marginal) | Set between FAIL and normal range |
-| WARNING upper | 0.90 | Higher means more retina (marginal) | Set above typical range |
-| FAIL upper | 0.95 | Higher means more retina (poor) | Set to catch unusual foreground detection |
+| FAIL lower | 0.2651 | value < 0.2651 → FAIL (mostly black border) | FAIL lower bound set conservatively to catch images with insufficient retinal area |
+| WARNING lower | 0.4736 | value < 0.4736 → WARNING (border heavy) | Between FAIL bound and normal range |
+| WARNING upper | 0.8833 | value > 0.8833 → WARNING (unusually large) | Between normal range and FAIL bound |
+| FAIL upper | 0.9758 | value > 0.9758 → FAIL (suspect mask) | Upper bound for unusual foreground detection |
 
-**Day 2 Statistics:** min=0.474, P5=0.474, P50=0.742, P95=0.839, max=0.840
+**PASS band:** 0.4736 ≤ foregroundFrac ≤ 0.8833
+**Day 3 observed distribution:** min=0.474, P5=0.474, P25=0.474, P50=0.742, P75=0.787, P95=0.839, max=0.840
 
 ### Illumination Thresholds
 
+Ratio of center brightness to edge brightness, unit **ratio (1.0 = uniform)**, lower = edges brighter / higher = center brighter (vignetting).
+
 | Threshold | Value | Direction | Derivation |
 |-----------|-------|-----------|------------|
-| FAIL lower | 0.75 | Lower means edges brighter (poor) | Set below Day 2 min (0.757) to catch extreme cases |
-| WARNING lower | 0.85 | Lower means edges brighter (marginal) | Set between FAIL and normal range |
-| WARNING upper | 1.40 | Higher means center brighter (marginal) | Set above Day 2 P95 (1.28) |
-| FAIL upper | 1.50 | Higher means center brighter (poor) | Set to catch extreme vignetting |
+| FAIL lower | 0.8025 | value < 0.8025 (edges brighter) | Bound defined; severity is WARNING so this never rejects an image |
+| WARNING lower | 0.9200 | value < 0.9200 → WARNING (uneven) | Between FAIL bound and normal range |
+| WARNING upper | 1.2615 | value > 1.2615 → WARNING (vignetting) | Between normal range and FAIL bound |
+| FAIL upper | 1.3541 | value > 1.3541 (extreme vignetting) | Bound defined; severity is WARNING so this never rejects an image |
 
-**Day 2 Statistics:** min=0.757, P5=0.95, P50=1.14, P95=1.28, max=1.293
+**PASS band:** 0.9200 ≤ illumination ≤ 1.2615
+**Day 3 observed distribution:** min=0.757, P5=0.95, P25=1.06, P50=1.14, P75=1.22, P95=1.28, max=1.293
 
-**Note:** Illumination uses WARNING severity (non-fatal) since illumination issues rarely make images unusable.
+**Note:** `config.severity.illumination = 'WARNING'`, so illumination is
+non-fatal — its two FAIL bounds are recorded in the config but an out-of-range
+illumination ratio can only downgrade an image to WARNING, never to FAIL
+(rationale in config: illumination issues rarely make images unusable). This
+matches the documented Day 2 observation that the APTOS image set contained no
+unusable images on this metric.
 
 ## 6. Output Structure
 

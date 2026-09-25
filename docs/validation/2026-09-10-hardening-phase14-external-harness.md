@@ -51,3 +51,5 @@ headlines.
 - `data/analysis/day10/phase14/phase14_external_validation.mat`
   (fields: `status`, `harnessReady`, `valDryRun`, `scoring`, `external`,
   `auditRes`)
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.

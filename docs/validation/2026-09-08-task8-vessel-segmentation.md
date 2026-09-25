@@ -78,6 +78,39 @@ the two manual segmentations inside the DRIVE FOV mask.
 | Human inter-observer Dice (2nd vs 1st) | 0.7881 | — |
 | Pixel-level ROC-AUC (map vs 1st_manual) | 0.6110 | — |
 
+**Provenance of the §3 table.** All four rows are the output of
+`src/eval_segmenter_drive.m` on the 20 DRIVE test images at native 584×565
+(STRIDE 4), scored against the **un-eroded** `mask` FOV, saved to
+`data/analysis/day8/task8/drive_test_dice.mat` (n=20). They are internally
+consistent with §5 and the Conclusion, which both cite Dice ~0.26.
+
+> **Unverified discrepancy — deliberately NOT corrected here.** A later
+> ad-hoc audit (`audit/final_project_audit/19_verification_checks.csv`,
+> `20_final_truth_table.csv`, `10_vessel_metrics.csv`) claims
+> `drive_test_dice.mat` holds mean Dice **0.2541** and human inter-observer
+> Dice **0.7902**, i.e. that the 0.2576 / 0.7881 above are wrong by +0.0035 /
+> −0.0021. That claim is **not adopted here** because:
+> 1. its only cited source is a binary `.mat` that cannot be re-read without
+>    re-running MATLAB, and
+> 2. the audit is **self-inconsistent** about the human figure —
+>    `10_vessel_metrics.csv` records the day8 artifact's `humanDice` as
+>    **0.7884** (within 0.0003 of the 0.7881 reported here), while
+>    `19_verification_checks.csv` attributes **0.79024** to
+>    `drive_vessel_metrics.mat`.
+>
+> The ~0.790 inter-observer figure demonstrably belongs to the **classical**
+> vessel pipeline, not this CNN: `data/analysis/vessel/phase3/metrics.txt:47`
+> records `2nd-manual Dice: locked 0.7278 champion 0.7573 (human
+> inter-observer ~0.790)` — and that run scores inside a **FOV eroded by 5 px**
+> (`phase3/metrics.txt:6`), a different masking convention from the un-eroded
+> `mask` used by `eval_segmenter_drive.m`. Adopting 0.7902 here would mix a
+> different pipeline's FOV convention into this report.
+>
+> Neither value changes any conclusion: the segmenter is far below DRIVE
+> deep-learning SOTA and the feature block is excluded from production either
+> way. Resolving the ~0.0035 offset requires re-running
+> `src/eval_segmenter_drive.m` and re-reading `drive_test_dice.mat`.
+
 **Honest note:** Dice 0.258 / IoU 0.148 is **well below** DRIVE deep-learning
 SOTA (~0.80 Dice). This is a small, CPU-only, patch-center CNN (not a dense
 U-Net), trained on only 16 images; vessel exit/entry paths are thin and the

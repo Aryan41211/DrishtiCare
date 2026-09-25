@@ -40,4 +40,20 @@
 1. No 98–99% overall accuracy exists (98% = healthy-only recall; 0.97 = ranking score).
 2. Weak spots: Severe (48.7%), Proliferative (52.5%).
 3. Validation-only — not hospital-tested.
-4. Open: manifest hashes need updating before judging.
+4. ~~Open: manifest hashes need updating before judging.~~ **RESOLVED (closed
+   2026-09-25).** The manifest hash drift was corrected at Phase 25 — see
+   `audit/improvement_baseline/baseline_manifest.md:28`, which now records that
+   the `day8_5class_v2a` stage1 checkpoint was never committed, and
+   `docs/validation/2026-09-10-hardening-phase25-capstone.md` (disposition 2).
+   The two locked champion SHA-256s were re-verified intact in Phase 17
+   (`docs/validation/2026-09-10-hardening-phase17-immutability.md`, 8/8 PASS).
+   **Nothing is outstanding on the manifest before judging.** This item is kept
+   struck-through rather than deleted so the closure stays auditable.
+
+## 5. Where the full metric table lives
+
+`docs/validation/metrics.md` is the complete **target-vs-measured** source of
+truth, including the explainability metrics this summary does not cover — the
+champion's Grad-CAM saliency lands inside an IDRiD lesion only ~3.1% of the
+time (pointing game 7.4%, IoU 0.035, n=81), far short of the original >60% /
+>70% / >0.3 targets. Those targets were missed, not met.

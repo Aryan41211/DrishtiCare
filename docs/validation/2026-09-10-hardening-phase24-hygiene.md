@@ -26,3 +26,5 @@ P0/P16 report-exemption policy, P1 report dated 2026-09-09).
 ## Artifacts
 - `src/phase24_prefinal_hygiene.m`
 - `data/analysis/day10/phase24/phase24_prefinal_hygiene.mat`
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.

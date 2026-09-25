@@ -30,3 +30,5 @@ provenance, superseded by hardening artifacts.
 ## Artifacts
 - `src/phase20_rogue_triage.m`
 - `data/analysis/day10/phase20/phase20_rogue_triage.mat`
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.

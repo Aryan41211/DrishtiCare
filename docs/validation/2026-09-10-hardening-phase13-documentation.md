@@ -44,3 +44,15 @@ headline number was found.
 - `src/phase13_documentation_completeness.m`
 - `data/analysis/day10/phase13/phase13_documentation_completeness.mat`
 - Doc fixes: `README.md`; 9 hardening reports (appended disclaimer)
+
+> **Re-verified 2026-09-25 — 10 PASS, 0 FAIL (the check had silently regressed).**
+> This check was re-run after the 2026-09-25 documentation pass and initially
+> reported **9 PASS / 1 FAIL** on `hardening_reports_disclaimers`. Cause: the
+> original phase appended the disclaimer to the 13 hardening reports that
+> existed at the time, but the **9 reports written afterwards** (P14, P17–P24)
+> never received it, so the check had been failing for some time without anyone
+> re-running it. Investigation confirmed all 9 already lacked the line at git
+> HEAD `8d344de` — the regression was **pre-existing and not caused by the
+> 2026-09-25 edits**. The standard disclaimer line was appended to all 9 and the
+> check now reports **10 PASS / 0 FAIL**. No verdict, metric or artifact
+> reference changed; the regenerated `.mat` reflects the 10/10 re-run.

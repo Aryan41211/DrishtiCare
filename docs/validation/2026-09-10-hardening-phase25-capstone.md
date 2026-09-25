@@ -51,9 +51,19 @@ P14's numbers are the harness checks.)*
    `data/analysis/final/`, `data/analysis/smoke_test/`): pre-hardening
    eval provenance, unreferenced by `src`, no training call-sites, no model
    weights. Superseded by hardening artifacts.
-2. **Manifest drift — correct at commit time:** `baseline_manifest.md` lists
-   `data/models/day8_5class_v2a_stage1.mat` (nonexistent; only `_stage2.mat`
-   exists). Not a locked file; locked champions verified intact (P17).
+2. **Manifest drift — RESOLVED (correction applied):** `baseline_manifest.md`
+   previously listed `data/models/day8_5class_v2a_stage1.mat`, which does not
+   exist. Verified by directory listing of `data/models/`: only
+   `day8_5class_v2a_stage2.mat` exists (41,726,910 bytes); there is no stage1
+   file. The Day 8 v2a run was a **non-promoted, never-locked** experiment, and
+   its stage1 checkpoint was simply never committed — so stage1 was **not** an
+   immutability-relevant artifact and the P17 contract was never at risk. The
+   manifest has been corrected to record that fact
+   (`audit/improvement_baseline/baseline_manifest.md:28`: *"Task 5(a), not
+   promoted; stage1 checkpoint was NOT committed — manifest corrected at
+   P25"*). Locked champions verified intact (P17). **No model file was added,
+   deleted, renamed, or re-hashed as part of this correction** — it is a
+   documentation fix to a listing, not tampering.
 3. **Residual risk (single outstanding item):** no real external dataset has
    been evaluated. P14 harness ready; Messidor-2/Sin-NP DR 2019 require a
    human download/registration. No deployment-facing (clinical) claim is made

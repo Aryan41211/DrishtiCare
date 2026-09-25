@@ -32,3 +32,5 @@ This is a **disclosure**, not a tuning exercise: threshold stays locked at 0.60.
 - `src/phase21_threshold_robustness.m`
 - `data/analysis/day10/phase21/phase21_threshold_robustness.mat`
   (fields: `thresholds`, `sweep` table, `frozenT60`, `report`, `auditRes`)
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.

@@ -23,11 +23,19 @@ Date: 2026-09-10. **8/8 PASS.**
    `data/analysis/day10/phase17/phase17_hash_snapshot.json` as the standing
    drift baseline, and optionally re-evaluate whether ~500 MB of models should
    be tracked (e.g. via a separate LFS/archive disposition).
-- **Pre-existing manifest drift (NOT caused by hardening):**
-  `baseline_manifest.md` lists `data/models/day8_5class_v2a_stage1.mat`, but
-  only `_stage2.mat` exists on disk. This file is explicitly *not promoted / not
-  locked*, so it does **not** violate the immutability contract. Disposition:
-  correct the manifest listing in Phase 25 (documented correction, not tampering).
+- **Pre-existing manifest drift (NOT caused by hardening) — disposition
+  executed at P25:** `baseline_manifest.md` previously listed
+  `data/models/day8_5class_v2a_stage1.mat`, but only
+  `day8_5class_v2a_stage2.mat` exists on disk (confirmed by directory listing;
+  no stage1 file was ever committed). This file is explicitly *not promoted /
+  not locked*, so stage1 was **not** an immutability-relevant artifact and its
+  absence **does not** violate the immutability contract — the contract covers
+  the two locked champions in check 1, both verified byte-identical by
+  SHA-256. The recommended Phase 25 correction has since been applied as a
+  documentation fix: the manifest now records
+  `audit/improvement_baseline/baseline_manifest.md:28` — *"Task 5(a), not
+  promoted; stage1 checkpoint was NOT committed — manifest corrected at P25"*.
+  No model file was created, deleted or modified to achieve this.
 - `.NET SHA-256` had one fix during development (`System.IO.File.Open` needed
   `System.IO.FileMode.Open`, not string literals); the git check also needed to
   distinguish untracked (allowed) from modified (forbidden).
@@ -37,3 +45,5 @@ Date: 2026-09-10. **8/8 PASS.**
 - `data/analysis/day10/phase17/phase17_model_immutability.mat`
 - `data/analysis/day10/phase17/phase17_hash_snapshot.json` (full-program hash
   snapshot: champions + 15 models + 17 artifacts + drift record)
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.

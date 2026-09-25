@@ -22,3 +22,5 @@ Date: 2026-09-10. **4/4 PASS** (one self-contradictory check fixed).
 - `src/phase23_performance_envelope.m`
 - `data/analysis/day10/phase23/phase23_performance_envelope.mat`
   (fields: `envelope` 2×1 struct, `memProbe`, `auditRes`)
+
+Engineering demo, NOT a clinical device: all cited metrics are engineering measurements on validation-set artifacts from the frozen protocol (Phase 10); no clinical validation is claimed.
