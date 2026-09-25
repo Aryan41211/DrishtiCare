@@ -452,23 +452,23 @@ Do not:
 
 DrishtiCare is submission-ready when:
 
-- [ ] Dashboard polished and verified
-- [ ] Report polished and verified
-- [ ] End-to-end demo works from clean launch
-- [ ] FAIL/refusal behavior demonstrated
-- [ ] Grad-CAM rendering is consistent
-- [ ] Simulink story has one clean figure
-- [ ] Deck exists as an actual file
-- [ ] Demo video exists
-- [ ] Impact statistics are sourced
-- [ ] Built vs Planned is accurate
-- [ ] Limitations are explicit
-- [ ] External validation is either completed or clearly documented as blocked
-- [ ] All final metrics trace to source artifacts
-- [ ] Model hashes unchanged
-- [ ] Sealed test remains untouched
-- [ ] Git working tree clean
-- [ ] Final team rehearsal completed
+- [x] Dashboard polished and verified — `verify_retinaai` PASS (re-run 2026-09-26), 8 curated frames in `results/visual_qa/`
+- [x] Report polished and verified — `verify_drishti_report_extended` PASS (edge, 3,119,264 bytes, `%PDF-1.4`, re-run 2026-09-26)
+- [ ] End-to-end demo works from clean launch — headless clean-session **is** proven (`src/demo/run_unseen_rehearsal.m`, 19/19, 4/4 contract checks). **Open:** the human GUI run (fresh launch → upload → analyze → save report)
+- [x] FAIL/refusal behavior demonstrated — rehearsal 19/19 with the locked 0.60 rule; deck slide 6; `pitch/video-plan.md` shot 4 (38 s, the longest)
+- [x] Grad-CAM rendering is consistent — centralized in `src/ui/renderGradCAMViews.m`, one code path shared by app and PDF, covered by the 35-assertion app check
+- [x] Simulink story has one clean figure — `results/presentation/simulink_district_summary.png` (+ alt-text), regenerable via `src/simulink/compose_simulink_summary_figure.m`
+- [x] Deck exists as an actual file — `pitch/deck.pdf`, 11 slides, 3,685,132 bytes. ⚠️ PDF, not `.pptx` (Report Generator unlicensed here; no PowerPoint automation)
+- [ ] Demo video exists — plan + narration ready (`pitch/video-plan.md`, `pitch/VOICEOVER-SCRIPT.md`); recording and MP4 assembly are human steps (no ffmpeg/OBS on this machine)
+- [x] Impact statistics are sourced — `docs/background/clinical-statistics-sources.md` with organisation, year and DOI. ⚠️ the "1 ophthalmologist per 100,000" claim was **not supported** and was removed, not restated
+- [x] Built vs Planned is accurate — deck slide 4
+- [x] Limitations are explicit — deck slide 10; the negatives below are reproduced verbatim in the submission
+- [x] External validation is either completed or clearly documented as blocked — **BLOCKED** on Messidor-2 / Sin-NP licensing; harness ready, no external metrics reported anywhere
+- [x] All final metrics trace to source artifacts — `docs/validation/metrics.md` evidence column; three provenance conflicts resolved 2026-09-26 with read-only MATLAB, no headline value changed
+- [x] Model hashes unchanged — both champions re-hashed 2026-09-26, **MATCH** `FROZEN_CONTRACT.md`
+- [x] Sealed test remains untouched — APTOS official test unlabeled and firewalled; no tuning against it
+- [x] Git working tree clean — `main` == `origin/main` at `6c4a44b`, 238 commits
+- [ ] Final team rehearsal completed — not done; the last step before submission
 
 ---
 
