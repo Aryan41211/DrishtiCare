@@ -182,14 +182,13 @@ function testQualityAssessment()
         config.thresholds.focus.lowerWarn, ...
         config.thresholds.focus.upperWarn);
 
-    %% Test 8: Verify main.m still works
-    fprintf('\n--- Test 8: Verify main.m Still Works ---\n');
+    %% Test 8: Verify a training image loads
+    fprintf('\n--- Test 8: Sample Image Readability ---\n');
     try
         mainImg = imread(fullfile(trainDir, allFiles(1).name));
-        % Just verify it loads - don't run main() as it opens figures
-        fprintf('[PASS] main.m input verification passed\n');
+        fprintf('[PASS] sample image loaded (%dx%d)\n', size(mainImg, 2), size(mainImg, 1));
     catch e
-        fprintf('[WARN] main.m input check failed: %s\n', e.message);
+        fprintf('[WARN] sample image check failed: %s\n', e.message);
     end
 
     %% Final Summary

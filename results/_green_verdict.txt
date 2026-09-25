@@ -1,8 +1,0 @@
-VERIFYRAN=0
-VERIFYERR=Screening Summary section present
-GENOK=1
-PDF=C:\projects\DrishtiCare\results\DrishtiScreeningReport_DRISHTI-0001_20260914_121410.pdf
-BYTES=86301
-HEADER=%PDF
-ENGINE=edge
-VERDICT=FAIL

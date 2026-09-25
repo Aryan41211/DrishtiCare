@@ -52,10 +52,14 @@ auditRes(end+1) = rec('P18 resnet18_resolvable', ~isempty(wR18), wR18, 'non-empt
     'pretrained resnet18 entry point resolvable (used by champions)'); %#ok<AGROW>
 
 %% ---- 3. Eval path resolves from THIS repo (no shadowing) ----
-crit = {'quality_gate','cascade_router','predictSingleFundus','fuseEvidence', ...
+% 12 eval-critical functions (was 13 until 2026-09-25; the 1-line comment-only
+% placeholder src/quality/quality_gate.m was deleted -- the real quality gate is
+% assessImageQuality, which is not itself on this list).
+crit = {'cascade_router','predictSingleFundus','fuseEvidence', ...
         'gradcamExplain','ood_detector','buildExplanationNarrative', ...
         'calibrationStats','temperatureScale','loadTemperatureParams', ...
         'evaluateClassifier','evaluateBinaryClassifier','re_verify_audit'};
+assert(numel(crit) == 12, 'P18: eval-critical list must hold exactly 12 entries');
 bad = {};
 for i = 1:numel(crit)
     w = which(crit{i});

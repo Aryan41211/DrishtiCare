@@ -30,8 +30,14 @@ function metrics = evaluateBinaryClassifier(trainedNet, valDSraw, varargin)
         if mod(i, 100) == 0, fprintf('  %d/%d\n', i, fileCount); end
     end
 
-    % Default 0.5 operating point
-    YPred = PRef >= 0.5;
+    % Default 0.5 operating point for THIS validation analysis only.
+    % NOTE: this is the script's own analysis operating point, NOT the locked
+    % production screening threshold. The locked binary referable decision
+    % threshold is 0.60 (src/inference/predictSingleFundus.m, 'BinaryThreshold'
+    % default 0.60; pRefLocked in src/inference/cascade_router.m) and is
+    % unaffected by anything in this function.
+    analysisThr = 0.50;
+    YPred = PRef >= analysisThr;
     tp = sum(YTrue & YPred); fp = sum(~YTrue & YPred);
     fn = sum(YTrue & ~YPred); tn = sum(~YTrue & ~YPred);
     sens = tp/(tp+fn+eps); spec = tn/(tn+fp+eps);
@@ -78,7 +84,7 @@ function metrics = evaluateBinaryClassifier(trainedNet, valDSraw, varargin)
     metrics.chosenSpec = sSpec(okIdx);
     metrics.note = 'Validation-only. Official test set untouched.';
 
-    fprintf('\n=== Binary Referable Results (thr=0.50) ===\n');
+    fprintf('\n=== Binary Referable Results (validation analysis thr=%.2f; locked screening thr=0.60) ===\n', analysisThr);
     fprintf('Accuracy: %.2f%%  Sens: %.4f  Spec: %.4f\n', acc*100, sens, spec);
     fprintf('PPV: %.4f  F1: %.4f  ROC-AUC: %.4f  PR-AUC: %.4f\n', ppv, f1, auc, auprc);
     fprintf('TP=%d FP=%d FN=%d TN=%d\n', tp, fp, fn, tn);

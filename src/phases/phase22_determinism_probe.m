@@ -20,10 +20,14 @@ fprintf('  Date: %s\n', datestr(now));
 fprintf('============================================================\n');
 
 %% ---- 1. Static: no RNG call-sites in eval-critical functions ----
-crit = {'quality_gate','cascade_router','predictSingleFundus','fuseEvidence', ...
+% 12 eval-critical functions (was 13 until 2026-09-25; the 1-line comment-only
+% placeholder src/quality/quality_gate.m was deleted -- the real quality gate is
+% assessImageQuality, which is not itself on this list).
+crit = {'cascade_router','predictSingleFundus','fuseEvidence', ...
         'gradcamExplain','ood_detector','buildExplanationNarrative', ...
         'calibrationStats','temperatureScale','loadTemperatureParams', ...
         'evaluateClassifier','evaluateBinaryClassifier','re_verify_audit'};
+assert(numel(crit) == 12, 'P22: eval-critical list must hold exactly 12 entries');
 rngPat = '\b(randn?|randi|datasample|cvpartition|shuffle|rng\s*\(|RandStream)\s*\(';
 hits = {};
 for i=1:numel(crit)

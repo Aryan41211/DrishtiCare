@@ -33,9 +33,18 @@
 **File:** `src/setup/DAY1_QUICKSTART.md`
 **Purpose:** Step-by-step instructions for running scripts
 
-### 8. Updated Main Entry Point
+### 8. Main Entry Point
 **File:** `src/main.m`
 **Purpose:** Properly structured pipeline entry point
+
+> **Correction — 2026-09-25.** `src/main.m` was never created at this path (this
+> Day-1 status doc recorded an intent, not a delivered file), and the Day-2 stub
+> that did live at `src/runs/main.m` was deleted on 2026-09-25 — it contained
+> only `[STUB] Pipeline stages not yet implemented.` and, because every phase
+> script runs `addpath(genpath('src'))`, its `main` function shadowed MATLAB's
+> built-in `main`. The real entry points are: `launchRetinaAI.m` (user-facing
+> app), `src/inference/predictSingleFundus.m` (single-image screening) and
+> `src/dashboard/verify_retinaai.m` (headless app verification).
 
 ---
 

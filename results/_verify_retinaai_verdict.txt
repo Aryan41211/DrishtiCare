@@ -1,0 +1,30 @@
+VERDICT: PASS
+MATLAB: 26.1.0.3346908 (R2026a) Update 5
+MATLAB_RELEASE: 2026a
+DATE: 2026-09-25
+BASELINE: src/dashboard/verify_retinaai.m (last modified 2026-09-19, pre-dashboard-redesign)
+ENTRY_POINT: src/dashboard/verify_retinaai.m
+INVOCATION: matlab -batch "run('src/dashboard/verify_retinaai.m')"   (run from the repo root; plain -batch worked first try, no -nodesktop/-r fallback needed)
+UIFIGURE_CREATED_HEADLESS: yes (isvalid(a.UIFigure) asserted true; figure titled with 'DRISHTI')
+STDERR: empty
+WALLCLOCK_SEC: 74.2
+TERMINATOR: ALL DRISHTI APP CHECKS PASS
+ASSERTIONS: 35
+ASSERTIONS_PASSED: 35
+ASSERTION_SOURCE_LINES: 32
+ASSERTION_NOTE: the script emits no machine-readable pass/total counter. 35 = the 32 assert() source lines, with the line-60 view-button assert executed 4x inside the 4-item {Original,Enhanced,Grad-CAM,Overlay} loop. Every one passed: no assertion error was raised and the run reached the "ALL DRISHTI APP CHECKS PASS" terminator.
+CALLBACKS_DRIVEN: uidropdown ValueChangedFcn (real sample selection) | ANALYZE IMAGE ButtonPushedFcn -> analyzeCallback (real inference + real report render into the uitextarea)
+CALLBACKS_PRESENCE_CHECKED_ONLY: Original / Enhanced / Grad-CAM / Overlay view buttons - asserted present by button Text, but their ButtonPushedFcn is NOT fired by this script
+CALLBACKS_NOT_DRIVEN: Save PDF Report (savePdfReportCallback) - not touched by this script; covered separately by src/reporting/verify_drishti_report_extended.m
+SAMPLE_LIST_ENTRIES: 16
+CONTRACT_CHECK_IMAGE: 005b95c28852.png (resolved from the selected dropdown item)
+QUALITY_STATUS: WARNING
+GRADE: 0
+CASCADE_ROUTE: CLEAR
+REPORT_TEXTAREA_LINES: 18
+REJECT_PATH_SAMPLE: data/splits/val/class_2/026dcd9af143.png
+REJECT_PATH_RESULT: quality FAIL -> binaryDecision WITHHELD, grade NaN (classifier correctly skipped)
+FAIL_STEP: 
+ERROR: 
+CONSOLE_NOTE: the redirected stdout shows "P(REFERABLE) ? LOCKED THRESHOLD 0.60" - that is a console code-page artifact for a UTF-8 middle dot in the app label, not a defect in the run; MATLAB's own verdict file writes the same character correctly.
+RELATED_VERDICT: results/_verify_extended_verdict.txt (report/PDF path, re-run 2026-09-25, VERDICT: PASS)

@@ -96,8 +96,16 @@ function config = defaultTrainingConfig()
     config.preprocessing.preserveAspectRatio = true;
 
     %% Referable DR settings
-    config.referable.threshold = 0.5;  % Default placeholder
-    config.referable.thresholdLabel = 'Configurable, not clinically validated';
+    % DOCUMENTATION ONLY -- this field is read by nothing in this repository.
+    % The OPERATIVE binary referable screening threshold is LOCKED at 0.60 and
+    % lives in src/inference/predictSingleFundus.m (inputParser default
+    % 'BinaryThreshold', 0.60), mirrored as pRefLocked in
+    % src/inference/cascade_router.m. Do not use this value for screening and
+    % do not change the locked one. Set to 0.60 on 2026-09-25 (was a
+    % contradictory 0.5 "% Default placeholder") purely so that a reader
+    % cannot mistake it for the operative threshold.
+    config.referable.threshold = 0.60;  % not consumed; mirrors the locked value
+    config.referable.thresholdLabel = 'Locked at 0.60, not clinically validated';
 
     %% Output settings
     config.output.modelSavePath = fullfile(config.dataset.modelDir, ...
