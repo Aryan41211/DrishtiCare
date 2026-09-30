@@ -22,13 +22,13 @@
 | Day 8 | [docs/schedule/day-08-simulink.md](docs/schedule/day-08-simulink.md) |
 | Day 9 | [docs/schedule/day-09-integration.md](docs/schedule/day-09-integration.md) |
 | Day 10 | [docs/schedule/day-10-pitch.md](docs/schedule/day-10-pitch.md) |
-| Quality Assessment | [modules/quality-assessment.md](modules/quality-assessment.md) |
-| Image Enhancement | [modules/image-enhancement.md](modules/image-enhancement.md) |
-| Grading Classifier | [modules/grading-classifier.md](modules/grading-classifier.md) |
-| Grad-CAM Explainability | [modules/gradcam-explainability.md](modules/gradcam-explainability.md) |
-| Simulink Workflow | [modules/simulink-workflow.md](modules/simulink-workflow.md) |
-| Segmentation (Simplified) | [modules/segmentation-od-vessels.md](modules/segmentation-od-vessels.md) |
-| Future Roadmap | [modules/future-roadmap.md](modules/future-roadmap.md) |
+| Quality Assessment | [modules/quality-assessment.md](docs/modules/quality-assessment.md) |
+| Image Enhancement | [modules/image-enhancement.md](docs/modules/image-enhancement.md) |
+| Grading Classifier | [modules/grading-classifier.md](docs/modules/grading-classifier.md) |
+| Grad-CAM Explainability | [modules/gradcam-explainability.md](docs/modules/gradcam-explainability.md) |
+| Simulink Workflow | [modules/simulink-workflow.md](docs/modules/simulink-workflow.md) |
+| Segmentation (Simplified) | [modules/segmentation-od-vessels.md](docs/modules/segmentation-od-vessels.md) |
+| Future Roadmap | [modules/future-roadmap.md](docs/modules/future-roadmap.md) |
 | Pitch Deck Structure | [pitch/deck-structure.md](pitch/deck-structure.md) |
 | Demo Script | [pitch/demo-script.md](pitch/demo-script.md) |
 

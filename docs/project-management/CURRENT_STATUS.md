@@ -160,8 +160,7 @@ docs/validation/               # one report per audit phase (the evidence record
 docs/task-tracker.md           # status source of truth
 audit/final_project_audit/     # judge-facing audit + 2026-09-25 correction notes
 audit/improvement_baseline/    # baseline_manifest (integrity anchor) + post-baseline notes
-pitch/                         # deck-structure.md, demo-script.md
-modules/future-roadmap.md      # redirect to ROADMAP.md (was stale; fixed 2026-09-26)
+pitch/                         # deck-structure.md, demo-script.md docs/modules/future-roadmap.md      # redirect to ROADMAP.md (was stale; fixed 2026-09-26)
 ```
 
 **Datasets on disk:** APTOS 2019 (3,662 train + 1,928 unlabeled test) · IDRiD

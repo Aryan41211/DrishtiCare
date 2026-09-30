@@ -357,7 +357,7 @@ If unresolved, document the discrepancy.
 
 Replace the stale:
 
-`modules/future-roadmap.md`
+`docs/modules/future-roadmap.md`
 
 with this roadmap or redirect it to this roadmap.
 

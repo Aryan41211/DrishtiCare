@@ -5,7 +5,7 @@ Status: Approved (design); follow-up creates the implementation plan.
 
 ## Problem
 
-The roadmap's Phase 2 "Grand Finale" (`modules/future-roadmap.md`) lists a
+The roadmap's Phase 2 "Grand Finale" (`docs/modules/future-roadmap.md`) lists a
 dual-evidence path (Branch A + Branch B) as the clinical-safety mechanism,
 and the archived architecture (`archive/architecture.md`) specifies an
 evidence-agreement layer: Branch A (deep grading) and Branch B (lesion

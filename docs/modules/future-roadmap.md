@@ -7,10 +7,10 @@
 > both wrong about the present: they list components as missing that shipped
 > before the internal round, and claim `None` for calibration, OOD and cascade.
 >
-> **Canonical roadmap:** [`docs/project-management/ROADMAP.md`](../docs/project-management/ROADMAP.md)
+> **Canonical roadmap:** [`docs/project-management/ROADMAP.md`](../project-management/ROADMAP.md)
 > (snapshot 2026-09-26). Companion files: `FROZEN_CONTRACT.md` (do-not-change
 > list), `DECISION_LOG.md`, `CURRENT_STATUS.md`, `EXECUTION_CHECKLIST.md`, and the
-> evidence record [`docs/task-tracker.md`](../docs/task-tracker.md).
+> evidence record [`docs/task-tracker.md`](../task-tracker.md).
 
 ## What the old "future work" actually is now
 
