@@ -92,26 +92,26 @@ The video should:
 
 ## 4. Slide structure
 
-### Slide 1
-Title + Team ID
+The shipped deck is `pitch/deck.pdf` — **11 slides**, generated from
+`pitch/deck.html`. Per-slide content, sources and timing are documented in
+[`../../pitch/deck-structure.md`](../../pitch/deck-structure.md).
 
-### Slide 2
-Problem → solution → real retinal evidence
+| # | Slide | Covers |
+|---|-------|--------|
+| 1 | Title | SIH 26038, MathWorks, team, standing "not a clinical device" disclaimer |
+| 2 | Problem | Capacity is the constraint; measured demand side; reframed question |
+| 3 | Workflow | Six-box flow, quality gate **before** the AI, WITHHELD on FAIL |
+| 4 | Feasibility | **BUILT** vs PLANNED, 230/230 hardening checks, measured gate/router figures |
+| 5 | Performance | Frozen metrics on the 733-image split, per-class recall, threshold/temperature |
+| 6 | Refusal + rehearsal | 19/19 unseen images, 4/4 contract checks, 8 FAILs withheld before any model call |
+| 7 | Explainability | Four views; Grad-CAM is attention, **not** lesion localisation (3.1% / 7.4% / 0.035) |
+| 8 | District simulation | `.slx` resource model, break-point analysis, figures |
+| 9 | Impact | Three national statistics, each with organisation, year and DOI |
+| 10 | Limitations | What the system cannot do yet — **on the slide, not the appendix** |
+| 11 | Resources | Repository, launch command, governance, datasets stated plainly |
 
-### Slide 3
-Six-box workflow
-
-### Slide 4
-Feasibility:
-BUILT vs PLANNED + risks
-
-### Slide 5
-Impact:
-2–3 sourced statistics + measured project outputs
-
-### Slide 6
-Resources:
-GitHub, dataset links, references
+Slide 10 is not optional. If the slot is short, compress slide 9 into slide 2
+rather than cutting the limitations.
 
 ## 5. Claims policy
 
