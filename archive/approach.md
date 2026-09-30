@@ -1,5 +1,13 @@
 # Approach
 
+> **Superseded — kept as design history.** This is the strategy layer as written
+> during the 10-day build. It is preserved verbatim, including claims that were
+> later measured and found not to hold. For what is true now, read
+> [`../docs/project-management/FINAL_RELEASE_STATUS.md`](../docs/project-management/FINAL_RELEASE_STATUS.md).
+> For the current design, read [`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+> Links in this file have been repointed at their current locations, but the
+> *content* is deliberately not updated — it records what we believed on day 1.
+
 This is the strategy layer — *how* to win this statement, as distinct from [ARCHITECTURE.md](./ARCHITECTURE.md), which covers *what* to build.
 
 ## Verdict
@@ -23,7 +31,7 @@ The expected-solution paragraph ends with a line most teams skim past:
 
 This is asking for an **ablation study** — proof that the assembled pipeline beats each of its parts alone. It's cheap to produce (the same experiment run 4–5 times with pieces switched off), it's explicitly requested, and the large majority of teams will not do it because it feels like bookkeeping rather than building.
 
-**Design the whole project backwards from this one table.** If the final report shows the CNN alone hits a certain sensitivity, the lesion-feature model alone hits something lower, the fusion beats both, and adding the quality gate improves it further on the low-quality subgroup — that directly and literally answers the hardest-to-fake requirement in the statement. Everything in [ARCHITECTURE.md](./ARCHITECTURE.md) and [VALIDATION.md](./VALIDATION.md) exists in service of filling that table honestly.
+**Design the whole project backwards from this one table.** If the final report shows the CNN alone hits a certain sensitivity, the lesion-feature model alone hits something lower, the fusion beats both, and adding the quality gate improves it further on the low-quality subgroup — that directly and literally answers the hardest-to-fake requirement in the statement. Everything in [ARCHITECTURE.md](./ARCHITECTURE.md) and [docs/validation/](../docs/validation/) exists in service of filling that table honestly.
 
 ---
 
@@ -43,7 +51,7 @@ This is why the architecture isn't just "a CNN plus some extra features" — the
 
 1. **Quantified explainability** — Grad-CAM saliency measured against IDRiD lesion masks (pointing-game score, IoU), not just heatmaps that look plausible. Highest impact, lowest competition — very few student teams do this.
 2. **The ablation study** — explicitly requested (see above), cheap to produce, widely skipped.
-3. **External validation on Messidor-2** with zero training contamination, placed beside published figures from the same dataset — see [VALIDATION.md](./VALIDATION.md) for the comparison table.
+3. **External validation on Messidor-2** with zero training contamination, placed beside published figures from the same dataset — see [docs/validation/](../docs/validation/) for the comparison table.
 4. **The Simulink threshold-vs-staffing Pareto analysis** — the insight that the clinical operating point (sensitivity/specificity threshold) and the district staffing budget are the same variable viewed from two ends. Nothing else in the statement is this easy to answer this well.
 5. **Closed-loop quality gating with actionable recapture reason codes** — the module that makes the system deployable by a health worker rather than merely accurate in a notebook.
 6. **Calibration plus abstention** as an explicit clinical safety mechanism, not just a metrics checkbox.
@@ -65,7 +73,7 @@ This framing does three things:
 
 ---
 
-## Validation Approach (summary — full detail in VALIDATION.md)
+## Validation Approach (summary — full detail in `docs/validation/`)
 
 - Train on EyePACS + APTOS; internal validation split from APTOS for model selection, threshold choice, and calibration; test on IDRiD; external-validate on **Messidor-2, touched only once, at the very end**
 - Report sensitivity/specificity/AUC with **bootstrap 95% confidence intervals**, not point estimates — a single 91% sensitivity on a small test set is not evidence of clearing a 90% bar; the interval is what tells you whether you actually cleared it

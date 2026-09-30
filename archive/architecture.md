@@ -1,5 +1,15 @@
 # System Architecture — DrishtiCare DR Screening Pipeline
 
+> **Superseded — kept as design history.** This is the architecture as designed
+> during the 10-day build, preserved verbatim. Several parts shipped
+> differently: image enhancement and vessel features were both excluded on
+> measured evidence, and the "dual-evidence path" below describes a
+> classifier/lesion pairing that is advisory rather than gating. Read it as the
+> design intent, not the delivered system.
+>
+> For the delivered system, read [`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md)
+> and [`../docs/project-management/FINAL_RELEASE_STATUS.md`](../docs/project-management/FINAL_RELEASE_STATUS.md).
+
 ## Design Principle
 
 **Dual-evidence path with closed-loop feedback.** Every clinical decision is backed by two independent evidence streams that must agree before the system commits to a grade. This is not a classifier with an explainability add-on — it is an evidence-agreement system where the classifier and the lesion model are peers.
@@ -193,11 +203,11 @@ Instead of running both branches on every image:
 
 | Module | Documentation | Key Output |
 |--------|--------------|------------|
-| Quality Gate | [MODULE-1-QUALITY.md](docs/modules/MODULE-1-QUALITY.md) | Gradeable/Borderline/Ungradeable + reason code |
-| Enhancement | [MODULE-1-QUALITY.md](docs/modules/MODULE-1-QUALITY.md) | CLAHE + illumination norm + denoising |
-| OOD Detection | [MODULE-0-OOD-DETECTION.md](docs/modules/MODULE-0-OOD-DETECTION.md) | In-distribution / OOD flag |
-| Cascade Router | [MODULE-0-CASCADE-ROUTER.md](docs/modules/MODULE-0-CASCADE-ROUTER.md) | Clear/Need Review/Abstain |
-| Segmentation | [MODULE-2-SEGMENTATION.md](docs/modules/MODULE-2-SEGMENTATION.md) | OD/fovea/vessels/MA/HE/EX/SE |
-| Grading | [MODULE-3-GRADING.md](docs/modules/MODULE-3-GRADING.md) | ICDR 0-4 + calibrated confidence |
-| Explainability | [MODULE-4-EXPLAINABILITY.md](docs/modules/MODULE-4-EXPLAINABILITY.md) | Grad-CAM + lesion evidence + report |
-| Simulink | [MODULE-5-SIMULINK.md](docs/modules/MODULE-5-SIMULINK.md) | Queueing model + Pareto analysis |
+| Quality Gate | [quality-assessment.md](../docs/modules/quality-assessment.md) | Gradeable/Borderline/Ungradeable + reason code |
+| Enhancement | [image-enhancement.md](../docs/modules/image-enhancement.md) | CLAHE + illumination norm + denoising |
+| OOD Detection | [module map](../docs/ARCHITECTURE.md#module-map) | In-distribution / OOD flag |
+| Cascade Router | [module map](../docs/ARCHITECTURE.md#module-map) | Clear/Need Review/Abstain |
+| Segmentation | [segmentation-od-vessels.md](../docs/modules/segmentation-od-vessels.md) | OD/fovea/vessels/MA/HE/EX/SE |
+| Grading | [grading-classifier.md](../docs/modules/grading-classifier.md) | ICDR 0-4 + calibrated confidence |
+| Explainability | [gradcam-explainability.md](../docs/modules/gradcam-explainability.md) | Grad-CAM + lesion evidence + report |
+| Simulink | [simulink-workflow.md](../docs/modules/simulink-workflow.md) | Queueing model + Pareto analysis |
