@@ -453,10 +453,12 @@ Do not:
 DrishtiCare is submission-ready when:
 
 - [x] Dashboard polished and verified — `verify_retinaai` PASS (re-run 2026-09-26), 8 curated frames in `results/visual_qa/`
-- [x] Report polished and verified — `verify_drishti_report_extended` PASS (edge, 3,119,264 bytes, `%PDF-1.4`, re-run 2026-09-26)
+- [x] Report polished and verified — `verify_drishti_report_extended` PASS (edge, 3,119,366 bytes, `%PDF-1.4`, re-run 2026-09-30)
 - [ ] End-to-end demo works from clean launch — headless clean-session **is** proven (`src/demo/run_unseen_rehearsal.m`, 19/19, 4/4 contract checks). **Open:** the human GUI run (fresh launch → upload → analyze → save report)
 - [x] FAIL/refusal behavior demonstrated — rehearsal 19/19 with the locked 0.60 rule; deck slide 6; `pitch/video-plan.md` shot 4 (38 s, the longest)
-- [x] Grad-CAM rendering is consistent — centralized in `src/ui/renderGradCAMViews.m`, one code path shared by app and PDF, covered by the 35-assertion app check
+- [x] Grad-CAM rendering is consistent — centralized in `src/ui/renderGradCAMViews.m`, one code path shared by app and PDF, covered by the 35-assertion app check and by a dedicated 9-check audit (`src/verify/verify_gradcam_rendering.m`, `docs/validation/2026-09-30-gradcam-rendering-audit.md`)
+- [x] App layout verified — `src/dashboard/verify_app_layout.m` PASS (4 checks): 217/217 components inside the 1360×760 canvas, 0 clipped, 0 zero-extent, three content panels tile one band without overlap. The app is a **fixed-canvas** design (`Resize` = `off`, absolute positioning, no `uigridlayout`), so multi-size responsive layout is not a property it has — see `docs/validation/2026-09-30-layout-and-lesion-audit.md`
+- [x] Lesion evidence is labelled supplementary everywhere it is shown — the PDF now restates the qualifier the narrative already produced (`docs/validation/2026-09-30-layout-and-lesion-audit.md`)
 - [x] Simulink story has one clean figure — `results/presentation/simulink_district_summary.png` (+ alt-text), regenerable via `src/simulink/compose_simulink_summary_figure.m`
 - [x] Deck exists as an actual file — `pitch/deck.pdf`, 11 slides, 3,685,132 bytes. ⚠️ PDF, not `.pptx` (Report Generator unlicensed here; no PowerPoint automation)
 - [ ] Demo video exists — plan + narration ready (`pitch/video-plan.md`, `pitch/VOICEOVER-SCRIPT.md`); recording and MP4 assembly are human steps (no ffmpeg/OBS on this machine)
@@ -467,7 +469,7 @@ DrishtiCare is submission-ready when:
 - [x] All final metrics trace to source artifacts — `docs/validation/metrics.md` evidence column; three provenance conflicts resolved 2026-09-26 with read-only MATLAB, no headline value changed
 - [x] Model hashes unchanged — both champions re-hashed 2026-09-26, **MATCH** `FROZEN_CONTRACT.md`
 - [x] Sealed test remains untouched — APTOS official test unlabeled and firewalled; no tuning against it
-- [x] Git working tree clean — `main` == `origin/main` at `6c4a44b`, 238 commits
+- [x] Git working tree clean — `main` == `origin/main` at `e41db75`, 245 commits
 - [ ] Final team rehearsal completed — not done; the last step before submission
 
 ---

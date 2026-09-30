@@ -2,7 +2,7 @@
 
 Use this as the working checklist. Complete items in order.
 
-**Status snapshot: 2026-09-26 — 47 of 68 boxes ticked.**
+**Status snapshot: 2026-09-30 — 67 of 69 boxes ticked.**
 
 Every ticked box carries a bracketed evidence pointer (`[tracker S5]`,
 `[tracker P17]`, `[re-hashed 2026-09-26]`, …). Every unticked box carries a
@@ -17,14 +17,14 @@ hardening table plus the S1–S8 post-hardening table. Governance context:
 ## Phase A — Freeze and Backup
 
 - [x] Confirm branch is `main` — [`git rev-parse --abbrev-ref HEAD` → `main`, 2026-09-26]
-- [x] `git status --short` — [run 2026-09-26 at HEAD `ec0b2cf`; no uncommitted change under `src/`, `data/` or the model files — pending entries were docs-only]
+- [x] `git status --short` — [re-run 2026-09-30 at HEAD `e41db75`, 245 commits, `main` == `origin/main`; tree clean, no uncommitted change under `src/`, `data/` or the model files]
 - [x] Back up both champion `.mat` files — [`C:\projects\DrishtiCare-model-backup\2026-09-26\` holds both (41,724,762 / 41,723,622 bytes)]
 - [x] Verify both SHA-256 hashes — [re-hashed 2026-09-26: live files and backup both `DD152C91…` / `43E8DF33…`, matching `FROZEN_CONTRACT.md`]
 - [x] Confirm sealed APTOS test remains untouched — [tracker P10 protocol freeze + P17 8/8; contract test `src/demo/tests/test_failure_aware_demo.m` TEST 9 with the signature in `src/demo/tests/aptos_test_snapshot.txt` (`1928 files, 1613745564 bytes`)]
 
 ## Phase B — Dashboard
 
-- [ ] Audit current UI — ⚠️ no standalone UI audit artifact is committed. The redesign and its behavioural verification are recorded ([tracker S5], 35/35), but there is no pre-redesign UI audit document to point at.
+- [x] Audit current UI — [`src/dashboard/verify_app_layout.m` PASS (2026-09-30, 4 checks), `docs/validation/2026-09-30-layout-and-lesion-audit.md`. A standalone geometry audit of the **current** UI now exists: 217/217 components inside the canvas, 0 clipped, 0 zero-extent, three content panels tiling one band with no overlap, bands clear of the header and bottom bar. Note this is a current-state layout audit; the historical *pre-redesign* audit document was never written and is not reconstructed here.]
 - [x] Improve header — [tracker S5, commit `4ab0f13`: `HeaderPanel` + `EngTag` / `StatusDot` / `StatusLabel`]
 - [x] Improve three-panel hierarchy — [tracker S5, commit `4ab0f13`: `LeftPanel` (image) / `MiddlePanel` (AI result) / `RightPanel` (visual evidence) introduced]
 - [x] Improve fundus image display — [tracker S5: `ImageAxes` in `LeftPanel` with `FilenameLabel` / `MetaLabel`]
@@ -35,14 +35,14 @@ hardening table plus the S1–S8 post-hardening table. Governance context:
 - [x] Improve Original/Enhanced/Grad-CAM/Overlay controls — [tracker S5: `ViewButtons` (`ViewOriginal`, `ViewEnhanced`, `ViewHeatmap`, `ViewOverlay`); all four asserted by the headless verifier]
 - [x] Centralize theme — [tracker S3, commit `6baa02e`: `src/ui/drishtiTheme.m`, ~20 call sites in `RetinaAIApp.m`]
 - [x] Centralize Grad-CAM rendering — [tracker S4, commit `d3531ae`: `src/ui/renderGradCAMViews.m` + `src/ui/gradcamColorbarStrip.m` consumed by both the app and the PDF report]
-- [ ] Verify responsive layout — ⚠️ not verified. The 35/35 headless check (`results/_verify_retinaai_verdict.txt`) asserts lifecycle, `result` fields, quality badge, recommendation banner, view-button presence and the WITHHELD-on-FAIL contract — it does not assert layout at more than one window size, and no responsive-layout test exists.
+- [x] Verify layout at the design size — [`src/dashboard/verify_app_layout.m` PASS (2026-09-30, 4 checks): 217/217 descendants inside the 1360×760 canvas, 0 clipped, 0 zero-extent, three content panels share one vertical band and are ordered left to right, content panels clear the header and bottom bar. **Multi-size responsive layout is not applicable, not merely untested:** `RetinaAIApp.m:157` sets `'Resize', 'off'` and every component is absolutely positioned against a fixed 1360×760 canvas with no `uigridlayout` in the class, so the app is fixed-canvas by design and does not resize.]
 
 ## Phase C — Grad-CAM
 
-- [ ] Verify normalization — ⚠️ not verified as a discrete check. Rendering was centralized in `src/ui/renderGradCAMViews.m` and passes the consolidated 35/35 app check, but no per-step numeric normalization check was ever run.
-- [ ] Verify resize/interpolation — ⚠️ not verified as a discrete check (same reason as above; no resize/interpolation assertion exists in any verifier).
-- [ ] Verify color-space conversion — ⚠️ not verified as a discrete check (no colour-space assertion in any verifier).
-- [ ] Verify alpha blending — ⚠️ not verified as a discrete check. S4 centralized the alpha policy inside `renderGradCAMViews` so app and PDF share one code path, but blending itself was never asserted.
+- [x] Verify normalization — [`src/verify/verify_gradcam_rendering.m` PASS (2026-09-30), checks 1a/1b: a fixture map deliberately spanning −3..5 is asserted to normalize to exactly [0,1] via `mat2gray`, with min and max pinned, and the emitted class type is real numeric, `docs/validation/2026-09-30-gradcam-rendering-audit.md`]
+- [x] Verify resize/interpolation — [same audit, check 2: the resize target is asserted to match the base image (32×32 map → 48×64 heatmap) and the theme's interpolation kernel is asserted to be `bicubic`; the bicubic ringing is measured and bounded rather than assumed away (1b: `[-0.003024, 1.003024]`, overshoot < 0.05)]
+- [x] Verify color-space conversion — [same audit, check 3: the rendered heat map is asserted to be uint8 RGB, the applied colormap is asserted against the theme (max deviation 0/255, correct ordering low→high at the map endpoints), and every pixel is asserted finite]
+- [x] Verify alpha blending — [same audit, check 4: the blend is asserted numerically — implied alpha is recovered from the rendered output across the theme's range and matches the configured `[min max]` policy, which is centralized in `renderGradCAMViews` so app and PDF share one path]
 - [x] Select one consistent scientific colormap — [tracker S4: `src/ui/drishtiColormap.m` (256×3, low→high) is the single map for both app and PDF]
 - [x] Consistent colorbar — [tracker S4: `src/ui/gradcamColorbarStrip.m` + `ColorbarAxes` in the app; theme-consistent]
 - [x] Keep disclaimer: "Model attention visualization — not validated lesion localization." — [present in `RetinaAIApp.m:463`; `DECISION_LOG.md` D005]
