@@ -159,6 +159,7 @@ verify_drishti_report_extended
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File pitch\audit_deck_pptx.ps1
+powershell -ExecutionPolicy Bypass -File docs\verify\check_markdown_links.ps1
 ```
 
 Chromium `fallback_task_provider` lines in the MATLAB log are Edge engine

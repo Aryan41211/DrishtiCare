@@ -17,7 +17,7 @@ hardening table plus the S1–S8 post-hardening table. Governance context:
 ## Phase A — Freeze and Backup
 
 - [x] Confirm branch is `main` — [`git rev-parse --abbrev-ref HEAD` → `main`, 2026-09-26]
-- [x] `git status --short` — [re-run 2026-09-30 at HEAD `3910f30`, 250 commits, `main` == `origin/main`; tree clean, no uncommitted change under `src/`, `data/` or the model files]
+- [x] `git status --short` — [re-run 2026-09-30 at HEAD `d4d3091`, 259 commits, `main` == `origin/main`; tree clean, no uncommitted change under `src/`, `data/` or the model files]
 - [x] Back up both champion `.mat` files — [`C:\projects\DrishtiCare-model-backup\2026-09-26\` holds both (41,724,762 / 41,723,622 bytes)]
 - [x] Verify both SHA-256 hashes — [re-hashed 2026-09-26: live files and backup both `DD152C91…` / `43E8DF33…`, matching `FROZEN_CONTRACT.md`]
 - [x] Confirm sealed APTOS test remains untouched — [tracker P10 protocol freeze + P17 8/8; contract test `src/demo/tests/test_failure_aware_demo.m` TEST 9 with the signature in `src/demo/tests/aptos_test_snapshot.txt` (`1928 files, 1613745564 bytes`)]

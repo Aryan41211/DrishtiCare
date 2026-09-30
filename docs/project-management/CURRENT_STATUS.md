@@ -1,7 +1,7 @@
 # DrishtiCare — Current Status
 
 **Snapshot:** 2026-09-30  
-**Git HEAD:** `3910f30` (250 commits, `main` == `origin/main`)  
+**Git HEAD:** `d4d3091` (259 commits, `main` == `origin/main`)  
 **Branch:** `main`  
 **Repository:** `https://github.com/Aryan41211/DrishtiCare.git`
 
@@ -12,6 +12,16 @@ post-hardening table). This file summarises; the tracker is what proves it.
 **Governance set:** [ROADMAP](ROADMAP.md) · [FROZEN_CONTRACT](FROZEN_CONTRACT.md) ·
 [DECISION_LOG](DECISION_LOG.md) · [EXECUTION_CHECKLIST](EXECUTION_CHECKLIST.md) ·
 [DEMO_AND_SUBMISSION_PLAN](DEMO_AND_SUBMISSION_PLAN.md) · [file map](#file-map)
+
+**Structure cleanup verified at `d4d3091`:** all four gates re-run after the
+`docs/` reorganisation, all passing. `verify_app_layout` 217/217,
+`verify_gradcam_rendering`, `verify_drishti_report_extended` (engine=edge),
+`pitch/audit_deck_pptx.ps1`. Both frozen model SHA-256 hashes re-checked and
+unchanged. Added `docs/verify/check_markdown_links.ps1`: 133 markdown files,
+112 relative links, zero broken. The reorganisation was `.gitignore`,
+`docs/ARCHITECTURE.md`, `docs/schedule/`, `docs/modules/`, deleted
+`archive/report-probes/`, repointed `archive/`, and a README rewrite -
+documentation and file layout only, zero changes under `src/`.
 
 ## Competition stage
 
