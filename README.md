@@ -17,7 +17,7 @@ MATLAB/Simulink-based DR screening pipeline for rural India. 10-day build for in
 ## Quick Start
 
 1. **Read the roadmap:** [roadmap-10day.md](roadmap-10day.md)
-2. **Check today's tasks:** [schedule/](schedule/)
+2. **Check the day-by-day plan:** [docs/schedule/](docs/schedule/)
 3. **Review module specs:** [modules/](modules/)
 
 ## Timeline
@@ -87,7 +87,7 @@ DrishtiCare/
 +--                              #   e.g. simulink_resource_simulation/,
 +--                              #        failure_aware_demo/
 +-- results/                  # Demo outputs (PDFs, visualizations)
-+-- audit/ docs/ pitch/ team/ context/ schedule/ modules/
++-- audit/ docs/ pitch/ team/ context/ modules/
 +-- archive/                  # Legacy scripts + old probes (reference only)
 ```
 
@@ -121,7 +121,7 @@ DrishtiCare/
 | [roadmap-10day.md](roadmap-10day.md) | Master roadmap with navigation |
 | [context/goals-internal-round.md](context/goals-internal-round.md) | What we're delivering Sep 12 |
 | [team/roles.md](team/roles.md) | Who does what |
-| [schedule/day-01-setup.md](schedule/day-01-setup.md) | Start here on Day 1 |
+| [docs/schedule/day-01-setup.md](docs/schedule/day-01-setup.md) | Day 1 setup, historical |
 | [pitch/demo-script.md](pitch/demo-script.md) | How to present |
 
 ## Datasets

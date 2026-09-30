@@ -18,7 +18,7 @@
 **Run:** `cd src/setup; check_dataset_integrity`
 
 ### 4. Day 1 Master Checklist
-**File:** `schedule/day-01-checklist.md`
+**File:** `docs/schedule/day-01-checklist.md`
 **Purpose:** Track all Day 1 tasks across the team
 
 ### 5. Role Assignment Form

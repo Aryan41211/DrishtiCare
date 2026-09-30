@@ -53,7 +53,7 @@
 | File | Purpose |
 |------|---------|
 | `docs/day2-quality-observations.md` | Full Day 2 analysis report |
-| `schedule/day-02-status.md` | This status file |
+| `docs/schedule/day-02-status.md` | This status file |
 
 ---
 

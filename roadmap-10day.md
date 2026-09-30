@@ -12,16 +12,16 @@
 | Tools & Access | [context/tools-access.md](context/tools-access.md) |
 | Team Roles | [team/roles.md](team/roles.md) |
 | Risk Checklist | [team/risk-checklist.md](team/risk-checklist.md) |
-| Day 1 | [schedule/day-01-setup.md](schedule/day-01-setup.md) |
-| Day 2 | [schedule/day-02-exploration.md](schedule/day-02-exploration.md) |
-| Day 3 | [schedule/day-03-quality-assessment.md](schedule/day-03-quality-assessment.md) |
-| Day 4 | [schedule/day-04-enhancement.md](schedule/day-04-enhancement.md) |
-| Day 5 | [schedule/day-05-classifier-setup.md](schedule/day-05-classifier-setup.md) |
-| Day 6 | [schedule/day-06-classifier-training.md](schedule/day-06-classifier-training.md) |
-| Day 7 | [schedule/day-07-gradcam.md](schedule/day-07-gradcam.md) |
-| Day 8 | [schedule/day-08-simulink.md](schedule/day-08-simulink.md) |
-| Day 9 | [schedule/day-09-integration.md](schedule/day-09-integration.md) |
-| Day 10 | [schedule/day-10-pitch.md](schedule/day-10-pitch.md) |
+| Day 1 | [docs/schedule/day-01-setup.md](docs/schedule/day-01-setup.md) |
+| Day 2 | [docs/schedule/day-02-exploration.md](docs/schedule/day-02-exploration.md) |
+| Day 3 | [docs/schedule/day-03-quality-assessment.md](docs/schedule/day-03-quality-assessment.md) |
+| Day 4 | [docs/schedule/day-04-enhancement.md](docs/schedule/day-04-enhancement.md) |
+| Day 5 | [docs/schedule/day-05-classifier-setup.md](docs/schedule/day-05-classifier-setup.md) |
+| Day 6 | [docs/schedule/day-06-classifier-training.md](docs/schedule/day-06-classifier-training.md) |
+| Day 7 | [docs/schedule/day-07-gradcam.md](docs/schedule/day-07-gradcam.md) |
+| Day 8 | [docs/schedule/day-08-simulink.md](docs/schedule/day-08-simulink.md) |
+| Day 9 | [docs/schedule/day-09-integration.md](docs/schedule/day-09-integration.md) |
+| Day 10 | [docs/schedule/day-10-pitch.md](docs/schedule/day-10-pitch.md) |
 | Quality Assessment | [modules/quality-assessment.md](modules/quality-assessment.md) |
 | Image Enhancement | [modules/image-enhancement.md](modules/image-enhancement.md) |
 | Grading Classifier | [modules/grading-classifier.md](modules/grading-classifier.md) |

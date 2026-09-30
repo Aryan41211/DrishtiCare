@@ -198,7 +198,7 @@ Proliferative   2    3   27    10    17
 ## 19. Git Status
 
 ```
- M schedule/day-05-classifier-setup.md
+ M docs/schedule/day-05-classifier-setup.md
  M src/grading/evaluateClassifier.m
  M src/grading/trainClassifier.m
 ?? data/analysis/day3/
