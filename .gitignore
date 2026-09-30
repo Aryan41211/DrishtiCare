@@ -141,20 +141,22 @@ data/analysis/day8/vessel/vessel_dataset.mat
 # Pre-hardening rogue eval provenance (Phase 20/25 disposition: keep on disk,
 # do NOT commit - standalone eval/smoke runners + outputs, superseded by
 # hardening artifacts in data/analysis/day10).
-runAPTOS.m
-runFinalAPTOS.m
-runFinalAPTOSBinary.m
-runSmokeTest.m
+# Anchored with a leading / : these were root-level scratch runners and the
+# intent was to ignore them there only. Unanchored, git matched them at every
+# depth and silently hid the canonical copies that were moved to src/runs/,
+# so a fresh clone had no evaluation entry points at all.
+/runAPTOS.m
+/runFinalAPTOS.m
+/runFinalAPTOSBinary.m
+/runSmokeTest.m
 data/analysis/final/
 data/analysis/smoke_test/
 
 # Post-hardening provenance runners (same disposition: keep untracked)
-runFinalModelEvaluation.m
-runRandomImage.m
-runSelectedImage.m
-runSmokeTest100.m
-runVesselVisualization.m
+/runFinalModelEvaluation.m
+/runRandomImage.m
+/runSelectedImage.m
+/runSmokeTest100.m
+/runVesselVisualization.m
 data/analysis/vessel_visualization/
 
-# Vessel-viz provenance PNGs (same runner disposition: untracked)
-data/analysis/vessel_visualization/
