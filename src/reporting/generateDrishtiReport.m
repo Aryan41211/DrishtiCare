@@ -160,6 +160,21 @@ for k = 1:numel(readouts)
         'label', readouts(k).label, 'value', readouts(k).value, 'score', NaN);
 end
 
+% The lesion readout above is bare counts. The narrative module already
+% qualifies them ("automated candidate counts, not clinical-grade
+% measurements, supportive evidence only") but that sentence lives in
+% r.explanation.evidence, which this report does not render. A reader of the
+% PDF alone would otherwise see unqualified counts, so the qualifier is
+% restated here. Presentation only - no count, score or decision is changed.
+if isfield(r, 'lesions') && isstruct(r.lesions) && ...
+        (isfield(r.lesions, 'maCount') || isfield(r.lesions, 'heCount'))
+    blocks{end+1} = struct('kind', 'text', 'text', ...
+        ['Lesion candidates above are automated, experimental counts from a ' ...
+         'supplementary second-opinion branch. They are not clinical-grade ' ...
+         'measurements, are not a validated detection of any lesion type, and ' ...
+         'do not by themselves establish a diagnosis.']);
+end
+
 % --- 6. Recommendation
 blocks{end+1} = struct('kind', 'heading', 'text', '6. Recommendation');
 blocks{end+1} = struct('kind', 'verdict', ...
