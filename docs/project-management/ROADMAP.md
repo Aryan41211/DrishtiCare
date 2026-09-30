@@ -469,7 +469,7 @@ DrishtiCare is submission-ready when:
 - [x] All final metrics trace to source artifacts — `docs/validation/metrics.md` evidence column; three provenance conflicts resolved 2026-09-26 with read-only MATLAB, no headline value changed
 - [x] Model hashes unchanged — both champions re-hashed 2026-09-26, **MATCH** `FROZEN_CONTRACT.md`
 - [x] Sealed test remains untouched — APTOS official test unlabeled and firewalled; no tuning against it
-- [x] Git working tree clean — `main` == `origin/main` at `e41db75`, 245 commits
+- [x] Git working tree clean — `main` == `origin/main` at `3910f30`, 250 commits
 - [ ] Final team rehearsal completed — not done; the last step before submission
 
 ---
