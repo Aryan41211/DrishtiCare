@@ -460,7 +460,7 @@ DrishtiCare is submission-ready when:
 - [x] App layout verified — `src/dashboard/verify_app_layout.m` PASS (4 checks): 217/217 components inside the 1360×760 canvas, 0 clipped, 0 zero-extent, three content panels tile one band without overlap. The app is a **fixed-canvas** design (`Resize` = `off`, absolute positioning, no `uigridlayout`), so multi-size responsive layout is not a property it has — see `docs/validation/2026-09-30-layout-and-lesion-audit.md`
 - [x] Lesion evidence is labelled supplementary everywhere it is shown — the PDF now restates the qualifier the narrative already produced (`docs/validation/2026-09-30-layout-and-lesion-audit.md`)
 - [x] Simulink story has one clean figure — `results/presentation/simulink_district_summary.png` (+ alt-text), regenerable via `src/simulink/compose_simulink_summary_figure.m`
-- [x] Deck exists as an actual file — `pitch/deck.pdf`, 11 slides, 3,685,132 bytes. ⚠️ PDF, not `.pptx` (Report Generator unlicensed here; no PowerPoint automation)
+- [x] Deck exists as an actual file — `pitch/deck.pptx`, 11 slides, native editable text boxes and 11 embedded figures. Source `pitch/build_deck_pptx.py`; rendered copy `pitch/deck.pdf`. ✅ `pitch/audit_deck_pptx.ps1` measures the PowerPoint-rendered result and reports zero text overflows or text-on-text overlaps.
 - [ ] Demo video exists — plan + narration ready (`pitch/video-plan.md`, `pitch/VOICEOVER-SCRIPT.md`); recording and MP4 assembly are human steps (no ffmpeg/OBS on this machine)
 - [x] Impact statistics are sourced — `docs/background/clinical-statistics-sources.md` with organisation, year and DOI. ⚠️ the "1 ophthalmologist per 100,000" claim was **not supported** and was removed, not restated
 - [x] Built vs Planned is accurate — deck slide 4
