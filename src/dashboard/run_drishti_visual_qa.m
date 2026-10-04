@@ -52,17 +52,17 @@ for i = 1:size(cases, 1)
     % snapshot the left image panel alone (large fundus view)
     driveView(a, 'Original');
     drawnow;
-    axesH = findall(a.UIFigure, 'Type', 'axes');
-    fundusAx = [];
-    for k = 1:numel(axesH)
-        p = axesH(k).Parent;
-        if isa(p, 'matlab.ui.container.Panel') && p.Position(1) < 50
-            fundusAx = axesH(k);
-            break;
-        end
-    end
+    fundusAx = findobj(a.UIFigure, 'Type', 'axes', 'Tag', 'fundusAxes');
+    fprintf('  [fundus axes matches: %d]\n', numel(fundusAx));
     if ~isempty(fundusAx)
         saveShot(fundusAx, qaDir, sprintf('04_%s_fundus.png', tag), []);
+    else
+        % A silently skipped shot is indistinguishable from a healthy run, so
+        % say out loud which evidence file is missing and which tag was sought.
+        warning('DrishtiCare:fundusAxesNotTagged', ...
+            ['visual QA: no axes tagged ''fundusAxes'' -- shot 04_%s_fundus.png ' ...
+             'was NOT written to %s. The fundus axes in RetinaAIApp must carry ' ...
+             '''Tag'', ''fundusAxes''.'], tag, qaDir);
     end
 end
 
