@@ -395,7 +395,9 @@ In `src/ui/drishtiTheme.m`, replace the `g.colormap` line and its comment:
 
 - [ ] **Step 2: Remove the dead `inferno` branch and fix the docstring**
 
-In `src/ui/drishtiColormap.m`, delete lines 20-22 so the switch reads:
+In `src/ui/drishtiColormap.m`, delete the two `inferno` lines (the
+`case 'inferno'` branch occupies lines 20-21; deleting lines 20-22 would orphan
+`map = parula(256);`) so the switch reads:
 
 ```matlab
     switch lower(name)
@@ -403,19 +405,19 @@ In `src/ui/drishtiColormap.m`, delete lines 20-22 so the switch reads:
             map = parula(256);
         case 'hot'
             map = hot(256);
-        case 'bone'
-            map = bone(256);
-        case 'copper'
-            map = copper(256);
         otherwise
             map = turbo(256);
     end
 ```
 
+Do not add a `bone` or `copper` branch: copper is a documented 28.125%
+endpoint fail and bone's 9.375% leaves a 0.6pp margin, and the gate resolves
+only the theme colormap so it would never catch either.
+
 And replace the docstring example on line 4:
 
 ```matlab
-%   map = drishtiColormap('parula')
+%   map = drishtiColormap('hot')
 ```
 
 - [ ] **Step 3: Run the Grad-CAM gate**

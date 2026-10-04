@@ -106,7 +106,7 @@ for i = 1:size(uniq, 1)
     maxDev = max(maxDev, min(max(d, [], 2)));
 end
 assert(maxDev <= 1, 'all emitted colours are colormap entries');
-% Colormap indices 0 and 255 are turbo's legitimate endpoints, so a ramp that
+% Colormap indices 0 and 255 are the map's legitimate endpoints, so a ramp that
 % spans the full range will legitimately reach them. What must not happen is a
 % non-finite value or a colour outside the map - maxDev above already rules the
 % second out. Here we bound how much of the frame sits on those endpoints.
@@ -132,9 +132,10 @@ den   = hmRGB - base;
 
 % Recover a per-channel opacity, keeping only channels where the colormap
 % colour is far enough from the base grey to make the ratio meaningful.
-% (turbo passes close to neutral grey in its mid-range, and its top colour is
-% a dark red that sits near mid grey in the red channel, so some channels are
-% deliberately excluded as ill-conditioned rather than silently averaged in.)
+% (Wherever the colormap colour sits near the base grey, the denominator
+% collapses and the ratio is ill-conditioned, so those channels are
+% deliberately excluded rather than silently averaged in. The exclusion
+% pattern therefore depends on the map in use and is not hard-coded.)
 %
 % Tolerance rationale: the overlay is stored as uint8, so each recovered
 % opacity carries a quantisation error of about (1/255)/|den|. With the
