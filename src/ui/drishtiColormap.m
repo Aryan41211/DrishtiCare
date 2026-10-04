@@ -1,7 +1,7 @@
 function map = drishtiColormap(name)
 %DRISHTICOLORMAP Centralized Grad-CAM colormap resolver.
 %   map = drishtiColormap()
-%   map = drishtiColormap('inferno')
+%   map = drishtiColormap('parula')
 %
 %   One place decides what colormap every Grad-CAM surface uses (dashboard
 %   heatmap, overlay, colorbar and generated report), so no two panels can
@@ -17,12 +17,14 @@ function map = drishtiColormap(name)
     end
 
     switch lower(name)
-        case 'inferno'
-            map = inferno(256);
         case 'parula'
             map = parula(256);
         case 'hot'
             map = hot(256);
+        case 'bone'
+            map = bone(256);
+        case 'copper'
+            map = copper(256);
         otherwise
             map = turbo(256);
     end

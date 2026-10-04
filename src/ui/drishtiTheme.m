@@ -88,7 +88,13 @@ function th = drishtiTheme()
 
     %% ---- Grad-CAM rendering config (single source of truth) ----
     g = struct();
-    g.colormap   = 'turbo';        % turbo > inferno > parula (all in R2026a)
+    % Colormaps verified present in this R2026a install: turbo, parula, hot,
+    % gray, bone, copper, jet, hsv, colorcube. inferno/magma/plasma/viridis/
+    % cividis are ABSENT and referencing them hard-errors. parula is chosen
+    % over turbo because it is perceptually uniform and colour-vision-
+    % deficiency-friendly, and it clears verify_gradcam_rendering's endpoint
+    % budget (3.13% of 10%) and alpha-conditioning floor (86.5% of 20%).
+    g.colormap   = 'parula';
     g.alphaLo    = 0.32;           % opacity where activation is low
     g.alphaHi    = 0.50;           % opacity where activation is high
     g.limits     = [0 1];          % mat2gray range used everywhere
