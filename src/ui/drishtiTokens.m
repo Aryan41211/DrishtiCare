@@ -9,7 +9,10 @@ function t = drishtiTokens()
 %
 %   Palette intent (light clinical):
 %     canvas/surface/sunken  three surface levels plus ONE border colour
-%     ink/inkMuted           all text; inkFaint is NON-TEXT ONLY
+%     ink/inkMuted           the two text colours
+%     inkFaint               RESERVED for non-text (rules, ticks): it measures
+%                            3.68:1, below the 4.5:1 text floor, so text must
+%                            use inkMuted or ink, never this.
 %     danger/success/warning the three decision tones
 %     primary                the single accent, used at most twice on screen
 %
@@ -41,7 +44,7 @@ function t = drishtiTokens()
     %% ---- ink ------------------------------------------------------------
     t.ink       = hex2rgb('#10151C');   % 18.32:1 on surface - values, headings
     t.inkMuted  = hex2rgb('#5A6473');   %  5.99:1 - ALL body text, labels, DISCLAIMERS
-    t.inkFaint  = hex2rgb('#7C8695');   %  3.68:1 - NON-TEXT ONLY (ticks, numerals)
+    t.inkFaint  = hex2rgb('#7C8695');   %  3.68:1 - RESERVED non-text (ticks, numerals)
 
     %% ---- decision tones -------------------------------------------------
     t.danger     = hex2rgb('#C0392B');  % referable / FAIL / reject

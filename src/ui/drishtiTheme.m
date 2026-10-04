@@ -7,16 +7,20 @@ function th = drishtiTheme()
 %   RetinaAIApp dashboard and the generateDrishtiReport PDF already read, and
 %   owns the Grad-CAM rendering parameters, so dashboard and report render with
 %   the IDENTICAL visual rules (colours, Grad-CAM colormap/alpha, terminology).
-%   Colour decisions are made in drishtiTokens.m, not here. The legacy field
-%   names are a frozen interface: callers depend on them, so fields may be
-%   added but never renamed or removed.
+%   The palette VALUES live in drishtiTokens.m; the only colour derived here is
+%   primaryDark, a hover/pressed tone. The legacy field names are a frozen
+%   interface: callers depend on them, so fields may be added but never
+%   renamed or removed.
 %
 %   The theme only owns PRESENTATION. It never changes model outputs, quality
 %   thresholds, referral decisions or any engineering value.
 %
 %   Palette intent (light clinical):
 %     canvas/surface/sunken  three surface levels plus ONE hairline border
-%     ink/inkMuted           all text; inkFaint is NON-TEXT ONLY
+%     ink/inkMuted           the two text colours
+%     inkFaint               RESERVED for non-text (rules, ticks): it measures
+%                            3.68:1, below the 4.5:1 text floor, so text must
+%                            use th.textMuted or th.text, never this.
 %     primary                the single accent; primaryDark is its hover tone
 %     success                green (PASS / non-referable)
 %     warning                dark amber ink on an amber fill (WARNING / review);
