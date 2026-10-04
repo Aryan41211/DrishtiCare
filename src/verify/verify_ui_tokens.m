@@ -88,6 +88,16 @@ end
 fprintf('OK  2b. inkFaint clears 3:1 on every surface (worst %.2f:1)\n', worstN);
 nPass = nPass + 1;
 
+%% 2c. hairline is DECORATIVE - measured and reported, deliberately NOT asserted
+% Panel boundaries are already identified by the surface/canvas background
+% difference and by spacing, so the hairline is not the affordance WCAG 1.4.11
+% asks about. It is printed here so anyone who later leans on it as a
+% load-bearing boundary can see the number instead of assuming it was checked.
+rHair = [ratio(t.hairline, t.surface), ratio(t.hairline, t.sunken), ...
+         ratio(t.hairline, t.canvas)];
+fprintf('INFO 2c. hairline is decorative: surface %.2f:1, sunken %.2f:1, canvas %.2f:1 - below the 3:1 non-text floor by design, not asserted\n', ...
+    rHair(1), rHair(2), rHair(3));
+
 %% 3. White on primary (button label)
 r = ratio([1 1 1], t.primary);
 assert(r >= 4.5, sprintf('white on primary = %.2f:1, below 4.5:1', r));

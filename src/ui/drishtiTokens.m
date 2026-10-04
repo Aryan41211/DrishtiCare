@@ -27,6 +27,12 @@ function t = drishtiTokens()
     t.canvas    = hex2rgb('#F7F8FA');   % figure background
     t.surface   = hex2rgb('#FFFFFF');   % panels, cards
     t.sunken    = hex2rgb('#F1F3F6');   % axes wells, advice box
+    % hairline is DECORATIVE and deliberately below the 3:1 non-text floor
+    % (1.25:1 on surface). A panel's boundary is already identified by the
+    % surface/canvas background difference and by spacing, so the border is a
+    % refinement of an edge the user can already perceive, not the affordance
+    % WCAG 1.4.11 asks about. Do NOT darken it to reach 3:1 - that reinstates
+    % the heavy-border look this palette exists to remove.
     t.hairline  = hex2rgb('#E3E6EB');   % the ONLY border colour, 1px
 
     %% ---- ink ------------------------------------------------------------
