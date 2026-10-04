@@ -7,16 +7,20 @@
 %   than one window size". This script establishes the facts about the layout
 %   instead of leaving the box ambiguous:
 %
-%     1. every visible component sits inside the figure bounds at the design
-%        size (no clipping, no zero-extent, no off-canvas control)
-%     2. no component overlaps the header or footer bands
-%     3. the figure's resize policy and design canvas size
-%     4. whether the default window fits on the current primary screen
+%     1. every visible component lies inside the design canvas - no clipping,
+%        no zero-extent, no off-canvas control
+%     2. the content panels share one horizontal band and are ordered left to
+%        right, so no component overlaps the header or footer bands
+%     3. the content panels clear the header band and the bottom bar
+%     4. the app is built on a uigridlayout root and the figure is resizable
+%        (Resize on), not a fixed canvas
+%     5. the default window fits on the current primary screen - reported, not
+%        asserted, because it depends on the machine the audit runs on
 %
-%   The app positions everything absolutely against a fixed canvas rather than
-%   using a uigridlayout, so "responsive layout at multiple window sizes" is
-%   not a property this app has. That is reported as a fact, not asserted as a
-%   pass.
+%   Five checks are counted, matching CHECKS below. The app is REQUIRED to be
+%   grid-driven and resizable. Bands are discovered by walking the grid
+%   hierarchy, so an absolute-positioned fixed canvas has no bands to discover
+%   and fails at the first band assertion.
 %
 % SCOPE: read-only. Instantiates the app headlessly, measures geometry, closes
 % it. Loads no model, touches no threshold, metric or calibration value, and
@@ -219,28 +223,48 @@ end
 % -------------------------------------------------------------------------
 function rects = bandRects(fig)
 %BANDRECTS Absolute rectangles of the app's top-level layout bands.
-%   A band is a uipanel sitting directly on the root grid, or directly on a grid
-%   that sits directly on the root grid. Panels nested deeper (inside a band) are
-%   interiors, not bands.
-grids = findall(fig, 'Type', 'uigridlayout');
+%   A band is a uipanel that is a direct child of the ROOT grid - the grid whose
+%   Parent is the figure - or a direct child of a grid that is itself a direct
+%   child of the root grid. Nothing deeper is traversed. A panel inside a band's
+%   own interior (the quality well, the pipeline track) has the band Panel as its
+%   Parent, not a grid, so it is excluded here; and a grid nested two levels down
+%   is not one of the two levels above, so its panels are excluded too. The bound
+%   is the whole point: counting an interior as a band would break the
+%   shared-vertical-band assertion in the calling section.
+grids = childrenOf(fig, 'matlab.ui.container.GridLayout');
+
 rects = [];
-for g = 1:numel(grids)
-    % Do not depend on which shape findall happens to return: normalise to a
-    % cell array and filter with cellfun throughout, so the discovery reports a
-    % layout defect rather than an unrelated exception if that shape ever changes.
-    kids = findall(grids(g));
-    if ~iscell(kids)
-        kids = num2cell(kids);
+for gi = 1:numel(grids)
+    if ~isequal(grids{gi}.Parent, fig)
+        continue;     % only a grid sitting directly on the figure is a root grid
     end
-    isPanel = cellfun(@(c) isa(c, 'matlab.ui.container.Panel') && ...
-        ~isa(c, 'matlab.ui.container.GridLayout'), kids);
-    kids = kids(isPanel);
-    % keep only direct children of this grid
-    kids = kids(cellfun(@(c) isequal(c.Parent, grids(g)), kids));
-    for i = 1:numel(kids)
-        rects(end+1, :) = absPos(kids{i}, fig); %#ok<AGROW>
+    % The two levels this function documents, and no others. The root grid is
+    % appended by index rather than horzcat'ed on, because findall returns a
+    % column: [1x1cell, Nx1cell] would fail as soon as the root grid carries two
+    % level-1 grids.
+    levels = childrenOf(grids{gi}, 'matlab.ui.container.GridLayout');
+    levels{end+1} = grids{gi};
+    for L = 1:numel(levels)
+        bands = childrenOf(levels{L}, 'matlab.ui.container.Panel');
+        for i = 1:numel(bands)
+            rects(end+1, :) = absPos(bands{i}, fig); %#ok<AGROW>
+        end
     end
 end
+end
+
+% -------------------------------------------------------------------------
+function kids = childrenOf(parent, className)
+%CHILDRENOF Direct children of parent of the given class, as a cell array.
+%   findall returns the whole subtree, so the Parent test is what makes
+%   "direct" true. The result is normalised to a cell array because findall's
+%   return shape is not something to depend on, and cellfun needs a cell array
+%   to filter.
+kids = findall(parent);
+if ~iscell(kids)
+    kids = num2cell(kids);
+end
+kids = kids(cellfun(@(c) isa(c, className) && isequal(c.Parent, parent), kids));
 end
 
 % -------------------------------------------------------------------------
