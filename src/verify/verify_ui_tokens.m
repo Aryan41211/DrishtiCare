@@ -1,9 +1,13 @@
 % verify_ui_tokens.m
 % Contract gate for the DrishtiCare light clinical token layer.
 %
-% Asserts: every token field exists; every text pair clears WCAG AA 4.5:1 and
-% every non-text pair clears 3:1, measured worst-case on the darkest surface;
-% the theme Grad-CAM colormap actually exists on this MATLAB install.
+% Asserts: every token field exists; every text pair clears WCAG AA 4.5:1;
+% inkFaint, the non-text colour, clears 3:1; the spacing scale is a 4px
+% progression; the theme Grad-CAM colormap actually exists on this MATLAB
+% install. `hairline` is a documented decorative exception - it is MEASURED
+% and printed (section 2c) but deliberately NOT asserted, because a panel
+% boundary is already identified by the surface/canvas background difference
+% and by spacing.
 %
 % SCOPE: read-only. Presentation only - touches no model, threshold or metric.
 % Run from the repo root:

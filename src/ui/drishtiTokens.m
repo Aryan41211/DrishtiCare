@@ -13,8 +13,11 @@ function t = drishtiTokens()
 %     danger/success/warning the three decision tones
 %     primary                the single accent, used at most twice on screen
 %
-%   All colour pairs are verified by src/verify/verify_ui_tokens.m against
-%   WCAG AA (text >= 4.5:1, non-text >= 3:1), worst case on `sunken`.
+%   Verified by src/verify/verify_ui_tokens.m: every text pair clears WCAG AA
+%   4.5:1 and inkFaint, the non-text colour, clears 3:1, worst case on `sunken`.
+%   `hairline` is the one documented exception - DECORATIVE, below the 3:1
+%   floor by design (see its definition below). Its ratios are measured and
+%   reported by the gate rather than asserted.
 %
 %   The theme only owns PRESENTATION. It never changes model outputs, quality
 %   thresholds, referral decisions or any engineering value.
