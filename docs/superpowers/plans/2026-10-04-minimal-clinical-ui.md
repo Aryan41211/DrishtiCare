@@ -389,7 +389,7 @@ In `src/ui/drishtiTheme.m`, replace the `g.colormap` line and its comment:
     % cividis are ABSENT and referencing them hard-errors. parula is chosen
     % over turbo because it is perceptually uniform and colour-vision-
     % deficiency-friendly, and it clears verify_gradcam_rendering's endpoint
-    % budget (3.13% of 10%) and alpha-conditioning floor (86.5% of 20%).
+    % budget (3.12% of 10%) and alpha-conditioning floor (86.5% of 20%).
     g.colormap   = 'parula';
 ```
 
@@ -1832,7 +1832,7 @@ and was rejected.
 
 **Grad-CAM map.** `turbo` -> `parula`. `turbo` is a rainbow map and not
 colourblind-safe; `parula` measures inside `verify_gradcam_rendering`'s budgets
-(endpoint 3.13% of 10%, alpha conditioning 86.5% of 20%). `hot` (203%) and
+(endpoint 3.12% of 10%, alpha conditioning 86.5% of 20%). `hot` (203%) and
 `copper` (28%) fail. `inferno` is **absent from this R2026a install** despite
 the theme previously claiming it was available, and `drishtiColormap` had
 advertised it while its branch would hard-error.
