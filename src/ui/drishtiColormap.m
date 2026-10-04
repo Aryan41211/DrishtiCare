@@ -3,9 +3,12 @@ function map = drishtiColormap(name)
 %   map = drishtiColormap()
 %   map = drishtiColormap('hot')
 %
-%   Only parula clears the measured Grad-CAM budgets (see the theme comment);
-%   hot is kept for legacy callers but fails alpha conditioning, so an
-%   unqualified name here is deliberate.
+%   The no-arg call takes the theme's Grad-CAM colormap, which is parula, so
+%   the turbo fallback below is reached only when a caller passes a name that
+%   matches no case. Against the gate's measured budgets parula and turbo both
+%   clear; parula was chosen over turbo for perceptual uniformity and
+%   colour-vision-deficiency safety. hot clears conditioning but blows the
+%   endpoint ceiling, and copper fails both, so neither is offered.
 %
 %   One place decides what colormap every Grad-CAM surface uses (dashboard
 %   heatmap, overlay, colorbar and generated report), so no two panels can
@@ -23,6 +26,7 @@ function map = drishtiColormap(name)
     switch lower(name)
         case 'parula'
             map = parula(256);
+        % retained for compatibility; fails the endpoint budget
         case 'hot'
             map = hot(256);
         otherwise
