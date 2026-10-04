@@ -29,6 +29,8 @@
         LastQualityStatus  char = ''
 
         % ---- layout containers -------------------------------------------
+        RootGrid           matlab.ui.container.GridLayout
+        BodyGrid           matlab.ui.container.GridLayout
         HeaderPanel        matlab.ui.container.Panel
         LeftPanel          matlab.ui.container.Panel
         MiddlePanel        matlab.ui.container.Panel
@@ -149,14 +151,33 @@
     methods (Access = private)
 
         function createComponents(app)
-            % Window: presentation-sized, fixed layout. Deep-navy theme.
+            % Window: resizable. Root grid owns the bands; every panel interior
+            % is its own pixel layout (see createImageSection et al).
             th = drishtiTheme();
             app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
-                'Position', [40 8 1360 760], ...
+                'Position', [40 60 1360 760], ...
                 'Color', th.background, ...
-                'Resize', 'off');
+                'Resize', 'on');
 
+            app.RootGrid = uigridlayout(app.UIFigure, [4 1]);
+            app.RootGrid.RowHeight = {48, '1x', 96, 28};
+            app.RootGrid.Padding = [0 0 0 0];
+            app.RootGrid.RowSpacing = 0;
+            app.RootGrid.BackgroundColor = th.background;
+
+            % uigridlayout hands each new child the next free cell in row-major
+            % order, so the bands must be CREATED in band order or they land in
+            % the wrong row: header (48) -> body ('1x') -> bottom bar (96) ->
+            % footer (28).
             createHeader(app);
+
+            app.BodyGrid = uigridlayout(app.RootGrid, [1 3]);
+            app.BodyGrid.ColumnWidth = {'1x', '1.3x', '1.75x'};
+            app.BodyGrid.Padding = [0 0 0 0];
+            app.BodyGrid.RowSpacing = 0;
+            app.BodyGrid.RowHeight = {'1x'};
+            app.BodyGrid.BackgroundColor = th.background;
+
             createImageSection(app);
             createResultSection(app);
             createEvidenceSection(app);
@@ -164,12 +185,30 @@
             createFooter(app);
             app.setStatus('System Ready', 'ok');
             app.setPipelineState('idle');
+            app.enforceMinSize();
+            settleLayout(app);
+        end
+
+        function settleLayout(app)
+            % uifigure resolves grid geometry on the NEXT event-loop turn, not
+            % during construction: straight after the constructor the root grid
+            % still reports its 100x100 creation default and every band is
+            % unplaced. A headless audit (verify_app_layout) measures Position as
+            % soon as the constructor returns, so render one frame here and hand
+            % the app back with real geometry. Failures are non-fatal: an
+            % interactive session settles on its own next frame anyway.
+            if ~isvalid(app.UIFigure), return; end
+            drawnow;
+            try
+                getframe(app.UIFigure);
+            catch
+            end
+            drawnow;
         end
 
         function createHeader(app)
             th = drishtiTheme();
-            app.HeaderPanel = uipanel(app.UIFigure, ...
-                'Position', [0 716 1360 44], ...
+            app.HeaderPanel = uipanel(app.RootGrid, ...
                 'BackgroundColor', th.panelDeep, ...
                 'BorderType', 'line', 'BorderColor', th.border, 'BorderWidth', 1);
 
@@ -211,13 +250,12 @@
             % Left column: RETINAL IMAGE - metadata row, fundus preview,
             % resolution line, and the primary Upload / Analyze actions.
             th = drishtiTheme();
-            app.LeftPanel = uipanel(app.UIFigure, ...
+            app.LeftPanel = uipanel(app.BodyGrid, ...
                 'Title', ' RETINAL IMAGE ', ...
                 'FontSize', th.type.sectionTitle, 'FontWeight', 'bold', ...
                 'ForegroundColor', th.textMuted, ...
                 'BackgroundColor', th.panel, ...
-                'BorderType', 'line', 'BorderColor', th.border, ...
-                'Position', [8 144 330 564]);
+                'BorderType', 'line', 'BorderColor', th.border);
 
             app.FilenameLabel = uilabel(app.LeftPanel, ...
                 'Text', 'Image ID : —', ...
@@ -284,13 +322,12 @@
             % Center column: AI SCREENING RESULT - severity, ICDR grade,
             % referral status card, confidence bar, score, advice card.
             th = drishtiTheme();
-            app.MiddlePanel = uipanel(app.UIFigure, ...
+            app.MiddlePanel = uipanel(app.BodyGrid, ...
                 'Title', ' AI SCREENING RESULT ', ...
                 'FontSize', th.type.sectionTitle, 'FontWeight', 'bold', ...
                 'ForegroundColor', th.textMuted, ...
                 'BackgroundColor', th.panel, ...
-                'BorderType', 'line', 'BorderColor', th.border, ...
-                'Position', [346 144 420 564]);
+                'BorderType', 'line', 'BorderColor', th.border);
 
             secLabel('DR SEVERITY', [16 528 388 14]);
             app.SeverityValue = uilabel(app.MiddlePanel, ...
@@ -395,13 +432,12 @@
             % Right column: VISUAL EVIDENCE - segmented view switcher,
             % Grad-CAM / overlay canvas with centralized colorbar + disclaimer.
             th = drishtiTheme();
-            app.RightPanel = uipanel(app.UIFigure, ...
+            app.RightPanel = uipanel(app.BodyGrid, ...
                 'Title', ' MODEL EXPLANATION & VISUAL EVIDENCE ', ...
                 'FontSize', th.type.sectionTitle, 'FontWeight', 'bold', ...
                 'ForegroundColor', th.textMuted, ...
                 'BackgroundColor', th.panel, ...
-                'BorderType', 'line', 'BorderColor', th.border, ...
-                'Position', [774 144 578 564]);
+                'BorderType', 'line', 'BorderColor', th.border);
 
             % segmented control: one row of equal buttons
             app.ViewButtons = gobjects(1, 4);
@@ -492,8 +528,7 @@
         function createBottomBar(app)
             % Bottom bar: IMAGE QUALITY cards | PIPELINE STATUS | REPORT.
             th = drishtiTheme();
-            app.BottomBar = uipanel(app.UIFigure, ...
-                'Position', [0 48 1360 88], ...
+            app.BottomBar = uipanel(app.RootGrid, ...
                 'BackgroundColor', th.panel, ...
                 'BorderType', 'line', 'BorderColor', th.border, 'BorderWidth', 1);
 
@@ -635,19 +670,35 @@
 
         function createFooter(app)
             th = drishtiTheme();
-            app.FooterLabel = uilabel(app.UIFigure, ...
-                'Text', 'Human-in-the-loop: final clinical decision by a qualified ophthalmologist.', ...
-                'Position', [16 13 720 18], ...
-                'FontSize', th.type.support, ...
-                'FontColor', th.textFaint, 'HorizontalAlignment', 'left');
+            fg = uigridlayout(app.RootGrid, [1 2]);
+            fg.ColumnWidth = {'1x', '1x'};
+            fg.Padding = [8 0 8 0];
+            fg.BackgroundColor = th.background;
 
-            app.MetricsLabel = uilabel(app.UIFigure, ...
+            app.FooterLabel = uilabel(fg, ...
+                'Text', 'Human-in-the-loop: final clinical decision by a qualified ophthalmologist.', ...
+                'FontSize', th.type.support, ...
+                'FontColor', th.textMuted, 'HorizontalAlignment', 'left');
+
+            app.MetricsLabel = uilabel(fg, ...
                 'Text', ['VALIDATION  ·  Accuracy 82.81%  ·  ' ...
                          'Referable sensitivity 90.60%  ·  Specificity 94.71%  ·  ' ...
                          'APTOS held-out validation  ·  Prototype, not clinically validated'], ...
-                'Position', [676 13 668 18], ...
                 'FontSize', th.type.support, ...
-                'FontColor', th.textFaint, 'HorizontalAlignment', 'right');
+                'FontColor', th.textMuted, 'HorizontalAlignment', 'right');
+        end
+
+        function enforceMinSize(app)
+            % Clamp the window to the documented 1120x680 floor rather than
+            % letting the three weighted columns collapse into each other.
+            if ~isvalid(app.UIFigure), return; end
+            p = app.UIFigure.Position;
+            w = max(p(3), 1120);
+            h = max(p(4), 680);
+            if w ~= p(3) || h ~= p(4)
+                app.UIFigure.Position = [p(1) + (p(3) - w) / 2, ...
+                                         p(2) + (p(4) - h) / 2, w, h];
+            end
         end
 
         function loadSampleList(app)

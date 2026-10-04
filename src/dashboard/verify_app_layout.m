@@ -145,6 +145,7 @@ nPass = nPass + 1;
 %% 4. The app must be grid-driven and resizable
 grids = findall(fig, 'Type', 'uigridlayout');
 assert(~isempty(grids), 'the app must be built on a uigridlayout root');
+assert(isequal(grids(1).Parent, fig), 'the root grid is a direct child of the figure');
 isFixed = strcmpi(char(fig.Resize), 'off');
 assert(~isFixed, 'the figure must be resizable (Resize on), not a fixed canvas');
 fprintf('OK  4. grid-driven root (%d uigridlayout containers), Resize=%s\n', ...
