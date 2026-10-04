@@ -82,35 +82,31 @@ fprintf('OK  1. all %d components lie inside the %gx%g canvas\n', numel(items), 
 nPass = nPass + 1;
 
 %% 3. The layout bands must tile without overlap
-% The redesign introduced a header, three content panels (image / AI result /
-% visual evidence) and a bottom bar. The layout containers are declared
-% Access = private, so rather than weakening the app's encapsulation for the
-% benefit of a test, the bands are identified structurally: the direct
-% uipanels of the figure, classified by where they sit on the canvas.
-allKids = fig.Children;
-kids = allKids(arrayfun(@(c) isa(c, 'matlab.ui.container.Panel'), allKids));
-rects = zeros(numel(kids), 4);
-for i = 1:numel(kids)
-    rects(i, :) = absPos(kids(i), fig);
-end
-assert(~isempty(rects), 'the figure exposes at least one layout panel');
+% Bands are the app's top-level bands, not every nested panel: they are found by
+% walking down at most two grid levels from the figure. `fig.Children` is not
+% usable - it returns only the root container once the bands are nested inside
+% uigridlayout, and a uigridlayout is deliberately not a
+% matlab.ui.container.Panel, so the Panel filter over fig.Children matched
+% nothing at all. The panel interiors in turn contain nested panels (the quality
+% well, the pipeline track) which are deliberately EXCLUDED here: they are not
+% bands, and counting them would break the shared-band assertion below.
+rects = bandRects(fig);
+assert(~isempty(rects), 'the figure exposes at least one layout band');
+fprintf('INFO bands discovered      = %d\n', size(rects, 1));
 
-topY    = rects(:, 2) + rects(:, 4);
-isHead  = abs(topY - figT) < 0.5;    % flush with the top of the canvas
-nHead   = sum(isHead);
+topY   = rects(:, 2) + rects(:, 4);
+isHead = abs(topY - figT) < 0.5;    % flush with the top of the canvas
+nHead  = sum(isHead);
 assert(nHead == 1, 'exactly one header band sits flush with the top');
 
-% The bottom bar is the lowest remaining band. It does NOT sit flush with the
-% canvas: a label-only footer strip occupies the space below it, so the band is
-% identified as the minimum y among the non-header panels rather than y == 0.
-rest    = rects(~isHead, :);
-minY    = min(rest(:, 2));
-isFoot  = ~isHead & abs(rects(:, 2) - minY) < 0.5;
-nFoot   = sum(isFoot);
+rest   = rects(~isHead, :);
+minY   = min(rest(:, 2));
+isFoot = ~isHead & abs(rects(:, 2) - minY) < 0.5;
+nFoot  = sum(isFoot);
 assert(nFoot == 1, 'exactly one bottom bar is the lowest band');
 
-isBody  = ~isHead & ~isFoot;
-nBody   = sum(isBody);
+isBody = ~isHead & ~isFoot;
+nBody  = sum(isBody);
 fprintf('INFO layout bands         = %d header, %d content, %d bottom\n', ...
     nHead, nBody, nFoot);
 assert(nBody >= 3, 'at least three content panels tile the middle of the canvas');
@@ -142,7 +138,16 @@ fprintf('OK  3. content panels clear the header band (y<=%g) and bottom bar (y>=
     headBot, footTop);
 nPass = nPass + 1;
 
-%% 4. Does the default window fit the current screen?
+%% 4. The app must be grid-driven and resizable
+grids = findall(fig, 'Type', 'uigridlayout');
+assert(~isempty(grids), 'the app must be built on a uigridlayout root');
+isFixed = strcmpi(char(fig.Resize), 'off');
+assert(~isFixed, 'the figure must be resizable (Resize on), not a fixed canvas');
+fprintf('OK  4. grid-driven root (%d uigridlayout containers), Resize=%s\n', ...
+    numel(grids), char(fig.Resize));
+nPass = nPass + 1;
+
+%% 6. Does the default window fit the current screen?
 screenW = ss(3); screenH = ss(4);
 fits = (pos(1) >= 0) && (pos(2) >= 0) && ...
        (pos(1) + pos(3) <= screenW) && (pos(2) + pos(4) <= screenH);
@@ -212,9 +217,30 @@ r = [x0, y0, p(3), p(4)];
 end
 
 % -------------------------------------------------------------------------
-function tf = overlaps(a, b)
-tf = a(1) < b(1) + b(3) && b(1) < a(1) + a(3) && ...
-     a(2) < b(2) + b(4) && b(2) < a(2) + a(4);
+function rects = bandRects(fig)
+%BANDRECTS Absolute rectangles of the app's top-level layout bands.
+%   A band is a uipanel sitting directly on the root grid, or directly on a grid
+%   that sits directly on the root grid. Panels nested deeper (inside a band) are
+%   interiors, not bands.
+grids = findall(fig, 'Type', 'uigridlayout');
+rects = [];
+for g = 1:numel(grids)
+    % Do not depend on which shape findall happens to return: normalise to a
+    % cell array and filter with cellfun throughout, so the discovery reports a
+    % layout defect rather than an unrelated exception if that shape ever changes.
+    kids = findall(grids(g));
+    if ~iscell(kids)
+        kids = num2cell(kids);
+    end
+    isPanel = cellfun(@(c) isa(c, 'matlab.ui.container.Panel') && ...
+        ~isa(c, 'matlab.ui.container.GridLayout'), kids);
+    kids = kids(isPanel);
+    % keep only direct children of this grid
+    kids = kids(cellfun(@(c) isequal(c.Parent, grids(g)), kids));
+    for i = 1:numel(kids)
+        rects(end+1, :) = absPos(kids{i}, fig); %#ok<AGROW>
+    end
+end
 end
 
 % -------------------------------------------------------------------------
