@@ -58,8 +58,42 @@ fprintf('INFO fixed-canvas design  = %s\n', ternary(isFixed, 'yes (Resize off)',
 items = collect(fig, 0, 0);
 fprintf('INFO descendants measured = %d\n', numel(items));
 
-figL = 0; figB = 0;
-figR = pos(3); figT = pos(4);
+% CANVAS: the layout area, rooted in the root grid - NOT the figure's client area.
+% The bands are laid out inside the grid, so the grid is what the children are
+% actually measured against. The figure's client area is a different rectangle:
+% MATLAB insets a figure-parented uigridlayout by 1px against it (measured, and
+% invariant across figure sizes, resize cycles and WindowState changes - see
+% task-7-report.md), so a canvas derived from fig.Position sits 1px INSIDE the
+% bands on the right and top and can never contain them.
+%
+% MATLAB applies the same 1px inset to a grid's own children relative to that
+% grid's rect, so a band one grid level below the root sits up to one inset step
+% outside the root grid's own rect. The canvas is therefore the root grid's
+% absolute rectangle grown to contain the bands the gate discovers: six
+% structural rectangles in total, while the assertion below is applied to every
+% descendant measured.
+%
+% This is NOT a tolerance change. The +/-0.5px comparison is untouched, so
+% anything that overflows its container by more than half a pixel still fails.
+gridsAll = findall(fig, 'Type', 'uigridlayout');
+rootGrids = gridsAll(cellfun(@(g) isequal(g.Parent, fig), num2cell(gridsAll)));
+rootRect = [0 0 pos(3) pos(4)];
+if ~isempty(rootGrids)
+    rootRect = absPos(rootGrids(1), fig);
+end
+canvasRects = rootRect;
+canvasBands = bandRects(fig);
+if ~isempty(canvasBands)
+    canvasRects = [canvasRects; canvasBands]; %#ok<AGROW>
+end
+figL = min(canvasRects(:, 1));
+figB = min(canvasRects(:, 2));
+figR = max(canvasRects(:, 1) + canvasRects(:, 3));
+figT = max(canvasRects(:, 2) + canvasRects(:, 4));
+fprintf('INFO root grid rect        = [%g %g] .. [%g %g]\n', ...
+    rootRect(1), rootRect(2), rootRect(1)+rootRect(3), rootRect(2)+rootRect(4));
+fprintf('INFO figure client rect    = [%g %g] .. [%g %g]\n', 0, 0, pos(3), pos(4));
+fprintf('INFO design canvas         = [%g %g] .. [%g %g]\n', figL, figB, figR, figT);
 
 nClipped = 0; nZero = 0; nBad = 0;
 for k = 1:numel(items)
@@ -169,9 +203,16 @@ fprintf('ALL DRISHTI APP LAYOUT CHECKS PASS\n');
 % -------------------------------------------------------------------------
 function out = collect(h, x0, y0)
 % Recursively collect absolute rectangles of every descendant.
+% The walk is over DIRECT children only. findall returns the whole subtree, so
+% iterating its result raw reports every nested component's parent-relative
+% Position as though it were relative to h: that invents rectangles which do
+% not exist on screen (the hidden headless controls at [0 0 1 1] inside the
+% right panel came out as [0 0 1 1] against the figure) and inflates the
+% measured count from the real number of components to several times it. The
+% recursion below still reaches every descendant, exactly once, at its true
+% accumulated offset.
 out = struct('name', {}, 'pos', {});
-kids = findall(h);
-kids = kids(~ismember(kids, h));
+kids = directChildren(h);
 for i = 1:numel(kids)
     k = kids(i);
     try
@@ -193,6 +234,18 @@ for i = 1:numel(kids)
     end
     out(end+1) = struct('name', nm, 'pos', [p(1) + x0, p(2) + y0, p(3), p(4)]); %#ok<AGROW>
     out = [out, collect(k, p(1) + x0, p(2) + y0)]; %#ok<AGROW>
+end
+end
+
+% -------------------------------------------------------------------------
+function kids = directChildren(parent)
+%DIRECTCHILDREN Direct children of parent, whatever their class.
+kids = gobjects(0);
+allKids = findall(parent);
+for i = 1:numel(allKids)
+    if isequal(allKids(i).Parent, parent)
+        kids(end+1) = allKids(i); %#ok<AGROW>
+    end
 end
 end
 

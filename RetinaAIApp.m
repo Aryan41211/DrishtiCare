@@ -154,10 +154,16 @@
             % Window: resizable. Root grid owns the bands; every panel interior
             % is its own pixel layout (see createImageSection et al).
             th = drishtiTheme();
-            app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
+            % AutoResizeChildren is turned OFF deliberately, not as redundancy: uifigure
+% defaults it to 'on' for legacy absolutely-positioned children, and while it is
+% on MATLAB refuses to run SizeChangedFcn at all. The bands are laid out by the
+% root grid, which resizes on its own and wants nothing from the legacy
+% behaviour - but the size clamp does need the callback.
+app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
                 'Position', [40 60 1360 760], ...
                 'Color', th.background, ...
-                'Resize', 'on');
+                'Resize', 'on', ...
+                'AutoResizeChildren', 'off');
 
             app.RootGrid = uigridlayout(app.UIFigure, [4 1]);
             app.RootGrid.RowHeight = {48, '1x', 96, 28};
@@ -173,7 +179,14 @@
 
             app.BodyGrid = uigridlayout(app.RootGrid, [1 3]);
             app.BodyGrid.ColumnWidth = {'1x', '1.3x', '1.75x'};
-            app.BodyGrid.Padding = [0 0 0 0];
+            % 1px of top/bottom padding, and only there. MATLAB lays a grid's
+            % children out 1px inside the grid's own rect, so a full-height
+            % child of an un-padded grid measures 588 tall starting at y=127 and
+            % overhangs the body row's top edge (714) by 1px - i.e. it overlaps
+            % the header band. Dropping it 1px puts the three panels exactly
+            % between the header (714) and the bottom bar (126) with no overlap.
+            % Measured: panel rects go from [3 127 331 588] to [3 128 331 586].
+            app.BodyGrid.Padding = [0 1 0 1];
             app.BodyGrid.RowSpacing = 0;
             app.BodyGrid.RowHeight = {'1x'};
             app.BodyGrid.BackgroundColor = th.background;
@@ -186,6 +199,12 @@
             app.setStatus('System Ready', 'ok');
             app.setPipelineState('idle');
             app.enforceMinSize();
+            % Installed AFTER the construction-time clamp above, so the first
+            % size change does not re-enter enforceMinSize on a half-built app.
+            % The callback terminates on its own: enforceMinSize writes Position
+            % only while the size is below the floor, so the callback it triggers
+            % sees a compliant size and writes nothing (counted in task-7-report.md).
+            app.UIFigure.SizeChangedFcn = @(~, ~) enforceMinSize(app);
             settleLayout(app);
         end
 
@@ -690,14 +709,38 @@
 
         function enforceMinSize(app)
             % Clamp the window to the documented 1120x680 floor rather than
-            % letting the three weighted columns collapse into each other.
+            % letting the three weighted columns collapse into each other, and
+            % keep the result ON the screen.
+            %
+            % Runs at construction and from SizeChangedFcn. It is its own
+            % termination proof: Position is written only while the size is
+            % below the floor, so the callback that the write triggers sees a
+            % compliant size and writes nothing further.
             if ~isvalid(app.UIFigure), return; end
             p = app.UIFigure.Position;
             w = max(p(3), 1120);
             h = max(p(4), 680);
-            if w ~= p(3) || h ~= p(4)
-                app.UIFigure.Position = [p(1) + (p(3) - w) / 2, ...
-                                         p(2) + (p(4) - h) / 2, w, h];
+
+            % ScreenSize is [left bottom width height], not [0 0 W H]: on a
+            % multi-screen arrangement it can report a non-zero origin or a
+            % spanned extent, so the usable box is derived from all four.
+            ss = get(groot, 'ScreenSize');
+            sL = ss(1); sB = ss(2); sR = ss(1) + ss(3); sT = ss(2) + ss(4);
+
+            % A screen smaller than the floor wins: a window is never made
+            % larger than the screen it has to fit on.
+            w = min(w, max(ss(3), 1));
+            h = min(h, max(ss(4), 1));
+
+            % Grow centred on the old window, then pull back inside the screen so
+            % a resize near an edge cannot push the window further off it.
+            x = p(1) + (p(3) - w) / 2;
+            y = p(2) + (p(4) - h) / 2;
+            x = min(max(x, sL), max(sL, sR - w));
+            y = min(max(y, sB), max(sB, sT - h));
+
+            if w ~= p(3) || h ~= p(4) || x ~= p(1) || y ~= p(2)
+                app.UIFigure.Position = [x y w h];
             end
         end
 
