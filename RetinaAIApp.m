@@ -27,6 +27,7 @@
         CurrentResult      struct
         ImageRawSize       double = [0 0]
         LastQualityStatus  char = ''
+        FloorNoticeShown   logical = false
 
         % ---- layout containers -------------------------------------------
         RootGrid           matlab.ui.container.GridLayout
@@ -155,11 +156,11 @@
             % is its own pixel layout (see createImageSection et al).
             th = drishtiTheme();
             % AutoResizeChildren is turned OFF deliberately, not as redundancy: uifigure
-% defaults it to 'on' for legacy absolutely-positioned children, and while it is
-% on MATLAB refuses to run SizeChangedFcn at all. The bands are laid out by the
-% root grid, which resizes on its own and wants nothing from the legacy
-% behaviour - but the size clamp does need the callback.
-app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
+            % defaults it to 'on' for legacy absolutely-positioned children, and while it is
+            % on MATLAB refuses to run SizeChangedFcn at all. The bands are laid out by the
+            % root grid, which resizes on its own and wants nothing from the legacy
+            % behaviour - but the size clamp does need the callback.
+            app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
                 'Position', [40 60 1360 760], ...
                 'Color', th.background, ...
                 'Resize', 'on', ...
@@ -179,6 +180,13 @@ app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
 
             app.BodyGrid = uigridlayout(app.RootGrid, [1 3]);
             app.BodyGrid.ColumnWidth = {'1x', '1.3x', '1.75x'};
+            % ColumnSpacing = 12 (theme spacing step s3), set deliberately. Nested
+            % card contrast is deliberately absent in this light theme, so the gap
+            % is what separates the three content panels - it carries the panel
+            % hierarchy on its own. Left at the uigridlayout default of 10 it would
+            % sit off the 4px spacing progression, so the spacing would be nobody's
+            % decision.
+            app.BodyGrid.ColumnSpacing = 12;
             % 1px of top/bottom padding, and only there. MATLAB lays a grid's
             % children out 1px inside the grid's own rect, so a full-height
             % child of an un-padded grid measures 588 tall starting at y=127 and
@@ -218,10 +226,13 @@ app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
             % interactive session settles on its own next frame anyway.
             if ~isvalid(app.UIFigure), return; end
             drawnow;
-            try
-                getframe(app.UIFigure);
-            catch
-            end
+            % No try/catch here on purpose. A failed settle would leave every
+            % caller - the gates above all - measuring unlaid-out geometry, and a
+            % gate that reports a confident PASS on garbage is the worst outcome
+            % available. Letting the exception propagate fails construction
+            % loudly instead, so no caller can mistake un-settled geometry for a
+            % measured layout.
+            getframe(app.UIFigure);
             drawnow;
         end
 
@@ -728,9 +739,25 @@ app.UIFigure = uifigure('Name', 'DRISHTI - Explainable AI for DR Screening', ...
             sL = ss(1); sB = ss(2); sR = ss(1) + ss(3); sT = ss(2) + ss(4);
 
             % A screen smaller than the floor wins: a window is never made
-            % larger than the screen it has to fit on.
-            w = min(w, max(ss(3), 1));
-            h = min(h, max(ss(4), 1));
+            % larger than the screen it has to fit on. That abandons the documented
+            % floor, so it is reported once - see the notice below.
+            cappedW = min(w, max(ss(3), 1));
+            cappedH = min(h, max(ss(4), 1));
+            if cappedW < w || cappedH < h
+                % One-time notice, in the same fprintf idiom used elsewhere. The
+                % gate output and the QA logs are where the floor is documented, so
+                % this is where a floor that is not actually in force has to show
+                % up; without it the floor silently stops being true.
+                if ~app.FloorNoticeShown
+                    app.FloorNoticeShown = true;
+                    fprintf(['NOTICE: screen is %dx%d, smaller than the %dx%d ' ...
+                        'minimum window size; the floor is abandoned for this ' ...
+                        'display and the window is capped to the screen.\n'], ...
+                        ss(3), ss(4), 1120, 680);
+                end
+            end
+            w = cappedW;
+            h = cappedH;
 
             % Grow centred on the old window, then pull back inside the screen so
             % a resize near an edge cannot push the window further off it.

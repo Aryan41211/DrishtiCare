@@ -55,68 +55,71 @@ fprintf('INFO fixed-canvas design  = %s\n', ternary(isFixed, 'yes (Resize off)',
 %% 2. Walk every descendant and compute its absolute position
 % Positions in MATLAB UI components are relative to the parent, so the absolute
 % rectangle is the sum of the chain up to the figure.
-items = collect(fig, 0, 0);
+items = collect(fig, 0, 0, 0);
 fprintf('INFO descendants measured = %d\n', numel(items));
 
-% CANVAS: the layout area, rooted in the root grid - NOT the figure's client area.
-% The bands are laid out inside the grid, so the grid is what the children are
-% actually measured against. The figure's client area is a different rectangle:
-% MATLAB insets a figure-parented uigridlayout by 1px against it (measured, and
-% invariant across figure sizes, resize cycles and WindowState changes - see
-% task-7-report.md), so a canvas derived from fig.Position sits 1px INSIDE the
-% bands on the right and top and can never contain them.
+% CANVAS: derived from the FIGURE plus each component's own grid depth. Never
+% from band positions - a canvas built out of the bands puts the bands inside it
+% by construction, so the check could not fail for them.
 %
-% MATLAB applies the same 1px inset to a grid's own children relative to that
-% grid's rect, so a band one grid level below the root sits up to one inset step
-% outside the root grid's own rect. The canvas is therefore the root grid's
-% absolute rectangle grown to contain the bands the gate discovers: six
-% structural rectangles in total, while the assertion below is applied to every
-% descendant measured.
+% MATLAB R2026a insets every uigridlayout by 1px relative to whatever contains
+% it, and repeats the inset at each level (measured, and invariant across figure
+% sizes, resize cycles and WindowState changes - see task-7-report.md). So a
+% component at grid depth d - the root grid itself is depth 1, its direct
+% children depth 2, and so on - may legitimately reach 1px further out per level
+% than the figure's client rect. That gives, for each item:
 %
-% This is NOT a tolerance change. The +/-0.5px comparison is untouched, so
-% anything that overflows its container by more than half a pixel still fails.
-gridsAll = findall(fig, 'Type', 'uigridlayout');
-rootGrids = gridsAll(cellfun(@(g) isequal(g.Parent, fig), num2cell(gridsAll)));
-rootRect = [0 0 pos(3) pos(4)];
-if ~isempty(rootGrids)
-    rootRect = absPos(rootGrids(1), fig);
-end
-canvasRects = rootRect;
-canvasBands = bandRects(fig);
-if ~isempty(canvasBands)
-    canvasRects = [canvasRects; canvasBands]; %#ok<AGROW>
-end
-figL = min(canvasRects(:, 1));
-figB = min(canvasRects(:, 2));
-figR = max(canvasRects(:, 1) + canvasRects(:, 3));
-figT = max(canvasRects(:, 2) + canvasRects(:, 4));
-fprintf('INFO root grid rect        = [%g %g] .. [%g %g]\n', ...
-    rootRect(1), rootRect(2), rootRect(1)+rootRect(3), rootRect(2)+rootRect(4));
-fprintf('INFO figure client rect    = [%g %g] .. [%g %g]\n', 0, 0, pos(3), pos(4));
-fprintf('INFO design canvas         = [%g %g] .. [%g %g]\n', figL, figB, figR, figT);
+%     allowed = [-d -d] .. [W + d  H + d],   W,H = fig.Position(3:4)
+%
+% which reproduces the measured insets exactly: root grid right 1361 = W+1,
+% header right 1362 = W+2, deepest panel right 1363 = W+3.
+%
+% Because d varies per component the bounds are computed inside the loop below,
+% not once up front. Nothing here consults band geometry, so a band pushed off
+% the window is still caught.
+%
+% This is NOT a tolerance change: the +/-0.5px comparison is untouched.
+W = pos(3);
+H = pos(4);
+fprintf('INFO figure client rect    = [%g %g] .. [%g %g]\n', 0, 0, W, H);
 
 nClipped = 0; nZero = 0; nBad = 0;
 for k = 1:numel(items)
     it = items(k);
     p = it.pos;
+    d = it.depth;
     if p(3) <= 0 || p(4) <= 0
         nZero = nZero + 1;
         fprintf('WARN zero/negative extent: %s [%g %g %g %g]\n', it.name, p(1), p(2), p(3), p(4));
         continue;
     end
-    if p(1) < figL - 0.5 || p(2) < figB - 0.5 || ...
-       p(1) + p(3) > figR + 0.5 || p(2) + p(4) > figT + 0.5
+    % Depth-scaled allowed region: see the CANVAS note above.
+    dL = -d; dB = -d; dR = W + d; dT = H + d;
+    if p(1) < dL - 0.5 || p(2) < dB - 0.5 || ...
+       p(1) + p(3) > dR + 0.5 || p(2) + p(4) > dT + 0.5
         nClipped = nClipped + 1;
         if nClipped <= 10
-            fprintf('WARN outside figure: %-28s [%g %g %g %g]\n', it.name, p(1), p(2), p(3), p(4));
+            fprintf('WARN outside window: %-28s [%g %g %g %g] depth=%d allowed [%g %g] .. [%g %g]\n', ...
+                it.name, p(1), p(2), p(3), p(4), d, dL, dB, dR, dT);
         end
     end
 end
-fprintf('INFO clipped by figure    = %d\n', nClipped);
+fprintf('INFO clipped by window    = %d\n', nClipped);
 fprintf('INFO zero-extent          = %d\n', nZero);
+% Per-depth evidence that the depth rule reproduces the measured 1px-per-level
+% inset, rather than merely asserting it: report how close the deepest-reaching
+% component at each depth actually gets to that depth's bound.
+depthsAll = [items.depth];
+for d = unique(depthsAll);
+    sub = reshape([items(depthsAll == d).pos], 4, []);
+    reachR = max(sub(1, :) + sub(3, :));
+    reachT = max(sub(2, :) + sub(4, :));
+    fprintf('INFO depth %d: %3d components, max right %.0f (bound %.0f), max top %.0f (bound %.0f)\n', ...
+        d, size(sub, 2), reachR, W + d, reachT, H + d);
+end
 assert(nClipped == 0, 'no component is clipped by the figure at the design size');
 assert(nZero == 0, 'no component has a zero or negative extent');
-fprintf('OK  1. all %d components lie inside the %gx%g canvas\n', numel(items), figR, figT);
+fprintf('OK  1. all %d components lie inside the depth-scaled canvas (+/-0.5px)\n', numel(items));
 nPass = nPass + 1;
 
 %% 3. The layout bands must tile without overlap
@@ -128,12 +131,17 @@ nPass = nPass + 1;
 % nothing at all. The panel interiors in turn contain nested panels (the quality
 % well, the pipeline track) which are deliberately EXCLUDED here: they are not
 % bands, and counting them would break the shared-band assertion below.
-rects = bandRects(fig);
+[rects, bandDepth] = bandRects(fig);
 assert(~isempty(rects), 'the figure exposes at least one layout band');
 fprintf('INFO bands discovered      = %d\n', size(rects, 1));
 
+% "Flush with the top" means flush with the TOP OF THE WINDOW, measured against
+% the band's own depth-scaled bound - not "the highest band". Comparing every
+% band against a single max(band top) would pass for any layout with one
+% topmost band, including a header pushed down the window.
 topY   = rects(:, 2) + rects(:, 4);
-isHead = abs(topY - figT) < 0.5;    % flush with the top of the canvas
+bandT  = H + bandDepth(:);        % window top, grown by that band's grid depth
+isHead = abs(topY - bandT) < 0.5;
 nHead  = sum(isHead);
 assert(nHead == 1, 'exactly one header band sits flush with the top');
 
@@ -201,7 +209,7 @@ fprintf('\nCHECKS: %d\n', nPass);
 fprintf('ALL DRISHTI APP LAYOUT CHECKS PASS\n');
 
 % -------------------------------------------------------------------------
-function out = collect(h, x0, y0)
+function out = collect(h, x0, y0, nGrid)
 % Recursively collect absolute rectangles of every descendant.
 % The walk is over DIRECT children only. findall returns the whole subtree, so
 % iterating its result raw reports every nested component's parent-relative
@@ -211,7 +219,11 @@ function out = collect(h, x0, y0)
 % measured count from the real number of components to several times it. The
 % recursion below still reaches every descendant, exactly once, at its true
 % accumulated offset.
-out = struct('name', {}, 'pos', {});
+%
+% nGrid counts the uigridlayout ancestors between h and the figure. Each item's
+% depth is nGrid+1 (the root grid itself is depth 1, its direct children depth 2)
+% and drives its own allowed region in the canvas check.
+out = struct('name', {}, 'pos', {}, 'depth', {});
 kids = directChildren(h);
 for i = 1:numel(kids)
     k = kids(i);
@@ -232,8 +244,11 @@ for i = 1:numel(kids)
         end
     catch
     end
-    out(end+1) = struct('name', nm, 'pos', [p(1) + x0, p(2) + y0, p(3), p(4)]); %#ok<AGROW>
-    out = [out, collect(k, p(1) + x0, p(2) + y0)]; %#ok<AGROW>
+    out(end+1) = struct('name', nm, 'pos', [p(1) + x0, p(2) + y0, p(3), p(4)], ...
+        'depth', nGrid + 1); %#ok<AGROW>
+    % Descending through a grid adds one inset step for everything below it.
+    nBelow = nGrid + double(isa(k, 'matlab.ui.container.GridLayout'));
+    out = [out, collect(k, p(1) + x0, p(2) + y0, nBelow)]; %#ok<AGROW>
 end
 end
 
@@ -275,7 +290,7 @@ r = [x0, y0, p(3), p(4)];
 end
 
 % -------------------------------------------------------------------------
-function rects = bandRects(fig)
+function [rects, depths] = bandRects(fig)
 %BANDRECTS Absolute rectangles of the app's top-level layout bands.
 %   A band is a uipanel that is a direct child of the ROOT grid - the grid whose
 %   Parent is the figure - or a direct child of a grid that is itself a direct
@@ -288,6 +303,7 @@ function rects = bandRects(fig)
 grids = childrenOf(fig, 'matlab.ui.container.GridLayout');
 
 rects = [];
+depths = [];
 for gi = 1:numel(grids)
     if ~isequal(grids{gi}.Parent, fig)
         continue;     % only a grid sitting directly on the figure is a root grid
@@ -302,8 +318,29 @@ for gi = 1:numel(grids)
         bands = childrenOf(levels{L}, 'matlab.ui.container.Panel');
         for i = 1:numel(bands)
             rects(end+1, :) = absPos(bands{i}, fig); %#ok<AGROW>
+            % Same depth rule the canvas check uses: 1 + grid ancestors. A panel on
+            % the root grid is depth 2, one inside a level-1 grid is depth 3.
+            depths(end+1, 1) = 1 + countGridAncestors(bands{i}, fig); %#ok<AGROW>
         end
     end
+end
+end
+
+% -------------------------------------------------------------------------
+function n = countGridAncestors(h, fig)
+%COUNTGRIDANCESTORS Number of uigridlayout ancestors between h and the figure.
+%   Used by bandRects to give each band the depth its own allowed region needs.
+%   The walk stops AT the figure, for the same reason absPos does.
+n = 0;
+cur = h;
+while ~isempty(cur) && isvalid(cur) && ~isequal(cur, fig)
+    if isa(cur, 'matlab.ui.container.GridLayout')
+        n = n + 1;
+    end
+    if isempty(cur.Parent)
+        break;
+    end
+    cur = cur.Parent;
 end
 end
 
