@@ -1,0 +1,282 @@
+{
+  "$comment": "Machine-readable research facts for DrishtiCare. Every fact carries a source. Values not present in the repository are marked UNKNOWN. Generated at commit d59e2ba (+2 uncommitted UI files).",
+  "meta": {
+    "project": "DrishtiCare",
+    "repo_path": "C:\\projects\\DrishtiCare",
+    "problem_statement": "SIH 26038",
+    "sponsor": "MathWorks",
+    "stage": "National screening round, 2026",
+    "stack": ["MATLAB", "Simulink"],
+    "generated_at_commit": "d59e2ba98fb536e796e13ae83f171eb7b25fcefa",
+    "clinical_validation": "NONE - engineering research project only",
+    "external_validation": "NOT PERFORMED",
+    "publication_readiness": "UNKNOWN - must be determined after literature review and additional experiments",
+    "dossier": "docs/research/DRISHTICARE_RESEARCH_DOSSIER.md"
+  },
+  "frozen_models": [
+    {
+      "role": "5-class grader champion",
+      "file": "data/models/day7_pretrained_resnet18_5class_stage2.mat",
+      "sha256": "DD152C917689146F6DEC4687B263EC5E5F237ECF60EC719A59F9FCEEFF737C1B",
+      "architecture": "ResNet-18",
+      "input": "224x224",
+      "source": "docs/project-management/FROZEN_CONTRACT.md"
+    },
+    {
+      "role": "binary referable champion",
+      "file": "data/models/day7_pretrained_resnet18_binary_stage2.mat",
+      "sha256": "43E8DF33B429231EE5BD60A775FDB3629AD81F28717AFAA9308EA87D311F9A0",
+      "architecture": "ResNet-18",
+      "input": "224x224",
+      "threshold_locked": 0.6,
+      "source": "docs/project-management/FROZEN_CONTRACT.md"
+    }
+  ],
+  "inventory_counts": {
+    "primary_model_files": 16,
+    "checkpoint_files": 47,
+    "onnx_or_exported_models": 0,
+    "source": "repository inventory during review"
+  },
+  "training": {
+    "stage1": {"backbone": "frozen", "lr": 0.001, "batch": 32, "max_epochs": 15},
+    "stage2": {"backbone": "full unfreeze", "lr": 1e-05, "batch": 16, "max_epochs": 15},
+    "optimizer": "Adam",
+    "lr_schedule": "piecewise x0.5 every 5 epochs",
+    "early_stopping_patience": 8,
+    "split_seed": 42,
+    "initialization": "ImageNet",
+    "augmentation": "rot15 + reflect + translate + shear + oversample <=800/class",
+    "known_defect": "class weights not wired into trainNetwork",
+    "source": ["src/grading/defaultTrainingConfig.m", "src/grading/defaultPretrainedConfig.m", "docs/validation/ablation-study.md:14-15"]
+  },
+  "data": {
+    "aptos_train_total": 3662,
+    "train_n": 2929,
+    "val_n": 733,
+    "val_referable_n": 298,
+    "val_referable_frac": 0.406548,
+    "aptos_test_n": 1928,
+    "aptos_test_gt": "UNKNOWN - not present locally; test set CLOSED",
+    "class_distribution_train_pool": [1805, 370, 999, 193, 295],
+    "datasets_present_images": ["APTOS 2019 (gitignored)", "IDRiD (gitignored)", "DRIVE (gitignored)", "DRIMDB (gitignored)"],
+    "datasets_absent": ["EyePACS", "HRF", "STARE", "CHASE_DB1", "Messidor-2", "Sin-NP DR 2019", "e-ophtha", "DIARETDB1"],
+    "leakage_verdict": "calibration/eval/val overlap verified = 0; no patient IDs in APTOS; cross-dataset duplicate check UNKNOWN",
+    "source": ["audit/final_project_audit/02_dataset_inventory.csv", "audit/final_project_audit/06_referable_metrics.csv", "docs/validation/2026-09-10-hardening-phase8-firewall.md"]
+  },
+  "champion_metrics_5class": {
+    "n": 733,
+    "accuracy": 0.828104,
+    "macro_f1": 0.680459,
+    "qwk": 0.891401,
+    "recall_per_class": [0.9834, 0.6081, 0.785, 0.4872, 0.5254],
+    "precision_per_class": [0.9807, 0.5769, 0.7772, 0.5, 0.5849],
+    "mae": 0.2278,
+    "weighted_f1": 0.8274,
+    "bootstrap_95ci": {
+      "B": 1000, "seed": 2026,
+      "accuracy": [0.80013643, 0.85402456],
+      "macro_f1": [0.63525169, 0.72310773],
+      "qwk": [0.86601998, 0.91464254],
+      "recall_severe": [0.33739837, 0.63995726],
+      "recall_proliferative": [0.39130435, 0.66054582]
+    },
+    "confusion_matrix_5x5": "UNKNOWN (artifact-only: reverify_audit_T0.mat)",
+    "source": ["docs/validation/metrics.md", "data/analysis/day8/bootstrap_T4.mat", "audit/final_project_audit/05_model_metrics.csv"]
+  },
+  "champion_metrics_binary": {
+    "n": 733,
+    "threshold": 0.6,
+    "sensitivity": 0.90604,
+    "specificity": 0.947126,
+    "confusion": {"tp": 270, "fp": 23, "fn": 28, "tn": 412},
+    "roc_auc": 0.979619,
+    "pr_auc": 0.782054,
+    "ppv": 0.9215,
+    "npv": 0.9364,
+    "default_0_5_metrics": {"accuracy": 0.934516, "sensitivity": 0.922819, "specificity": 0.942529},
+    "bootstrap_95ci": {
+      "sensitivity": [0.87023632, 0.93898743],
+      "specificity": [0.9253012, 0.96670625]
+    },
+    "pr_auc_regression_vs_scratch": {"scratch": 0.90695852, "champion": 0.78205371, "status": "DIAGNOSTIC_ONLY"},
+    "source": ["audit/final_project_audit/06_referable_metrics.csv", "docs/validation/2026-09-08-task0-reverification-report.md"]
+  },
+  "calibration": {
+    "promoted_temperature": 2.53818939,
+    "display_only": true,
+    "decisions_use_raw_pref": true,
+    "firewalled": {"fit_n": 500, "eval_n": 2429, "ece_before": 0.0319, "ece_after": 0.0087196, "nll_before": 0.1998, "nll_after": 0.12425, "flip_fraction": 0.0074105, "flips": "18/2429"},
+    "standard_val": {"temperature": 2.67224388, "ece_before": 0.045013, "ece_after": 0.029653, "flips": "12/733"},
+    "t_eval_never_promoted": 2.69843831,
+    "five_class_temperature": "NEVER FITTED",
+    "top1_ece_5class": 0.1255,
+    "source": ["docs/validation/2026-09-10-hardening-phase8-firewall.md", "phase8_firewall_proof.json", "docs/validation/2026-09-08-task5-calibration.md"]
+  },
+  "quality_gate": {
+    "runs_before_model": true,
+    "metrics": ["brightness", "contrast", "focus_score", "foreground_fraction", "illumination_metric"],
+    "threshold_provenance": "P1/P5/P95/P99 percentiles of 3662 APTOS train images",
+    "distribution_n3662": {"pass": 0.65483, "warning": 0.26679, "fail": 0.07837},
+    "val733_buckets": {"pass": 490, "warning": 194, "fail": 49},
+    "accuracy_by_bucket": {"pass": 0.8122, "warning": 0.8711, "fail": 0.8163},
+    "finding": "NULL - no accuracy degradation by quality bucket; gate kept as safety control",
+    "skip_model_on_fail_differs_by_caller": {"cli_demo": false, "gui": true, "gui_ref": "RetinaAIApp.m:916-918"},
+    "source": ["src/quality/computeDay3Thresholds.m", "docs/validation/2026-09-09-hardening-phase1-quality-gate.md:66-79"]
+  },
+  "ood": {
+    "method": "Mahalanobis distance on 512-d pool5 features",
+    "fit_on": "all 3662 APTOS train+val",
+    "threshold_p99": 34.22,
+    "in_sample_false_ood": 0.0101,
+    "real_val_mean": 22.63,
+    "canaries": {"noise": 103.42, "black": 54.03, "gray": 60.89},
+    "policy": "ADVISORY ONLY - never alters decisions",
+    "rehearsal_fired": "5/19 (34.5-62.1)",
+    "source": "docs/validation/2026-09-10-hardening-phase9-ood.md"
+  },
+  "router": {
+    "rules": {"abstain": "conf<0.50 or |pRef-0.60|<0.05", "review": "conf<0.75 or margin<0.20 or screen/grade conflict"},
+    "routes": [
+      {"route": "CLEAR", "n": 648, "share": 0.884, "acc5": 0.8781, "true_ref_frac": 0.355},
+      {"route": "REVIEW", "n": 75, "share": 0.102, "acc5": 0.4667, "true_ref_frac": 0.8},
+      {"route": "ABSTAIN", "n": 10, "share": 0.014, "acc5": 0.3, "true_ref_frac": 0.8}
+    ],
+    "source": "docs/validation/2026-09-10-hardening-phase2-router.md:38-46"
+  },
+  "gradcam_saliency_overlap": {
+    "$note": "Saliency vs expert lesion-mask overlap. NOT lesion localization.",
+    "n": 81,
+    "errors": 0,
+    "layer": "res5b_relu",
+    "protocol": "top-20% cumulative saliency mass vs IDRiD MA/HE/EX/SE masks",
+    "mass_any_lesion": 0.0307,
+    "areal_chance": 0.022,
+    "mass_vs_areal_chance": 1.39,
+    "pointing": 0.074,
+    "annotator_chance": 0.2,
+    "pointing_vs_annotator_chance": 0.37,
+    "iou": 0.035,
+    "dice": 0.051,
+    "per_type_mass": {"ma": 0.0013, "he": 0.0126, "ex": 0.0145, "se": 0.0049},
+    "retina_disk_mass_share": 0.78,
+    "on_retina_mass_on_lesion": 0.038,
+    "proxy_split": {"correct": {"n": 72, "mass": 0.034, "pointing": 0.083, "iou": 0.039}, "incorrect": {"n": 9, "mass": 0.003, "pointing": 0.0, "iou": 0.002}, "confusion": {"tp": 72, "fn": 9, "fp": 0, "tn": 0}},
+    "verdict": "WEAK - visualization only",
+    "source": "data/analysis/gradcam_lesion_alignment/run_log.txt:1195-1215"
+  },
+  "ablation": [
+    {"id": "day5_scratch", "change": "ResNet-18 scratch, no balance", "sens": 0.8322, "spec": 0.908, "qwk": 0.767181, "acc": 0.736698, "macro_f1": 0.508335, "verdict": "baseline"},
+    {"id": "day6_balanced", "change": "scratch + oversample<=800/class", "sens": 0.802, "spec": 0.8966, "qwk": 0.688726, "verdict": "NEGATIVE"},
+    {"id": "day7_champion", "change": "pretrained + balancing", "sens": 0.90604, "spec": 0.947126, "qwk": 0.891401, "acc": 0.828104, "verdict": "ADOPTED/FROZEN"},
+    {"id": "day8_v2a_weighting", "change": "targets 800/800/800/1000/1000", "qwk": 0.887696, "verdict": "NEGATIVE on target classes - not promoted"},
+    {"id": "branchb_features", "change": "10-feature logistic cross-check", "auc": 0.89691, "sens": 0.6913, "spec": 0.9126, "verdict": "cross-check only"},
+    {"id": "vessel_features", "change": "+8 vessel features", "auc": 0.880984, "delta_auc": -0.0159, "bootstrap_ci": [-0.03125, -0.00039], "p_vessel_wins": 0.022, "verdict": "EXCLUDED"},
+    {"id": "enhancement_ab", "change": "CLAHE+denoise before resize", "acc": 0.54161, "macro_f1": 0.403922, "qwk": 0.650697, "vs_control": {"acc": 0.832196, "macro_f1": 0.682803, "qwk": 0.895242}, "verdict": "EXCLUDED - display only"},
+    {"id": "tta", "change": "h-flip + rot +/-5", "acc": 0.8336, "qwk": 0.8965, "severe_recall_delta": -0.0256, "verdict": "not promoted"},
+    {"id": "ensemble", "change": "day7+day8 w-sweep", "best_qwk": 0.8933, "verdict": "not promoted"},
+    {"id": "vessel_cnn", "change": "DRIVE patch CNN", "dice": 0.2576, "human_dice": 0.7881, "verdict": "EXCLUDED - unfit"},
+    {"id": "fovea", "change": "CNN + disc-relative", "auc": 0.7487, "within_300px": "0/10", "verdict": "HONEST NEGATIVE - closed"},
+    {"id": "quality_gate_accuracy", "change": "bucket comparison", "verdict": "NULL FINDING"}
+  ],
+  "significance_testing": {
+    "bootstrap_ci": {"B": 1000, "seed": 2026, "script": "src/verify/bootstrap_cis_T4.m"},
+    "bootstrap_auc_diff": {"B": 500, "detail": "vessel vs base delta -0.0159, CI [-0.0312,-0.0004], P(diff>0)=0.022"},
+    "temperature_fit": "fminbnd NLL over T in [0.1,8]",
+    "absent_tests": ["McNemar", "DeLong", "permutation", "Wilcoxon", "t-test", "Fisher"],
+    "ablation_pairwise_tests": "NONE - table rows are descriptive only"
+  },
+  "error_analysis": {
+    "n": 733,
+    "correct": 607,
+    "errors": 126,
+    "adjacent_grade_errors": 92,
+    "far_grade_errors": 34,
+    "far_errors_from_proliferative": 18,
+    "binary_fp": 23,
+    "binary_fn": 28,
+    "error_rate_by_conf_band": {"ge_0_75": 0.1409, "0_50_to_0_75": 0.5179, "lt_0_50": 0.6667},
+    "confidence_distribution": "UNKNOWN - band-wise rates only",
+    "source": "docs/validation/2026-09-10-hardening-phase5-errors.md"
+  },
+  "unseen_rehearsal": {
+    "n": 19,
+    "composition": {"DRIVE": 5, "IDRiD": 5, "DRIMDB": 9},
+    "withheld_quality_fail": 8,
+    "quality_fail_rate": 0.42,
+    "in_distribution_fail_rate": 0.0784,
+    "routes": {"clear": 8, "review": 11, "abstain": 0},
+    "ood_fired": 5,
+    "median_latency_s": 1.81,
+    "failure_case": "DRIMDB ungradable graded 4, pRef 0.9690, routed CLEAR/REFERABLE",
+    "source": "docs/validation/2026-09-26-unseen-input-rehearsal.md"
+  },
+  "simulink": {
+    "model": "deterministic FIFO single-server, 250 daily steps",
+    "params": {"patients_per_day": 400, "q_usable": 0.9216, "q_fail": 0.0784, "recapture": 0.5, "prevalence": 0.4065, "sens": 0.9060, "spec": 0.9471, "specialist_capacity": 60},
+    "scenarios": {"600_per_day": "stable, 453 auto-clear, 149 flagged, 0 backlog", "2400_per_day": "unstable"},
+    "param_provenance_qusable_qfail": "UNKNOWN - not traced to a named measurement",
+    "validated_against_real_clinic": false,
+    "source": ["src/simulink/drishti_sim_default_params.m:12-19", "docs/task-tracker.md:79"]
+  },
+  "performance": {
+    "model_only_s_per_image": 0.1028,
+    "model_only_img_per_s": 9.73,
+    "full_demo_n": 10,
+    "full_demo_median_s": 11.03,
+    "full_demo_mean_s": 15.16,
+    "memory_upper_bound_gb": 2.63,
+    "source": "docs/validation/2026-09-10-hardening-phase23-performance-envelope.md"
+  },
+  "reproducibility": {
+    "determinism": "3/3 bit-identical reruns (P22)",
+    "t0_reverification": "PASS 21/21",
+    "t13_re_audit": "PASS 63/63",
+    "locked_hashes": "data/analysis/audit_locked_files.sha256",
+    "ci": "UNKNOWN - none found",
+    "test_framework": "UNKNOWN - only smoke tests + phase audits",
+    "datasets_gitignored": true,
+    "manifest_defect": "baseline_manifest.md references non-existent day8_5class_v2a_stage1.mat"
+  },
+  "claim_audit": [
+    {"claim": "champion is EyePACS-pretrained", "verdict": "UNSUPPORTED", "evidence": "code sets initialization='ImageNet' (defaultPretrainedConfig.m:15); no EyePACS data in repo", "locations": ["docs/validation/ablation-study.md:14", "pitch/deck.html:394", "pitch/demo-script.md:104", "audit/final_project_audit/05_model_metrics.csv:5"]},
+    {"claim": "OD patch AUC 0.993", "verdict": "MISMATCH", "evidence": "od_cnn_metrics.mat = 0.9955; cited artifact has no AUC field"},
+    {"claim": "OD 9/10 within 300 px", "verdict": "PROSE-ONLY", "evidence": "artifact records 10/10 located, no distance field"},
+    {"claim": "T_eval 2.6979", "verdict": "TRANSCRIPTION ERROR", "evidence": "canonical 2.69843831 (phase8_firewall_proof.json)"},
+    {"claim": "val referable n=313", "verdict": "PHANTOM", "evidence": "true n=298 (06_referable_metrics.csv)"},
+    {"claim": "day5 sens/spec 0.8322/0.9080", "verdict": "AUTHORITATIVE", "evidence": "0.8307/0.8667 is a pre-freeze derivation (metric-provenance-resolution.md)"}
+  ],
+  "not_claimed": [
+    "no claim to beat specialist/clinical standard",
+    "no regulatory clearance claim",
+    "no lesion-level diagnostic accuracy claim",
+    "no clinical validation claim (explicitly disclaimed in README)"
+  ],
+  "unknown_register": [
+    "5x5 confusion matrix as text (artifact-only)",
+    "confidence distribution histogram",
+    "CI configuration",
+    "unit test coverage",
+    "external validation metrics",
+    "reader study / ethics approval",
+    "hyperparameter sweep logs",
+    "cross-dataset duplicate analysis",
+    "simulink validation against real clinic throughput",
+    "dataset license receipts",
+    "model export / serving benchmarks",
+    "per-patient dedup",
+    "qUsable/qFail parameter provenance"
+  ],
+  "key_documents": {
+    "readme": "README.md",
+    "architecture": "docs/ARCHITECTURE.md",
+    "frozen_contract": "docs/project-management/FROZEN_CONTRACT.md",
+    "release_status": "docs/project-management/FINAL_RELEASE_STATUS.md",
+    "metrics": "docs/validation/metrics.md",
+    "ablation": "docs/validation/ablation-study.md",
+    "task_tracker": "docs/task-tracker.md",
+    "technical_audit": "audit/final_project_audit/FINAL_DRISHTICARE_TECHNICAL_AUDIT.md",
+    "dossier": "docs/research/DRISHTICARE_RESEARCH_DOSSIER.md",
+    "handoff": "docs/research/CLAUDE_RESEARCH_HANDOFF.md"
+  }
+}
