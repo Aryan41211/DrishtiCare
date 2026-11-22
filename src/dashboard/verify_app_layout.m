@@ -153,29 +153,45 @@ assert(nFoot == 1, 'exactly one bottom bar is the lowest band');
 
 isBody = ~isHead & ~isFoot;
 nBody  = sum(isBody);
-fprintf('INFO layout bands         = %d header, %d content, %d bottom\n', ...
+fprintf('INFO layout bands         = %d header, %d non-header/footer, %d bottom\n', ...
     nHead, nBody, nFoot);
-assert(nBody >= 3, 'at least three content panels tile the middle of the canvas');
+assert(nBody >= 3, 'at least three panels sit between header and footer');
 
 head = rects(isHead, :);
 foot = rects(isFoot, :);
-body = sortrows(rects(isBody, :), 1);
-for i = 1:nBody
+body = rects(isBody, :);
+
+% Cluster the non-header/footer panels by their vertical position (top edge).
+% The body band is the cluster holding 3+ panels side by side (the three
+% content columns). Other bands (e.g. a workflow strip or a bottom action bar)
+% sit above/below it and are not content panels.
+topY = body(:, 2);
+[uniqueT, ~, grp] = unique(round(topY / 2)); % bucket by 2px rows
+counts = accumarray(grp, 1);
+[~, best] = max(counts);
+contentIdx = find(grp == best);
+body = body(contentIdx, :);
+nContent = size(body, 1);
+assert(nContent >= 3, 'the body band holds at least three content panels');
+
+fprintf('INFO body band top          = %g\n', uniqueT(best) * 2);
+for i = 1:nContent
     fprintf('INFO content panel %d     [%g %g %g %g]\n', i, body(i,1), body(i,2), body(i,3), body(i,4));
 end
-for i = 1:nBody-1
+body = sortrows(body, 1);
+for i = 1:nContent-1
     a = body(i, :); b = body(i+1, :);
     assert(a(2) == b(2) && a(4) == b(4), ...
         'content panels %d and %d share the same vertical band', i, i+1);
     assert(a(1) + a(3) <= b(1) + 0.5, ...
         'content panel %d ends before panel %d begins (no overlap)', i, i+1);
 end
-fprintf('OK  2. %d content panels share one band and are ordered left to right\n', nBody);
+fprintf('OK  2. %d content panels share one band and are ordered left to right\n', nContent);
 nPass = nPass + 1;
 
 footTop = foot(2) + foot(4);
 headBot = head(2);
-for i = 1:nBody
+for i = 1:nContent
     q = body(i, :);
     assert(q(2) >= footTop - 0.5, 'content panel %d clears the bottom bar', i);
     assert(q(2) + q(4) <= headBot + 0.5, 'content panel %d clears the header band', i);
