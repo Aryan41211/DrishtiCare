@@ -17,29 +17,6 @@ if isempty(sample)
 end
 fprintf('Using sample: %s\n', sample);
 
-function setText(fig, text, newText)
-    h = findobj(fig, 'Text', text);
-    if ~isempty(h), h.Text = newText; end
-end
-
-function enableBtn(fig, text, enable)
-    h = findobj(fig, 'Text', text);
-    if ~isempty(h), h.Enable = enable; end
-end
-
-function selectTab(fig, tabTitle)
-    tg = findobj(fig, 'Type', 'uitabgroup');
-    if ~isempty(tg)
-        tabs = findobj(tg, 'Type', 'uitab');
-        for k = 1:numel(tabs)
-            if strcmp(tabs(k).Title, tabTitle)
-                tg.SelectedTab = tabs(k);
-                return;
-            end
-        end
-    end
-end
-
 % ---- State 1: initial empty state ----
 fprintf('\n=== STATE 1: Initial empty state ===\n');
 app = RetinaAIApp();
@@ -57,14 +34,17 @@ cla(imgAxes);
 imshow(img, 'Parent', imgAxes);
 title(imgAxes, '');
 [rows, cols, ~] = size(img);
-setText(app.UIFigure, 'Resolution: —  ·  Quality: —', ...
-    sprintf('Resolution: %d x %d px   Quality: —', cols, rows));
+h = findobj(app.UIFigure, 'Text', 'Resolution: —  ·  Quality: —');
+if ~isempty(h), h.Text = sprintf('Resolution: %d x %d px   Quality: —', cols, rows); end
 [~, fname] = fileparts(sample);
-setText(app.UIFigure, 'Image ID: —', ['Image ID: ' fname]);
-enableBtn(app.UIFigure, 'ANALYZE IMAGE', 'on');
-enableBtn(app.UIFigure, 'NEW SCREENING', 'on');
-setText(app.UIFigure, 'System Ready', 'Loaded: ' fname);
-% Note: setStatus color change not accessible; text change is enough for visual.
+h = findobj(app.UIFigure, 'Text', 'Image ID: —');
+if ~isempty(h), h.Text = ['Image ID: ' fname]; end
+h = findobj(app.UIFigure, 'Text', 'ANALYZE IMAGE');
+if ~isempty(h), h.Enable = 'on'; end
+h = findobj(app.UIFigure, 'Text', 'NEW SCREENING');
+if ~isempty(h), h.Enable = 'on'; end
+h = findobj(app.UIFigure, 'Text', 'System Ready');
+if ~isempty(h), h.Text = ['Loaded: ' fname]; end
 drawnow;
 pause(1);
 exportapp(app.UIFigure, fullfile(pwd, 'docs', 'ui-reference', 'actual-02-loaded.png'));
@@ -74,36 +54,41 @@ fprintf('  Saved actual-02-loaded.png\n');
 fprintf('\n=== STATE 3: Analysis complete (Screening tab) ===\n');
 result = predictSingleFundus(sample, 'ShowFigure', false, 'RunLesions', true, ...
     'RunBranchB', true, 'SkipModelOnFail', true);
-% Update severity.
-setText(app.UIFigure, '—', result.gradeLabel);
-setText(app.UIFigure, '— / 4', sprintf('%d / 4', result.grade));
-% Referral panel.
+h = findobj(app.UIFigure, 'Text', '—');
+if ~isempty(h), h.Text = result.gradeLabel; end
+h = findobj(app.UIFigure, 'Text', '— / 4');
+if ~isempty(h), h.Text = sprintf('%d / 4', result.grade); end
 if strcmp(result.binaryDecision, 'REFERABLE')
-    setText(app.UIFigure, '—', 'REFERABLE');
+    h = findobj(app.UIFigure, 'Text', '—');
+    if ~isempty(h), h(1).Text = 'REFERABLE'; end
 else
-    setText(app.UIFigure, '—', 'NOT REFERABLE');
+    h = findobj(app.UIFigure, 'Text', '—');
+    if ~isempty(h), h(1).Text = 'NOT REFERABLE'; end
 end
-setText(app.UIFigure, 'Run an analysis to see the referral decision', ...
-    'Specialist review advised by the model.');
-setText(app.UIFigure, '—', sprintf('%.2f%%   (P referable)', result.binaryProbability * 100));
-setText(app.UIFigure, 'Awaiting analysis', ...
-    sprintf('Margin %.1fpp · %s · TTA off · SO n/a', ...
-        abs(1 - 2 * result.binaryProbability) * 100, 'medium'));
-setText(app.UIFigure, 'Run an analysis to see the screening advice', ...
-    'ROUTINE SCREENING\nNo immediate specialist referral indicated by the model.');
-% Quality.
-setText(app.UIFigure, 'Resolution: —  ·  Quality: —', ...
-    sprintf('Resolution: %d x %d px   Quality: %s', cols, rows, result.qualityStatus));
-setText(app.UIFigure, '—', 'ACCEPT');
-% Show overlay view on GradCAMAxes.
-gcAxes = findobj(app.UIFigure, 'Tag', 'fundusAxes'); % wrong - need GradCAMAxes
-% Find the GradCAM axes in the right panel.
-allAxes = findobj(app.UIFigure, 'Type', 'axes');
-% The GradCAMAxes is in the right panel. We'll just show the overlay on it.
+h = findobj(app.UIFigure, 'Text', 'Run an analysis to see the referral decision');
+if ~isempty(h), h.Text = 'Specialist review advised by the model.'; end
+h = findobj(app.UIFigure, 'Text', '—');
+if ~isempty(h) && numel(h) > 1, h(2).Text = sprintf('%.2f%%   (P referable)', result.binaryProbability * 100); end
+h = findobj(app.UIFigure, 'Text', 'Awaiting analysis');
+if ~isempty(h), h.Text = sprintf('Margin %.1fpp · %s · TTA off · SO n/a', ...
+    abs(1 - 2 * result.binaryProbability) * 100, 'medium'); end
+h = findobj(app.UIFigure, 'Text', 'Run an analysis to see the screening advice');
+if ~isempty(h), h.Text = 'ROUTINE SCREENING\nNo immediate specialist referral indicated by the model.'; end
+h = findobj(app.UIFigure, 'Text', 'Resolution: —  ·  Quality: —');
+if ~isempty(h), h.Text = sprintf('Resolution: %d x %d px   Quality: %s', cols, rows, result.qualityStatus); end
+h = findobj(app.UIFigure, 'Text', '—');
+if ~isempty(h) && numel(h) > 2, h(3).Text = 'ACCEPT'; end
 if ~isempty(result.gradCAMMap) && ~isempty(app.ViewOverlay)
+    allAxes = findobj(app.UIFigure, 'Type', 'axes');
     imshow(app.ViewOverlay, 'Parent', allAxes(2));
 end
-selectTab(app.UIFigure, 'Screening');
+tg = findobj(app.UIFigure, 'Type', 'uitabgroup');
+tabs = findobj(tg, 'Type', 'uitab');
+for k = 1:numel(tabs)
+    if strcmp(tabs(k).Title, 'Screening')
+        tg.SelectedTab = tabs(k);
+    end
+end
 drawnow;
 pause(1);
 exportapp(app.UIFigure, fullfile(pwd, 'docs', 'ui-reference', 'actual-03-screening-overlay.png'));
@@ -112,6 +97,7 @@ fprintf('  Saved actual-03-screening-overlay.png\n');
 % ---- State 4: Grad-CAM view ----
 fprintf('\n=== STATE 4: Grad-CAM view ===\n');
 if ~isempty(app.ViewHeatmap)
+    allAxes = findobj(app.UIFigure, 'Type', 'axes');
     imshow(app.ViewHeatmap, 'Parent', allAxes(2));
 end
 drawnow;
@@ -121,14 +107,16 @@ fprintf('  Saved actual-04-gradcam.png\n');
 
 % ---- State 5: Lesion Evidence tab (MA overlay) ----
 fprintf('\n=== STATE 5: Lesion Evidence (MA overlay) ===\n');
-selectTab(app.UIFigure, 'Lesion Evidence');
-% Show raw image on LesAxes.
-lesAxes = findobj(app.UIFigure, 'Text', 'No lesion evidence available');
-if isempty(lesAxes)
-    lesAxes = allAxes(end); % last axes
+tg = findobj(app.UIFigure, 'Type', 'uitabgroup');
+tabs = findobj(tg, 'Type', 'uitab');
+for k = 1:numel(tabs)
+    if strcmp(tabs(k).Title, 'Lesion Evidence')
+        tg.SelectedTab = tabs(k);
+    end
 end
-imshow(img, 'Parent', lesAxes);
-title(lesAxes, '');
+allAxes = findobj(app.UIFigure, 'Type', 'axes');
+imshow(img, 'Parent', allAxes(end));
+title(allAxes(end), '');
 drawnow;
 pause(1);
 exportapp(app.UIFigure, fullfile(pwd, 'docs', 'ui-reference', 'actual-05-lesion-ma.png'));
@@ -136,7 +124,13 @@ fprintf('  Saved actual-05-lesion-ma.png\n');
 
 % ---- State 6: Report tab ----
 fprintf('\n=== STATE 6: Report tab ===\n');
-selectTab(app.UIFigure, 'Report');
+tg = findobj(app.UIFigure, 'Type', 'uitabgroup');
+tabs = findobj(tg, 'Type', 'uitab');
+for k = 1:numel(tabs)
+    if strcmp(tabs(k).Title, 'Report')
+        tg.SelectedTab = tabs(k);
+    end
+end
 drawnow;
 pause(1);
 exportapp(app.UIFigure, fullfile(pwd, 'docs', 'ui-reference', 'actual-06-report.png'));
