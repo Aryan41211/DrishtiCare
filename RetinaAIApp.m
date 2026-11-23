@@ -1313,13 +1313,13 @@
         function setWorkflowStep(app, stepNum, completed)
             th = drishtiThemeDark();
             if completed
-                app.PipelineDots(stepNum).dot = char(10003);
+                app.PipelineDots(stepNum).Text = char(10003);
                 app.PipelineDots(stepNum).FontColor = th.success;
                 app.PipelineNames(stepNum).FontColor = th.text;
                 app.PipelineChips(stepNum).BackgroundColor = th.successBg;
                 app.PipelineChips(stepNum).BorderColor = th.success;
             else
-                app.PipelineDots(stepNum).dot = char(9675);
+                app.PipelineDots(stepNum).Text = char(9675);
                 app.PipelineDots(stepNum).FontColor = th.textFaint;
                 app.PipelineNames(stepNum).FontColor = th.textMuted;
                 app.PipelineChips(stepNum).BackgroundColor = th.panelAlt;
