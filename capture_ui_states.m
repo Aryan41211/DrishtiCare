@@ -103,9 +103,9 @@ fprintf('  Saved actual-03-screening-overlay.png\n');
 
 % ---- State 4: Grad-CAM view ----
 fprintf('\n=== STATE 4: Grad-CAM view ===\n');
-if ~isempty(app.ViewHeatmap)
+if ~isempty(result.gradCAMMap)
     allAxes = findobj(app.UIFigure, 'Type', 'axes');
-    imshow(app.ViewHeatmap, 'Parent', allAxes(2));
+    imshow(result.gradCAM, 'Parent', allAxes(2));
 end
 drawnow;
 pause(1);
