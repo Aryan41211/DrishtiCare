@@ -1277,7 +1277,9 @@
                     styles(2).chipBg = th.warningBg;
                     styles(2).border = th.warning;
                 case 'complete'
-                    for k = 1:6
+                    % Steps 1-5 completed (image, quality, screening, reliability, referral)
+                    % Step 6 (Report) stays incomplete until PDF is generated
+                    for k = 1:5
                         styles(k).dot = char(10003);
                         styles(k).dotColor = th.success;
                         styles(k).nameColor = th.text;
@@ -1305,6 +1307,23 @@
                 app.PipelineNames(k).FontColor = s.nameColor;
                 app.PipelineChips(k).BackgroundColor = s.chipBg;
                 app.PipelineChips(k).BorderColor = s.border;
+            end
+        end
+
+        function setWorkflowStep(app, stepNum, completed)
+            th = drishtiThemeDark();
+            if completed
+                app.PipelineDots(stepNum).dot = char(10003);
+                app.PipelineDots(stepNum).FontColor = th.success;
+                app.PipelineNames(stepNum).FontColor = th.text;
+                app.PipelineChips(stepNum).BackgroundColor = th.successBg;
+                app.PipelineChips(stepNum).BorderColor = th.success;
+            else
+                app.PipelineDots(stepNum).dot = char(9675);
+                app.PipelineDots(stepNum).FontColor = th.textFaint;
+                app.PipelineNames(stepNum).FontColor = th.textMuted;
+                app.PipelineChips(stepNum).BackgroundColor = th.panelAlt;
+                app.PipelineChips(stepNum).BorderColor = th.border;
             end
         end
 
@@ -1841,6 +1860,7 @@
                 app.PdfEngineLabel.FontColor = th.textFaint;
                 [~, baseName, ext] = fileparts(pdfPath);
                 app.StatusLabel.Text = sprintf('PDF saved (%s): %s%s', engine, baseName, ext);
+                app.setWorkflowStep(6, true);
             catch e
                 app.StatusLabel.Text = sprintf('PDF export failed: %s', e.message);
             end
