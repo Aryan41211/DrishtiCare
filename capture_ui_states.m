@@ -91,9 +91,9 @@ setFirst(app.UIFigure, 'Resolution: —  ·  Quality: —', ...
     sprintf('Resolution: %d x %d px   Quality: %s', cols, rows, result.qualityStatus));
 h = findobj(app.UIFigure, 'Text', '—');
 if ~isempty(h) && numel(h) >= 3, h(3).Text = 'ACCEPT'; end
-if ~isempty(result.gradCAMMap) && ~isempty(app.ViewOverlay)
+if ~isempty(result.gradCAMMap)
     allAxes = findobj(app.UIFigure, 'Type', 'axes');
-    imshow(app.ViewOverlay, 'Parent', allAxes(2));
+    imshow(result.gradCAM, 'Parent', allAxes(2));
 end
 selectTab(app.UIFigure, 'Screening');
 drawnow;
