@@ -1,0 +1,175 @@
+{
+  "phase": 3,
+  "date": "2026-11-25",
+  "environment": {
+    "cpu_cores": 16,
+    "ram_gb": 15.65,
+    "gpu_available": false,
+    "python_version": "3.12.10",
+    "os": "win32"
+  },
+  "repositories": {
+    "nyaysaathi": {
+      "path": "C:\\projects\\NyaySaathi",
+      "git_sha": "e34ad6e",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E3-001",
+          "name": "Query normalization + dense retrieval (all 4 models)",
+          "script": "backend/experiment_phase3_improvements.py",
+          "dataset": "human_validated.json (90 queries, mapped to 232 deduped cases)",
+          "n_queries": 90,
+          "random_seed": 42,
+          "result": "No statistically significant improvement; best R@5 = 0.0222 (TF-IDF)",
+          "status": "COMPLETED",
+          "evidence": "backend/experiment_results/phase3_improvements.json"
+        },
+        {
+          "id": "E3-002",
+          "name": "Multi-query retrieval (RRF fusion across variants)",
+          "script": "backend/experiment_phase3_improvements.py",
+          "dataset": "auto-generated (232 queries) + human-validated (90 queries)",
+          "n_queries": 232 + 90,
+          "random_seed": 42,
+          "result": "No improvement over single-query dense retrieval",
+          "status": "COMPLETED",
+          "evidence": "backend/experiment_results/phase3_improvements.json"
+        },
+        {
+          "id": "E3-003",
+          "name": "Hybrid BM25+MPNet (RRF and weighted fusion)",
+          "script": "backend/experiment_phase3_improvements.py",
+          "dataset": "auto-generated (232 queries) + human-validated (90 queries)",
+          "n_queries": 232 + 90,
+          "random_seed": 42,
+          "result": "No meaningful improvement over dense alone",
+          "status": "COMPLETED",
+          "evidence": "backend/experiment_results/phase3_improvements.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "Human-validated labels are sequential blocks, not genuine relevance judgments",
+        "37% of relevant case IDs reference deduped-out cases",
+        "110 case IDs reused across different categories",
+        "No train/dev/test split"
+      ]
+    },
+    "retrieval_intelligence_platform": {
+      "path": "C:\\projects\\Retrieval Intelligence Platform",
+      "git_sha": "96a0001",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E3-004",
+          "name": "End-to-end RAG evaluation with real 31-document corpus",
+          "script": "scripts/rip_phase3_e2e_rag_eval.py",
+          "dataset": "31 synthetic documents + 19 evaluation queries (8 simple, 3 multi-hop, 3 unanswerable, 2 ambiguous, 2 misleading, 1 conflicting)",
+          "n_queries": 19,
+          "random_seed": 42,
+          "result": "Context precision 0.37-0.56 with real retrieval (vs 1.0000 trivial baseline)",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/rip_phase3_e2e_rag_eval.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "Context precision = 1.0000 is trivial (1 context per query, 0.4 threshold)",
+        "Circular evaluation: answer = ground_truth, not model output",
+        "No documents ingested (data/raw and data/vectorstore empty)",
+        "0.16ms latency measured on 60-vector index, not production corpus",
+        "Only 60 simple factual questions"
+      ]
+    },
+    "ml_pipeline_monitor": {
+      "path": "C:\\projects\\ML-pipeline-monitor",
+      "git_sha": "852acb4",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E3-005",
+          "name": "Fix SVM ROC-AUC silent zeroing bug",
+          "script": "src/ml_pipeline_monitor/ml/pipeline.py",
+          "dataset": "iris, breast_cancer, wine, digits",
+          "n_queries": 4 datasets,
+          "random_seed": 42,
+          "result": "SVM ROC-AUC now correctly computed (0.972-0.997) instead of 0.0000",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/mlpm_phase3_improvements.json"
+        },
+        {
+          "id": "E3-006",
+          "name": "Extended benchmarking: imbalanced, noisy datasets + calibration metrics",
+          "script": "scripts/mlpm_phase3_improvements.py",
+          "dataset": "iris, breast_cancer, wine, digits, imbalanced_90_10, noisy_20pct, diabetes, california_housing, noisy_regression",
+          "n_queries": 9 datasets,
+          "random_seed": 42,
+          "result": "Wine achieves 1.0000 (easy dataset); noisy data reduces accuracy to 0.71-0.89",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/mlpm_phase3_improvements.json"
+        },
+        {
+          "id": "E3-007",
+          "name": "Extended drift scenarios (gradual drift, concept drift)",
+          "script": "scripts/mlpm_phase3_improvements.py",
+          "dataset": "10 synthetic drift scenarios",
+          "n_queries": 10 scenarios x 4 methods,
+          "random_seed": 42,
+          "result": "PSI threshold 0.25 misses small drift; KS maintains F1=1.0",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/mlpm_phase3_improvements.json"
+        },
+        {
+          "id": "E3-008",
+          "name": "Nested cross-validation on wine dataset",
+          "script": "scripts/mlpm_phase3_improvements.py",
+          "dataset": "wine (178 samples)",
+          "n_queries": 4 models,
+          "random_seed": 42,
+          "result": "Nested CV accuracy 0.9167-1.0000 depending on model",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/mlpm_phase3_improvements.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "SVM ROC-AUC silently zeroed (bug, now fixed)",
+        "Wine 0.9907 on easy 178-sample dataset",
+        "Only 5 datasets (not 6), no imbalanced/noisy/high-dimensional",
+        "Only 8 drift scenarios (not 13), no gradual/concept drift",
+        "No calibration metrics"
+      ]
+    },
+    "equipilot_ai": {
+      "path": "C:\\projects\\Equipilot AI",
+      "git_sha": "c7b7d39",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E3-009",
+          "name": "Fix orphaned merge_results graph node",
+          "script": "backend/graphs/graph.py",
+          "dataset": "N/A (graph architecture fix)",
+          "n_queries": 1 end-to-end execution test,
+          "random_seed": N/A,
+          "result": "All 5 nodes now in execution path; graph compiles and runs end-to-end (status: success)",
+          "status": "COMPLETED",
+          "evidence": "Graph execution test: router → parallel_tools → synthesis → research → merge_results → END"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "merge_results node was orphaned (no incoming edges), now fixed",
+        "No OPENAI_API_KEY - LLM synthesis not measurable",
+        "Only 5 research evaluation cases",
+        "Financial analysis functions not integrated into graph",
+        "No agent efficiency metrics measured"
+      ]
+    }
+  },
+  "total_experiments": 9,
+  "completed_experiments": 9,
+  "failed_experiments": 0,
+  "regressions_introduced": 0
+}

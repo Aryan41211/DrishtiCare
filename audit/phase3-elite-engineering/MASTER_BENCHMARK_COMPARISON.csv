@@ -1,0 +1,19 @@
+Project,Metric,Baseline Value,Improved Value,Absolute Change,Relative Change,Statistically Significant,Evidence File,Notes
+NyayaSaathi,Recall@5 (auto-generated, MPNet),0.1867,0.1867,0.0000,0.0%,No,experiment_results/phase3_improvements.json,Normalization/multi-query/hybrid within CI overlap
+NyayaSaathi,Recall@5 (human-validated, MPNet),0.0178,0.0222,+0.0044,+24.7%,No,experiment_results/phase3_improvements.json,CIs overlap heavily; label data invalid
+NyayaSaathi,Recall@5 (human-validated, E5-base),0.0200,0.0200,0.0000,0.0%,No,experiment_results/phase3_improvements.json,No improvement over baseline
+NyayaSaathi,Recall@5 (human-validated, TF-IDF),0.0133,0.0222,+0.0089,+66.9%,No,experiment_results/phase3_improvements.json,CIs overlap; label data invalid
+NyayaSaathi,p50 latency (MPNet),12.15ms,12.06ms,-0.09ms,-0.7%,No,experiment_results/phase3_improvements.json,Within noise
+RIP,Context Precision (offline pre-written),1.0000,1.0000,0.0000,0.0%,N/A,experiment_results/rip_phase2_evaluation.json,Trivially 1.0 (1 context/query)
+RIP,Context Precision (end-to-end dense),1.0000,0.5579,-0.4421,-44.2%,N/A,experiment_results/rip_phase3_e2e_rag_eval.json,Real retrieval on 31-doc corpus
+RIP,Context Precision (end-to-end BM25),1.0000,0.3684,-0.6316,-63.2%,N/A,experiment_results/rip_phase3_e2e_rag_eval.json,Real retrieval on 31-doc corpus
+RIP,Faithfulness (end-to-end dense),0.7894,0.9737,+0.1843,+23.3%,N/A,experiment_results/rip_phase3_e2e_rag_eval.json,Simulated answer = top context (no LLM key)
+RIP,Retrieval p50 (60-vector index),0.16ms,4.59ms,+4.43ms,+2769%,N/A,experiment_results/rip_phase3_e2e_rag_eval.json,Real corpus vs trivial index - not comparable
+MLPM,SVM ROC-AUC (wine),0.0000,0.9722,+0.9722,Inf%,Yes,src/ml_pipeline_monitor/ml/pipeline.py,Bug fix: silent exception swallowing
+MLPM,Best Classification Accuracy (wine),0.9907,1.0000,+0.0093,+0.9%,No,experiment_results/mlpm_phase3_improvements.json,Easy dataset; 1.0000 not production-representative
+MLPM,PSI Drift Recall,0.5714,0.5714,0.0000,0.0%,No,experiment_results/mlpm_drift_benchmark.json,Threshold 0.25 too high for small drift
+MLPM,KS Test Drift F1,1.0000,1.0000,0.0000,0.0%,No,experiment_results/mlpm_drift_benchmark.json,8 synthetic scenarios only
+EquiPilot,Graph nodes in execution path,4,5,+1,+25%,Yes,backend/graphs/graph.py,merge_results was orphaned
+EquiPilot,Citation Precision,1.0000,1.0000,0.0000,0.0%,No,experiment_results/equipilot_aggressive_opt.json,5 cases, placeholder output (no LLM key)
+EquiPilot,Citation Coverage,1.0000,1.0000,0.0000,0.0%,No,experiment_results/equipilot_aggressive_opt.json,5 cases, placeholder output (no LLM key)
+EquiPilot,Financial validation tests,39/39,39/39,0,0%,No,tests/test_financial_analysis.py,Unit tests pass; not integrated into graph
