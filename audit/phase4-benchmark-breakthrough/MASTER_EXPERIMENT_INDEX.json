@@ -1,0 +1,173 @@
+{
+  "phase": 4,
+  "date": "2026-11-25",
+  "environment": {
+    "cpu_cores": 16,
+    "ram_gb": 15.65,
+    "gpu_available": false,
+    "python_version": "3.12.10",
+    "os": "win32"
+  },
+  "repositories": {
+    "nyaysaathi": {
+      "path": "C:\\projects\\NyaySaathi",
+      "git_sha": "4ef4923",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E4-001",
+          "name": "Annotation system with candidate queries",
+          "script": "scripts/phase4/annotation_system.py",
+          "dataset": "1,160 candidate queries across 10 categories",
+          "n_queries": 1160,
+          "random_seed": 42,
+          "result": "Candidate queries generated; await human annotation",
+          "status": "COMPLETED",
+          "evidence": "backend/evaluation/phase4/annotations/candidate_queries.jsonl"
+        },
+        {
+          "id": "E4-002",
+          "name": "Retrieval evaluation pipeline with 6 models",
+          "script": "scripts/phase4/retrieval_evaluation.py",
+          "dataset": "1,160 auto-generated category-proxy queries",
+          "n_queries": 1160,
+          "random_seed": 42,
+          "result": "E5-base R@5=0.9968 (category-proxy, not human-validated)",
+          "status": "COMPLETED",
+          "evidence": "backend/evaluation/phase4/retrieval_results.json"
+        },
+        {
+          "id": "E4-003",
+          "name": "Query normalization impact",
+          "script": "scripts/phase4/retrieval_evaluation.py",
+          "dataset": "Same 1,160 queries",
+          "n_queries": 1160,
+          "random_seed": 42,
+          "result": "No statistically significant improvement (all CIs overlap)",
+          "status": "COMPLETED",
+          "evidence": "backend/evaluation/phase4/retrieval_results.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "No human-validated evaluation data exists",
+        "1,160 candidate queries await human annotation",
+        "Corpus is synthetic (232 unique cases from 201 seed cases)",
+        "No language diversity (all English)"
+      ]
+    },
+    "retrieval_intelligence_platform": {
+      "path": "C:\\projects\\Retrieval Intelligence Platform",
+      "git_sha": "142313d",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E4-004",
+          "name": "End-to-end RAG evaluation with real document corpus",
+          "script": "scripts/phase4/rag_evaluation_pipeline.py",
+          "dataset": "36 synthetic documents + 19 evaluation queries",
+          "n_queries": 19,
+          "random_seed": 42,
+          "result": "Context precision 0.39-0.57 (vs trivial 1.0); BM25 p50=0.21ms; Dense p50=4.67ms",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/phase4/rag_evaluation_results.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "No LLM API key — generation not measurable",
+        "Faithfulness trivially 1.0 (placeholder answer = top context)",
+        "36-document corpus is small for production",
+        "No concurrent load testing"
+      ]
+    },
+    "ml_pipeline_monitor": {
+      "path": "C:\\projects\\ML-pipeline-monitor",
+      "git_sha": "0f13abb",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E4-005",
+          "name": "Advanced benchmarking with 13 datasets, calibration metrics, nested CV",
+          "script": "scripts/phase4/mlpm_phase4_benchmark.py",
+          "dataset": "13 datasets (iris, breast_cancer, wine, digits, imbalanced, noisy, high-dimensional, temporal, missing values, diabetes, california_housing)",
+          "n_queries": 13 datasets,
+          "random_seed": 42,
+          "result": "SVM ROC-AUC bug fixed; KS Test F1=1.0; wine 1.0000 (easy dataset)",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/phase4/mlpm_phase4_results.json"
+        },
+        {
+          "id": "E4-006",
+          "name": "Drift detection with 7 methods on 10 scenarios",
+          "script": "scripts/phase4/mlpm_phase4_benchmark.py",
+          "dataset": "10 synthetic drift scenarios",
+          "n_queries": 10 scenarios x 7 methods,
+          "random_seed": 42,
+          "result": "KS Test F1=1.0, FPR=0.0; ADWIN F1=0.95; Page-Hinkley/CUSUM F1=0.0",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/phase4/mlpm_phase4_results.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "Wine dataset too easy (1.0000 accuracy)",
+        "All datasets synthetic or from scikit-learn",
+        "No nested CV for all models",
+        "No human-annotated data"
+      ]
+    },
+    "equipilot_ai": {
+      "path": "C:\\projects\\Equipilot AI",
+      "git_sha": "5087a7a",
+      "branch": "main",
+      "experiments": [
+        {
+          "id": "E4-007",
+          "name": "Fix orphaned merge_results graph node",
+          "script": "backend/graphs/graph.py",
+          "dataset": "N/A (graph architecture fix)",
+          "n_queries": 1 end-to-end execution test,
+          "random_seed": "N/A",
+          "result": "All 5 nodes now in execution path; verified with live execution",
+          "status": "COMPLETED",
+          "evidence": "Graph execution: router → parallel_tools → synthesis → research → merge_results → END"
+        },
+        {
+          "id": "E4-008",
+          "name": "Financial validation with edge cases",
+          "script": "scripts/phase4/financial_validation_benchmark.py",
+          "dataset": "4 reference cases + 11 edge case tests",
+          "n_queries": 4 cases + 11 edge cases,
+          "random_seed": 42,
+          "result": "15/15 metrics match reference; 11/11 edge cases pass",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/phase4/financial_validation_results.json"
+        },
+        {
+          "id": "E4-009",
+          "name": "Citation metrics and agent performance",
+          "script": "scripts/phase4/citation_metrics_benchmark.py",
+          "dataset": "5 citation test cases + 5 agent execution tests",
+          "n_queries": 5 + 5,
+          "random_seed": 42,
+          "result": "Citation precision 0.8000; coverage 0.6333; agent success 2/5 (yfinance rate-limited)",
+          "status": "COMPLETED",
+          "evidence": "experiment_results/phase4/citation_and_performance_results.json"
+        }
+      ],
+      "baseline_reproduced": true,
+      "critical_issues": [
+        "No OPENAI_API_KEY — LLM synthesis not measurable",
+        "yfinance rate-limited — 3 of 5 agent executions failed",
+        "Only 4 financial reference cases",
+        "Only 5 citation test cases",
+        "No human review of report quality"
+      ]
+    }
+  },
+  "total_experiments": 9,
+  "completed_experiments": 9,
+  "failed_experiments": 0,
+  "regressions_introduced": 0
+}

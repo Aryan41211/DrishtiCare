@@ -1,0 +1,20 @@
+Project,Metric,Baseline Value,Phase 4 Value,Absolute Change,Relative Change,Statistically Significant,Evidence File,Notes
+NyayaSaathi,Recall@5 (auto-generated, E5-base),0.1836,0.9968,+0.8132,+443%,No,backend/evaluation/phase4/retrieval_results.json,Category-proxy labels; not human-validated
+NyayaSaathi,Recall@5 (auto-generated, BGE-base),0.1819,0.9968,+0.8149,+448%,No,backend/evaluation/phase4/retrieval_results.json,Category-proxy labels; not human-validated
+NyayaSaathi,Recall@5 (auto-generated, BM25),0.1618,1.0000,+0.8382,+518%,No,backend/evaluation/phase4/retrieval_results.json,Category-proxy labels; not human-validated
+NyayaSaathi,Recall@5 (human-validated),0.0200,0.0000,N/A,N/A,N/A,N/A,No human-validated data exists; 1,160 candidate queries awaiting annotation
+NyayaSaathi,p50 latency (E5-base),8.95ms,7.97ms,-0.98ms,-11%,No,backend/evaluation/phase4/retrieval_results.json,Within noise
+RIP,Context Precision,1.0000,0.5684,-0.4316,-43%,N/A,experiment_results/phase4/rag_evaluation_results.json,Phase 3 was trivial (1 context/query); Phase 4 uses real multi-document retrieval
+RIP,Answer Relevancy,0.7316,0.5702,-0.1614,-22%,N/A,experiment_results/phase4/rag_evaluation_results.json,Placeholder answer = top context; not real LLM generation
+RIP,Retrieval p50 (BM25),0.98ms,0.21ms,-0.77ms,-79%,N/A,experiment_results/phase4/rag_evaluation_results.json,Real 36-doc corpus vs 60-vector trivial index
+RIP,Retrieval p50 (Dense),8.95ms,4.67ms,-4.28ms,-48%,N/A,experiment_results/phase4/rag_evaluation_results.json,Real 36-doc corpus vs 60-vector trivial index
+MLPM,SVM ROC-AUC (wine),0.0000,0.9722,+0.9722,Inf%,Yes,src/ml_pipeline_monitor/ml/pipeline.py,Bug fix: silent exception swallowing
+MLPM,Best Classification Accuracy (wine),0.9907,1.0000,+0.0093,+1%,No,experiment_results/phase4/mlpm_phase4_results.json,Easy dataset; not production-representative
+MLPM,KS Test Drift F1,1.0000,1.0000,0.0000,0%,No,experiment_results/phase4/mlpm_phase4_results.json,10 drift scenarios including gradual and concept drift
+MLPM,PSI Drift F1,0.7273,0.8235,+0.0962,+13%,No,experiment_results/phase4/mlpm_phase4_results.json,10 scenarios with additional drift types
+MLPM,Datasets Count,5,13,+8,+160%,No,experiment_results/phase4/PHASE4_DATASET_CATALOG.md,Added imbalanced, noisy, high-dimensional, temporal, missing values
+EquiPilot,Graph nodes in execution path,4,5,+1,+25%,Yes,backend/graphs/graph.py,merge_results was orphaned; now connected
+EquiPilot,Citation Precision,1.0000,0.8000,-0.2000,-20%,No,experiment_results/phase4/PHASE4_CITATION_METRICS.json,5 test cases; placeholder output (no LLM key)
+EquiPilot,Citation Coverage,1.0000,0.6333,-0.3667,-37%,No,experiment_results/phase4/PHASE4_CITATION_METRICS.json,5 test cases; placeholder output (no LLM key)
+EquiPilot,Financial validation tests,39/39,39/39+11 edge cases,0,0%,No,tests/test_financial_analysis.py,Unit tests pass; 11 edge cases added (zero denominators, None, negative)
+EquiPilot,Financial metrics validated,0/4 reference cases,4/4 reference cases,+4,Inf%,Yes,experiment_results/phase4/financial_validation_results.json,15/15 metrics match independent reference values
