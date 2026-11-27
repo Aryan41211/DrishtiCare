@@ -1,0 +1,5 @@
+disagreement_id,project,example_id,reviewer_id_1,reviewer_id_2,dimension,judgment_1,judgment_2,agreement_status,adjudicated_grade,adjudicator_id,adjudication_timestamp,rationale,status
+,nyayasaathi,,,,,,,,,,,,,No annotations collected - no disagreements exist,pending
+,retrieval_intelligence_platform,,,,,,,,,,,,,No annotations collected - no disagreements exist,pending
+,ml_pipeline_monitor,,,,,,,,,,,,,No annotations collected - no disagreements exist,pending
+,equipilot_ai,,,,,,,,,,,,,No annotations collected - no disagreements exist,pending

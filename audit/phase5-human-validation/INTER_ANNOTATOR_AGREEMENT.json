@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "created_at": "2026-11-27T00:00:00Z",
+  "guideline_version": "1.0",
+  "audit_date": "2026-11-27",
+  "status": "no_annotations_collected",
+  "note": "No human annotations have been collected in any project. All annotation directories are empty. No agreement statistics can be computed.",
+  "projects": {
+    "nyayasaathi": {
+      "pilot_examples": 50,
+      "examples_annotated": 0,
+      "reviewers_participated": 0,
+      "double_reviewed_examples": 0,
+      "exact_agreement": null,
+      "cohens_kappa": null,
+      "krippendorff_alpha": null,
+      "confusion_matrix": null,
+      "category_level_agreement": null,
+      "most_disputed_examples": [],
+      "blocker": "No reviewer has submitted any annotation"
+    },
+    "retrieval_intelligence_platform": {
+      "pilot_examples": 19,
+      "examples_annotated": 0,
+      "reviewers_participated": 0,
+      "double_reviewed_examples": 0,
+      "exact_agreement": null,
+      "cohens_kappa": null,
+      "krippendorff_alpha": null,
+      "agreement_by_dimension": {
+        "factual_correctness": null,
+        "faithfulness": null,
+        "citation_correctness": null,
+        "completeness": null,
+        "abstention": null
+      },
+      "most_disputed_examples": [],
+      "blocker": "No reviewer has submitted any annotation"
+    },
+    "ml_pipeline_monitor": {
+      "pilot_examples": 11,
+      "scenarios_reviewed": 0,
+      "reviewers_participated": 0,
+      "realism_rating_agreement": null,
+      "validity_rating_agreement": null,
+      "incorrect_or_ambiguous_scenarios": [],
+      "blocker": "No reviewer has submitted any annotation"
+    },
+    "equipilot_ai": {
+      "pilot_examples": 20,
+      "cases_annotated": 0,
+      "reviewers_participated": 0,
+      "financial_calculation_agreement": null,
+      "citation_judgment_agreement": null,
+      "numerical_disagreements": [],
+      "claim_support_disagreements": [],
+      "blocker": "No reviewer has submitted any annotation"
+    },
+    "cross_project": {
+      "total_pilot_examples": 100,
+      "total_annotated": 0,
+      "total_reviewers": 0,
+      "overall_agreement": null
+    }
+  }
+}

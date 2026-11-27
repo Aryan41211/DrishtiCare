@@ -1,0 +1,7 @@
+# Adjudication Results — Phase 5.1
+# No adjudications have been performed because no human annotations have been collected.
+# All annotation directories across all four projects are empty.
+# When adjudications occur, each line will be a JSON object with:
+#   adjudication_id, example_id, project, reviewer_id_1, reviewer_id_2,
+#   judgment_1, judgment_2, adjudicated_grade, adjudicator_id,
+#   adjudication_timestamp, rationale, original_judgments_preserved
